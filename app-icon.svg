@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1a3e"/>
+      <stop offset="1" stop-color="#120c1c"/>
+    </linearGradient>
+    <linearGradient id="outer" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#d7261e"/>
+      <stop offset=".55" stop-color="#ff6a1a"/>
+      <stop offset="1" stop-color="#ffb02e"/>
+    </linearGradient>
+    <linearGradient id="inner" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#ffd34d"/>
+      <stop offset="1" stop-color="#fff6c8"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".5" cy=".72" r=".5">
+      <stop offset="0" stop-color="#ff7a1a" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ff7a1a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="220" fill="url(#bg)"/>
+  <circle cx="512" cy="700" r="380" fill="url(#glow)"/>
+  <!-- äußere Flamme -->
+  <path fill="url(#outer)" d="M512 120
+    C 560 250 700 330 720 500
+    C 735 630 680 760 600 820
+    C 640 720 610 650 560 610
+    C 570 690 530 750 480 780
+    C 500 720 470 670 430 640
+    C 440 720 400 790 340 820
+    C 280 760 270 650 300 560
+    C 320 500 360 470 380 410
+    C 400 470 420 500 450 520
+    C 430 400 440 250 512 120 Z"/>
+  <!-- innerer Kern -->
+  <path fill="url(#inner)" d="M520 470
+    C 560 560 640 610 630 720
+    C 622 800 570 850 512 860
+    C 450 850 400 800 396 730
+    C 392 660 440 630 460 580
+    C 470 630 490 650 505 660
+    C 490 600 495 530 520 470 Z"/>
+</svg>

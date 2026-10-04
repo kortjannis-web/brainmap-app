@@ -1,0 +1,14 @@
+{
+  "name": "brainmap",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dist": "node -e \"const f=require('fs');f.mkdirSync('dist',{recursive:true});f.copyFileSync('Brainmap.html','dist/index.html')\"",
+    "build": "tauri build",
+    "dev": "tauri dev",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}
