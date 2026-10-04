@@ -14,8 +14,13 @@ struct Opened {
     content: String,
 }
 
+/// Projektordner: Dokumente\Brainmap (wird angelegt), dort starten Öffnen und Speichern.
 fn dialog() -> rfd::FileDialog {
-    rfd::FileDialog::new().add_filter("Brainmap-Mindmap", &["brainmap"])
+    let d = rfd::FileDialog::new().add_filter("Brainmap-Mindmap", &["brainmap"]);
+    match std::env::var_os("USERPROFILE").map(|p| PathBuf::from(p).join("Documents").join("Brainmap")) {
+        Some(dir) if fs::create_dir_all(&dir).is_ok() => d.set_directory(dir),
+        _ => d,
+    }
 }
 
 fn data_dir(app: &AppHandle) -> Result<PathBuf, String> {

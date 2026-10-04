@@ -495,7 +495,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
   <button id="btn-add" title="Neuer Block (klicken, dann auf die Fläche setzen)" aria-label="Neuer Block"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="15" height="11" rx="3"/><path d="M20 2.5v6M17 5.5h6"/></svg></button>
   <hr>
   <button id="btn-new" title="Neue Mindmap" aria-label="Neue Mindmap"><svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6"/><path d="M12 12v6M9 15h6"/></svg></button>
-  <button id="btn-open" title="Öffnen (Strg+O)" aria-label="Öffnen"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
+  <button id="btn-open" title="Öffnen (Strg+O) · Umschalt+Klick: Projektordner wählen" aria-label="Öffnen"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></button>
   <button id="btn-save" title="Speichern (Strg+S) · Umschalt+Klick: Speichern unter" aria-label="Speichern"><svg viewBox="0 0 24 24"><path d="M5 3h11l5 5v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8V3"/><path d="M7 21v-7h10v7"/></svg></button>
   <button id="btn-backups" title="Sicherungskopien" aria-label="Sicherungskopien"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l3 2"/></svg></button>
   <hr>
@@ -2969,6 +2969,24 @@ function download(name, data) {
   a.download = name; document.body.appendChild(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
+// Projektordner: Speichern und Öffnen starten dort (Browser: gemerktes Ordner-Handle, Programm: Dokumente\Brainmap)
+let dirFresh = false; // Ordner wurde gerade gewählt: die Nutzeraktion ist für den nächsten Dialog verbraucht
+async function projectDir(choose) {
+  dirFresh = false;
+  if (invoke || !window.showDirectoryPicker) return null;
+  let d = null;
+  try { d = await idb.get('dir'); } catch (_) {}
+  try {
+    if (d && !choose && (await d.queryPermission({ mode:'readwrite' })) === 'denied') d = null;
+    if (!d || choose) {
+      toast('Wähle deinen Projektordner (zum Beispiel Dokumente und dort Brainmap)');
+      d = await window.showDirectoryPicker({ mode:'readwrite', startIn:d || 'documents' });
+      idb.set('dir', d).catch(() => {}); dirFresh = true;
+    }
+  } catch (_) { return null; }
+  return d;
+}
+const startOpt = d => d ? { startIn:d } : { startIn:'documents' };
 async function saveFile(as) {
   endEdit(); if (sheetId) { syncSheet(); commit(); }
   const data = fileData();
@@ -2986,7 +3004,9 @@ async function saveFile(as) {
   try {
     if (!as && fileHandle) await writeHandle(fileHandle, data);
     else if (window.showSaveFilePicker) {
-      const h = await window.showSaveFilePicker({ suggestedName:fileName + '.brainmap', types:PICK_TYPES });
+      const pd = await projectDir(false);
+      const h = dirFresh && pd ? await pd.getFileHandle(fileName + '.brainmap', { create:true })
+        : await window.showSaveFilePicker({ suggestedName:fileName + '.brainmap', types:PICK_TYPES, ...startOpt(pd) });
       await writeHandle(h, data);
       fileHandle = h; fileName = h.name.replace(/\.brainmap$/i, '');
     } else download(fileName + '.brainmap', data);
@@ -3003,8 +3023,9 @@ async function confirmDiscard() {
   if (!dirty || !Object.keys(doc.nodes).length) return true;
   return ask('Ungespeicherte Änderungen verwerfen?', { yes:'Verwerfen', no:'Abbrechen' });
 }
-async function openFile() {
+async function openFile(changeDir) {
   if (!(await confirmDiscard())) return;
+  if (changeDir) { await projectDir(true); if (dirFresh) { toast('Projektordner gesetzt. Jetzt nochmal auf Öffnen klicken.'); return; } }
   if (invoke) {
     try { const r = await invoke('open_dialog'); if (r) loadText(r.content, r.path); }
     catch (err) { toast('Öffnen fehlgeschlagen: ' + err); }
@@ -3012,7 +3033,9 @@ async function openFile() {
   }
   if (window.showOpenFilePicker) {
     try {
-      const [h] = await window.showOpenFilePicker({ types:PICK_TYPES, multiple:false });
+      const pd = await projectDir(false);
+      if (dirFresh) { toast('Projektordner gesetzt. Jetzt nochmal auf Öffnen klicken.'); return; }
+      const [h] = await window.showOpenFilePicker({ types:PICK_TYPES, multiple:false, ...startOpt(pd) });
       await loadFile(await h.getFile(), h);
     } catch (err) { if (err && err.name !== 'AbortError') $('#file-input').click(); }
   } else $('#file-input').click();
@@ -3072,7 +3095,7 @@ async function newMap() {
 /* ---------- Werkzeugleiste ---------- */
 $('#btn-add').onclick = () => setPlacing(!placing);
 $('#btn-new').onclick = newMap;
-$('#btn-open').onclick = openFile;
+$('#btn-open').onclick = e => openFile(e.shiftKey);
 $('#btn-save').onclick = e => saveFile(e.shiftKey);
 $('#btn-undo').onclick = undo;
 $('#btn-backups').onclick = showBackups;
