@@ -31,6 +31,14 @@
   --canvas:#f5f0e4; --canvas-dot:#ddd5c0; --canvas-ink:#44444c; --canvas-muted:#8a8472;
 }
 :root[data-canvas=dark]{--canvas:#2b2d31; --canvas-dot:#40434a; --canvas-ink:#e6e6e8; --canvas-muted:#9a9ca3}
+#btn-canvas{position:fixed;right:12px;top:12px;width:40px;height:40px;border:1px solid var(--line);border-radius:10px;background:var(--panel);box-shadow:var(--shadow);display:grid;place-items:center;cursor:pointer;z-index:21;transition:right .24s cubic-bezier(.32,.72,0,1)}
+#btn-canvas:hover{background:var(--accent2-soft)}
+#btn-canvas svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#btn-canvas .i-sun{display:none}
+:root[data-canvas=dark] #btn-canvas .i-sun{display:block}
+:root[data-canvas=dark] #btn-canvas .i-moon{display:none}
+body:has(#sidebar.open) #btn-canvas{right:288px}
+body.focus #btn-canvas{display:none}
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
 button{font:inherit;color:inherit}
@@ -450,6 +458,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
 
 <div id="docname">Unbenannt</div>
 <div id="zoomlbl" title="Klicken: alles anzeigen">100%</div>
+<button id="btn-canvas" title="Hintergrund: hell oder dunkel" aria-label="Hintergrund auf dunkel umschalten" aria-pressed="false"><svg class="i-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><svg class="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
 
 <nav id="toolbar" aria-label="Werkzeuge">
   <button id="btn-add" title="Neuer Block (klicken, dann auf die Fläche setzen)" aria-label="Neuer Block"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="15" height="11" rx="3"/><path d="M20 2.5v6M17 5.5h6"/></svg></button>
@@ -1768,6 +1777,17 @@ function startBand(e) {
     }
   };
 }
+
+/* ---------- Hintergrund hell/dunkel ---------- */
+function setCanvas(dark) {
+  if (dark) document.documentElement.setAttribute('data-canvas', 'dark'); else document.documentElement.removeAttribute('data-canvas');
+  const b = $('#btn-canvas');
+  b.setAttribute('aria-pressed', String(dark));
+  b.setAttribute('aria-label', dark ? 'Hintergrund auf hell umschalten' : 'Hintergrund auf dunkel umschalten');
+  try { localStorage.setItem('brainmap:canvas', dark ? 'dark' : 'light'); } catch (_) {}
+}
+$('#btn-canvas').onclick = () => setCanvas(document.documentElement.getAttribute('data-canvas') !== 'dark');
+try { if (localStorage.getItem('brainmap:canvas') === 'dark') setCanvas(true); } catch (_) {}
 
 /* ---------- Sortieren ---------- */
 const GRID = 24;
