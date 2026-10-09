@@ -50,3 +50,8 @@ Daten: `%APPDATA%\de.brainmap.app\` (autosave.json, Sicherungen\<Dateiname>\).
   SVGs lesen und die Zeilen `const ICONS = …;` und `const ICON_CATS = …;` ersetzen. Tabler-Schlüssel mit `t:`.
 
 Laufzeitwerte im Blatt-HTML (`data-auto`, `data-w`, `.sh-pt`, `.sel`, `.flash`) entfernt `syncSheet` vor dem Speichern.
+
+## Ab Ä17 (Seiten, Projekt, Gestaltung)
+- `doc.page = { w, mode:'flow'|'book', fmt:'tb'|'roman'|'a5', nums:'off'|'mid'|'out', bd:{art:design} }` (`cleanPage`). Breite: `applyTextWidth`, Ränder `#mg-l/#mg-r`. Buchseiten: `applyBook` (Editor als Mehrspalten-Box, jede Spalte eine Seite, Seitenblätter malt der Hintergrund von `#paper`), `renderPageNums`, `pageCSS` (Druck/PDF).
+- `doc.tree = { items:{id:{id,kind:'folder'|'map'|'text',name,parent,ord,view}}, map, active, dir }` (`cleanTree`, `fixTreeRefs`). Knoten und Rahmen tragen `m` (Karte, fehlt = 'main'), eigenständige Texte sind Knoten mit `solo:true` und gleicher id wie ihr Reiter. `switchMap`, `openTab`, `renderTabs`, `newTabItem`, `deleteTab`, `moveTab`. Sichtbarkeit über `hiddenSet` (`applyVisibility`).
+- Gestaltung im Text: `.cols/.grid>.gcol` (Spalten, `applyCols`), Notiz-Kasten `section.blk[data-kind=notiz]`, Kasten-Designs `section.blk[data-d]` (`BLK_DESIGNS`, `designAll`), Kasten-Zeichen `.tbox[data-osym][data-opos]` mit `--orn`, Zettel am Wort `.anchor[data-sn]` + `.sticky[data-sn][data-mode]` (`makeSticky`, `renderStickyLines` in `#stlines`).
