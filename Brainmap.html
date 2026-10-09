@@ -397,6 +397,17 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .blk-body{position:relative;padding:0 14px 12px 44px}
 .blk-body>section.blk{margin-left:-30px}
 .blk.closed>.blk-body{display:none}
+/* Notiz-Kasten: schmaler Balken, ohne Kennung und Untertitel, gehört nicht ins Buch */
+.blk[data-kind=notiz]{border-radius:10px;border-color:#e6d27f;background:#fff8d8;margin:8px 0}
+.blk[data-kind=notiz]>.blk-head{padding:3px 8px 3px 4px;align-items:center}
+.blk[data-kind=notiz]>.blk-head .blk-label,.blk[data-kind=notiz]>.blk-head .blk-sub{display:none}
+.blk[data-kind=notiz]>.blk-head .blk-title{font-size:.92em;font-weight:600;color:#7a6418}
+.blk[data-kind=notiz]>.blk-head .blk-title:empty::before{content:"Notiz"}
+.blk[data-kind=notiz]>.blk-body{padding:0 12px 8px 40px;font-size:.95em}
+:root[data-theme=dark] .blk[data-kind=notiz]{background:#3a3524;border-color:#6d6233}
+:root[data-theme=dark] .blk[data-kind=notiz]>.blk-head .blk-title{color:#e6cf7a}
+.sn-row.k-notiz small{color:#b0961f}
+#sheet.book .blk[data-kind=notiz]{background:#fff8d8}
 .blk.flash{animation:blkflash 1.2s ease}
 .blk.moving{opacity:.35}
 .blk.drop-in{box-shadow:0 0 0 3px var(--accent)}
@@ -1004,9 +1015,10 @@ body.focus .mg{display:none}
       <span class="sep"></span>
       <button class="tb" id="btn-kap" title="Kapitel-Kasten einfügen (Strg+Umschalt+2). Rechtsklick auf Text: Rang vergeben" aria-label="Kapitel-Kasten einfügen">+ Kapitel</button>
       <button class="tb" id="btn-szene" title="Szenen-Kasten einfügen (Strg+Umschalt+3)" aria-label="Szenen-Kasten einfügen">+ Szene</button>
+      <button class="tb" id="btn-notiz" title="Notiz-Kasten einfügen (Strg+Umschalt+4): schmaler Balken, aufklappbar, erscheint nicht im Export" aria-label="Notiz-Kasten einfügen">+ Notiz</button>
       <button class="tb fx-btn" id="btn-sep" title="Trenner einfügen: Szenenwechsel, Linie, Punkte, Stern, Welle, Seitenumbruch" aria-label="Trenner einfügen" aria-haspopup="true">Trenner ▾</button>
       <span class="sep"></span>
-      <button class="tb" id="btn-note" title="Notiz (Sticky Note) in den Text einfügen" aria-label="Notiz einfügen">🗒 Notiz</button>
+      <button class="tb" id="btn-note" title="Zettel (Sticky Note) in den Text einfügen" aria-label="Zettel einfügen">🗒 Zettel</button>
       <button class="tb" id="btn-icon" title="Icon in den Text einfügen" aria-label="Icon einfügen">★ Icon</button>
       <button class="tb fx-btn" id="btn-shape" title="Form frei auf die Seite legen: Linie, Pfeil, Rechteck, rund, Oval, Vielecke. Ziehen verschiebt, Punkte ändern die Ecken, Rechtsklick: Farbe und mehr" aria-label="Form einfügen" aria-haspopup="true">◇ Form ▾</button>
       <button class="tb" id="btn-pic" title="Bild einfügen (oder Bild ins Blatt ziehen bzw. einfügen mit Strg+V)" aria-label="Bild einfügen">🖼 Bild</button>
@@ -1078,6 +1090,7 @@ body.focus .mg{display:none}
     <tr><td>Spalten</td><td>In einen Absatz klicken oder mehrere markieren, dann ▥ Spalten ▾: 2 oder 3 Spalten, fließend (Text läuft weiter wie in der Zeitung) oder getrennt nebeneinander (jede Spalte eigener Text). Nochmal ▥ Spalten ▾ im Bereich: umstellen oder auflösen.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
+    <tr><td>Notiz-Kasten</td><td>+ Notiz (Strg+Umschalt+4) oder Rechtsklick › Rang › Notiz: ein schmaler gelber Balken, aufklappbar wie Kapitel und Szene, aber ohne Nummer und Untertitel. Darf überall stehen, auch in Kapiteln und Szenen, und erscheint nicht im Export.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Trenner</td><td>Im Textblatt: Trenner ▾: Szenenwechsel (* * *), Linie, Punkte, Stern, Welle, Seitenumbruch. Alles erscheint im Export.</td></tr>
     <tr><td>Listen</td><td>• Liste ▾: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schneller: am Zeilenanfang - , -> , * , 1. , [] oder o tippen und Leertaste. Im Text wird -> zu →, <- zu ← und => zu ⇒.</td></tr>
@@ -1088,7 +1101,7 @@ body.focus .mg{display:none}
     <tr><td>Fokus-Modus</td><td>Im Textblatt: Knopf ⤢ oder Strg+Umschalt+F. Esc beendet. Die Werkzeugleiste erscheint beim Zeigen nach oben.</td></tr>
     <tr><td>Link-Farben</td><td>Grün: andere Box. Gelb: Unterstrang. Lila: Mini-Block (mit ○: unsichtbar). Kursiv: gilt nur für diesen einen Begriff. Legende unten im Textblatt.</td></tr>
     <tr><td>Gleiche Begriffe</td><td>Ein verlinkter Begriff ist in allen Texten automatisch klickbar (gepunktet unterstrichen). Der Schalter „Nur dieser Begriff“ gilt einmalig und macht den Link kursiv.</td></tr>
-    <tr><td>Notizen im Text</td><td>Knopf Notiz im Textblatt. Größe: Ecke unten rechts ziehen. Rechtsklick auf die Griffleiste oben: Farbe, Position, löschen.</td></tr>
+    <tr><td>Zettel im Text</td><td>Knopf 🗒 Zettel im Textblatt. Größe: Ecke unten rechts ziehen. Rechtsklick auf die Griffleiste oben: Farbe, Position, löschen.</td></tr>
     <tr><td>Unterblock</td><td>Tab</td></tr>
     <tr><td>Äste ein- und ausklappen</td><td>Das − bzw. +Zahl unten links im Block</td></tr>
     <tr><td>Löschen</td><td>Entf</td></tr>
@@ -2783,9 +2796,10 @@ for (const b of document.querySelectorAll('.tb[data-cmd]')) {
   b.addEventListener('mousedown', e => e.preventDefault());
   b.addEventListener('click', () => cmd(b.dataset.cmd));
 }
-for (const id of ['btn-kap', 'btn-szene', 'btn-list', 'btn-sep']) $('#' + id).addEventListener('mousedown', e => e.preventDefault());
+for (const id of ['btn-kap', 'btn-szene', 'btn-notiz', 'btn-list', 'btn-sep']) $('#' + id).addEventListener('mousedown', e => e.preventDefault());
 $('#btn-kap').addEventListener('click', () => insertBlock('kapitel'));
 $('#btn-szene').addEventListener('click', () => insertBlock('szene'));
+$('#btn-notiz').addEventListener('click', () => insertBlock('notiz'));
 $('#fmt-block').addEventListener('change', e => cmd('formatBlock', `<${e.target.value}>`));
 const fontOpts = FONTS.map(f => `<option value="${esc(f[0])}" style="font-family:${esc(f[2])}">${esc(f[1])}</option>`).join('');
 $('#sb-font').innerHTML = fontOpts;
@@ -3045,7 +3059,7 @@ picker.querySelector('input').addEventListener('keydown', e => {
 picker.querySelector('.list').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) choosePick(b.dataset.id); });
 
 /* ---------- Kästen im Text (Teil, Kapitel, Szene) ---------- */
-const BLK_KINDS = { teil:'Teil', kapitel:'Kapitel', szene:'Szene' }, BLK_RANK = { teil:1, kapitel:2, szene:3 };
+const BLK_KINDS = { teil:'Teil', kapitel:'Kapitel', szene:'Szene', notiz:'Notiz' }, BLK_RANK = { teil:1, kapitel:2, szene:3, notiz:9 };
 const BLK_CHEV = '<svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg>';
 const BLK_GRIP = '<svg viewBox="0 0 24 24"><path d="M9 5h.01M15 5h.01M9 12h.01M15 12h.01M9 19h.01M15 19h.01" stroke-width="3"/></svg>';
 function makeBlock(kind, title = '', sub = '') {
@@ -3084,6 +3098,7 @@ function blockLabels(root) {
   const cnt = { teil:0, kapitel:0, szene:0 }, m = new Map();
   for (const b of root.querySelectorAll('section.blk')) {
     const k = BLK_KINDS[b.dataset.kind] ? b.dataset.kind : 'kapitel';
+    if (k === 'notiz') { m.set(b, 'Notiz'); continue; }
     cnt[k]++; if (k === 'kapitel') cnt.szene = 0;
     m.set(b, BLK_KINDS[k] + ' ' + (k === 'teil' ? roman(cnt.teil) : cnt[k]));
   }
@@ -3144,7 +3159,7 @@ function blockKeys(e) {
     if (e.key === 'Enter') {
       e.preventDefault();
       if (field.classList.contains('blk-label')) caretIn(blkField(b, 'title'));
-      else if (field.classList.contains('blk-title')) caretIn(blkField(b, 'sub'));
+      else if (field.classList.contains('blk-title') && b.dataset.kind !== 'notiz') caretIn(blkField(b, 'sub'));
       else { b.classList.remove('closed'); caretIn(blkBody(b).firstElementChild || blkBody(b), false); onEditorInput(); }
       return true;
     }
@@ -3199,7 +3214,7 @@ editor.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (!sheetId || !(e.ctrlKey || e.metaKey) || !e.shiftKey) return;
-  const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene', Digit8:'rede', Digit9:'innen' }[e.code];
+  const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene', Digit4:'notiz', Digit8:'rede', Digit9:'innen' }[e.code];
   if (kind === 'rede' || kind === 'innen') { e.preventDefault(); makeSpeech(kind); }
   else if (kind) { e.preventDefault(); insertBlock(kind); }
 }, true);
@@ -3268,7 +3283,7 @@ function caretRangeAt(x, y) {
   else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (p) { r = document.createRange(); r.setStart(p.offsetNode, p.offset); } }
   return r && editor.contains(r.startContainer) ? r : null;
 }
-const RANK_ROW = [['teil','Teil'],['kapitel','Kapitel'],['szene','Szene'],'|',['h1','Ü1','Überschrift 1'],['h2','Ü2','Überschrift 2'],['h3','Ü3','Überschrift 3'],['p','Text','Normaler Text']];
+const RANK_ROW = [['teil','Teil'],['kapitel','Kapitel'],['szene','Szene'],['notiz','Notiz','Notiz-Kasten (nicht im Buch)'],'|',['h1','Ü1','Überschrift 1'],['h2','Ü2','Überschrift 2'],['h3','Ü3','Überschrift 3'],['p','Text','Normaler Text']];
 function rankRow(range, cur) {
   return { label:'Rang', row:RANK_ROW.map(r => r === '|' ? r : { label:r[1], title:r[2] || r[1], on:r[0] === cur, fn:() => applyRank(r[0], range) }) };
 }
@@ -3501,6 +3516,7 @@ function flattenBlocks(root) {
   const labels = blockLabels(root); let scenes = 0;
   for (const b of [...root.querySelectorAll('section.blk')]) {
     const kind = BLK_KINDS[b.dataset.kind] ? b.dataset.kind : 'kapitel', body = b.querySelector(':scope>.blk-body');
+    if (kind === 'notiz') { b.remove(); continue; }          // Notizen gehören nicht ins Buch
     const get = f => { const x = b.querySelector(':scope>.blk-head .blk-' + f); return x ? x.textContent.trim() : ''; };
     if (kind === 'kapitel') scenes = 0; else if (kind === 'szene') scenes++;
     const label = get('label') || labels.get(b), title = get('title'), sub = get('sub');
