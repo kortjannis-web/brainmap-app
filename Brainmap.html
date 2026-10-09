@@ -420,6 +420,14 @@ hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;height:auto;margin:1.1em 0;text-
 hr.deco-dots::after{content:"•   •   •"}
 hr.deco-star::after{content:"✦"}
 hr.deco-wave::after{content:"~   ~   ~"}
+/* Freie Formen: liegen frei auf der Seite, nur Linie und Fläche sind klickbar */
+.shape{position:absolute;z-index:3;pointer-events:none;user-select:none}
+.shape svg{display:block;overflow:visible}
+.shape svg *{pointer-events:visiblePainted;cursor:move}
+.shape.sel{outline:1.5px dashed var(--accent);outline-offset:6px}
+.sh-pt,.sh-rs{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:2px solid var(--accent);pointer-events:auto;cursor:crosshair;z-index:1}
+.sh-rs{border-radius:3px;cursor:nwse-resize;left:100%;top:100%}
+#m-page .shape{display:none}
 /* Gliederung links im Textblatt */
 #sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
 #sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
@@ -822,6 +830,7 @@ body.focus #sheet-navbtn{display:none}
       <span class="sep"></span>
       <button class="tb" id="btn-note" title="Notiz (Sticky Note) in den Text einfügen" aria-label="Notiz einfügen">🗒 Notiz</button>
       <button class="tb" id="btn-icon" title="Icon in den Text einfügen" aria-label="Icon einfügen">★ Icon</button>
+      <button class="tb fx-btn" id="btn-shape" title="Form frei auf die Seite legen: Linie, Pfeil, Rechteck, rund, Oval, Vielecke. Ziehen verschiebt, Punkte ändern die Ecken, Rechtsklick: Farbe und mehr" aria-label="Form einfügen" aria-haspopup="true">◇ Form ▾</button>
       <button class="tb" id="btn-pic" title="Bild einfügen (oder Bild ins Blatt ziehen bzw. einfügen mit Strg+V)" aria-label="Bild einfügen">🖼 Bild</button>
       <label class="lk-switch" title="Gilt für neue Links: alle gleichen Begriffe verlinken oder nur diesen einen (kursiv)"><b class="l-all">Alle Begriffe</b><input type="checkbox" id="lk-once" role="switch" aria-label="Nur dieser Begriff"><i></i><b class="l-once">Nur dieser</b></label>
       <button class="tb" id="btn-link" title="Markiertes Wort mit einer Überschrift verlinken (oder Rechtsklick auf ein Wort)" aria-label="Verlinken">🔗 Verlinken</button>
@@ -884,6 +893,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen. Farbe darunter wählen. Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
+    <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
@@ -2051,6 +2061,7 @@ function showMenu(x, y, items) {
         const b = document.createElement('button');
         b.textContent = r.label; b.title = r.title || ''; b.setAttribute('role', 'menuitem');
         if (r.on) b.className = 'on';
+        if (r.color) { b.style.color = r.color; b.style.fontSize = '18px'; b.style.padding = '2px 5px'; }
         b.onclick = () => { hideMenu(); r.fn(); };
         d.appendChild(b);
       }
@@ -2325,6 +2336,7 @@ function openSheet(id) {
   sheetTitle.title = sheetTitle.readOnly ? 'Überschrift mit Icons: bitte im Block bearbeiten' : '';
   editor.innerHTML = n.text || '';
   migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav();
+  requestAnimationFrame(() => { for (const s of editor.querySelectorAll('.shape')) renderShape(s); });
   editor.style.fontFamily = n.style && n.style.font ? fontStack(n.style.font) : '';
   applyAutoLinks(); markBrokenLinks(); renderBacklinks(id);
   $('#sheet-goal').value = n.goal || ''; updateSheetStat();
@@ -2355,6 +2367,8 @@ function syncSheet() {
   for (const x of c.querySelectorAll('.blk-meta')) x.removeAttribute('data-w');
   for (const x of c.querySelectorAll('.blk-label')) x.removeAttribute('data-auto');
   for (const x of c.querySelectorAll('.blk.flash')) x.classList.remove('flash');
+  for (const x of c.querySelectorAll('.sh-pt,.sh-rs')) x.remove();
+  for (const x of c.querySelectorAll('.shape.sel')) x.classList.remove('sel');
   for (const a of c.querySelectorAll('.nlink')) { a.classList.remove('broken', 'tomini', 'tosub', 'tonote', 'once'); a.removeAttribute('title'); }
   n.text = cleanHTML(c.innerHTML);
   if (!c.textContent.trim()) n.text = '';
@@ -2583,6 +2597,8 @@ function currentRange() {
 }
 editor.addEventListener('contextmenu', e => {
   e.preventDefault();
+  const shp = e.target.closest('.shape');
+  if (shp) { shapeMenu(shp, e.clientX, e.clientY); return; }
   const fig = e.target.closest('.pic');
   if (fig) { picMenu(fig, e.clientX, e.clientY); return; }
   const note = e.target.closest('.note-head') && e.target.closest('.note');
@@ -2842,6 +2858,7 @@ function blockKeys(e) {
       if (isEmptyLine(line) && par.children.length > 1) { line.remove(); onEditorInput(); }
       caretIn(blkField(par.parentNode, 'title')); return true;
     }
+    if (prev && prev.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
     if (prev && prev.matches('section.blk')) {
       e.preventDefault();
       if (isEmptyLine(line)) { line.remove(); onEditorInput(); }
@@ -2852,6 +2869,7 @@ function blockKeys(e) {
   } else {
     r.setStart(s.anchorNode, s.anchorOffset); if (r.toString().length) return false;
     const next = line.nextElementSibling;
+    if (next && next.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
     if (next && next.matches('section.blk')) { e.preventDefault(); if (isEmptyLine(line) && line.previousElementSibling) { line.remove(); onEditorInput(); } return true; }
     if (!next && line.parentNode.classList.contains('blk-body')) { e.preventDefault(); return true; }
   }
@@ -3310,6 +3328,121 @@ $('#btn-sep').addEventListener('click', e => {
   });
 });
 
+// Freie Formen. Punkte (Linie, Vieleck) liegen als Anteile 0..1 der Formfläche in data-pts
+const regular = (n, star) => Array.from({ length:star ? n * 2 : n }, (_, i) => {
+  const a = -Math.PI / 2 + i * Math.PI * 2 / (star ? n * 2 : n), r = star && i % 2 ? .21 : .5;
+  return (.5 + r * Math.cos(a)).toFixed(3) + ',' + (.5 + r * Math.sin(a)).toFixed(3);
+}).join(' ');
+const SHAPES = [['line','Linie'],['arrow','Pfeil'],['rect','Rechteck'],['round','Abgerundet'],['ellipse','Kreis / Oval'],['tri','Dreieck'],['penta','Fünfeck'],['hexa','Sechseck'],['star','Stern']];
+const SHAPE_COLORS = ['#2a2a30','#d1343b','#e07b00','#2f8f4e','#2f6fd6','#7b3fd1','#8a8472'];
+const shapePts = el => (el.dataset.pts || '').split(' ').filter(Boolean).map(p => p.split(',').map(Number));
+function renderShape(el) {
+  const w = Math.max(6, el.offsetWidth), h = Math.max(6, el.offsetHeight), d = el.dataset, sw = clamp(+d.sw || 2, 1, 20), k = d.shape;
+  const open = k === 'line' || k === 'arrow', col = isHex(d.stroke) ? d.stroke : '#2a2a30', fill = !open && isHex(d.fill) ? d.fill : 'none';
+  const dash = d.dash === '1' ? ` stroke-dasharray="${sw * 3} ${sw * 2.5}"` : '';
+  const P = shapePts(el).map(([x, y]) => [+(sw / 2 + x * (w - sw)).toFixed(1), +(sw / 2 + y * (h - sw)).toFixed(1)]);
+  let geo;
+  if (k === 'rect' || k === 'round') geo = `<rect x="${sw / 2}" y="${sw / 2}" width="${w - sw}" height="${h - sw}" rx="${k === 'round' ? Math.round(Math.min(w, h) * .2) : 0}"`;
+  else if (k === 'ellipse') geo = `<ellipse cx="${w / 2}" cy="${h / 2}" rx="${(w - sw) / 2}" ry="${(h - sw) / 2}"`;
+  else geo = `<${open ? 'polyline' : 'polygon'} points="${P.map(p => p.join(',')).join(' ')}"`;
+  let svg = `${geo} fill="none" stroke="transparent" stroke-width="${Math.max(14, sw + 10)}"/>` +
+    `${geo} fill="${fill}" fill-opacity=".25" stroke="${col}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"${dash}/>`;
+  if (k === 'arrow' && P.length > 1) {
+    const [a, b] = P.slice(-2), ang = Math.atan2(b[1] - a[1], b[0] - a[0]), L = 8 + sw * 3;
+    const tip = s => [(b[0] - L * Math.cos(ang + s)).toFixed(1), (b[1] - L * Math.sin(ang + s)).toFixed(1)].join(',');
+    svg += `<polyline points="${tip(-.45)} ${b.join(',')} ${tip(.45)}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  for (const x of el.querySelectorAll(':scope>svg,:scope>.sh-pt,:scope>.sh-rs')) x.remove();
+  el.insertAdjacentHTML('afterbegin', `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${svg}</svg>`);
+  if (el.classList.contains('sel')) {
+    if (!/^(rect|round|ellipse)$/.test(k)) P.forEach((p, i) => el.insertAdjacentHTML('beforeend', `<span class="sh-pt" data-i="${i}" style="left:${p[0]}px;top:${p[1]}px" title="Ziehen verschiebt den Punkt"></span>`));
+    el.insertAdjacentHTML('beforeend', '<span class="sh-rs" title="Ziehen ändert die Größe"></span>');
+  }
+}
+function selectShape(el) {
+  for (const s of editor.querySelectorAll('.shape.sel')) if (s !== el) { s.classList.remove('sel'); renderShape(s); }
+  if (el && !el.classList.contains('sel')) { el.classList.add('sel'); renderShape(el); }
+}
+function insertShape(kind) {
+  let box = savedRange && editor.contains(savedRange.startContainer) ? elOf(savedRange.startContainer) : editor;
+  while (box !== editor && !box.classList.contains('blk-body')) box = box.parentNode;
+  const el = document.createElement('div'); el.className = 'shape'; el.contentEditable = 'false';
+  const k = { tri:'poly', penta:'poly', hexa:'poly', star:'poly' }[kind] || kind;
+  el.dataset.shape = k; el.dataset.stroke = '#2a2a30'; el.dataset.sw = '2';
+  if (k === 'line' || k === 'arrow') el.dataset.pts = '0.02,0.85 0.98,0.15';
+  if (k === 'poly') el.dataset.pts = kind === 'star' ? regular(5, true) : regular({ tri:3, penta:5, hexa:6 }[kind]);
+  const cr = box.getBoundingClientRect(), pr = paper.getBoundingClientRect();
+  const at = savedRange ? savedRange.getBoundingClientRect() : null, y = at && at.height ? at.top : Math.max(cr.top, pr.top + 80);
+  el.style.cssText = `left:35%;top:${Math.max(0, Math.round(y - cr.top))}px;width:22%;height:${k === 'line' || k === 'arrow' ? 70 : 130}px`;
+  box.appendChild(el); selectShape(el); onEditorInput();
+}
+function startShapePoint(el, i) {
+  const pts = shapePts(el);
+  drag = {
+    move(ev) {
+      const r = el.getBoundingClientRect();
+      pts[i] = [clamp((ev.clientX - r.left) / r.width, 0, 1), clamp((ev.clientY - r.top) / r.height, 0, 1)];
+      el.dataset.pts = pts.map(p => p.map(v => v.toFixed(3)).join(',')).join(' '); renderShape(el);
+    },
+    up() { onEditorInput(); }
+  };
+}
+function startShapeResize(el, e) {
+  const sx = e.clientX, sy = e.clientY, w0 = el.offsetWidth, h0 = el.offsetHeight, W = el.parentNode.clientWidth;
+  drag = {
+    move(ev) {
+      el.style.width = clamp((w0 + ev.clientX - sx) / W * 100, 1, 100).toFixed(1) + '%';
+      el.style.height = Math.max(8, Math.round(h0 + ev.clientY - sy)) + 'px';
+      renderShape(el);
+    },
+    up() { onEditorInput(); }
+  };
+}
+editor.addEventListener('mousedown', e => {
+  const el = e.target.closest('.shape');
+  if (!el) { selectShape(null); return; }
+  if (e.button !== 0) return;
+  e.preventDefault(); selectShape(el);
+  const pt = e.target.closest('.sh-pt');
+  if (pt) startShapePoint(el, +pt.dataset.i);
+  else if (e.target.closest('.sh-rs')) startShapeResize(el, e);
+  else startFreeMove(el, e);
+});
+document.addEventListener('keydown', e => {
+  if (!sheetId || (e.key !== 'Delete' && e.key !== 'Backspace')) return;
+  const el = editor.querySelector('.shape.sel'); if (!el) return;
+  const s = getSelection(); if (s.rangeCount && !s.isCollapsed) return;
+  e.preventDefault(); e.stopPropagation(); el.remove(); onEditorInput();
+}, true);
+new ResizeObserver(() => { if (sheetId) for (const s of editor.querySelectorAll('.shape')) renderShape(s); }).observe(editor);
+function shapeMenu(el, x, y) {
+  const d = el.dataset, k = d.shape, open = k === 'line' || k === 'arrow';
+  const set = (key, v) => { if (v === null) delete d[key]; else d[key] = v; renderShape(el); onEditorInput(); };
+  const pts = shapePts(el);
+  showMenu(x, y, [
+    { label:'Linie', row:SHAPE_COLORS.map(c => ({ label:'●', color:c, title:c, on:d.stroke === c, fn:() => set('stroke', c) })) },
+    ...(open ? [] : [{ label:'Fläche', row:[{ label:'leer', on:!d.fill, fn:() => set('fill', null) }, ...SHAPE_COLORS.map(c => ({ label:'●', color:c, title:c, on:d.fill === c, fn:() => set('fill', c) }))] }]),
+    { label:'Stärke', row:[1, 2, 4, 6, 10].map(v => ({ label:String(v), on:+d.sw === v, fn:() => set('sw', String(v)) })) },
+    { label:d.dash === '1' ? 'Durchgezogen' : 'Gestrichelt', fn:() => set('dash', d.dash === '1' ? null : '1') },
+    ...(k === 'line' || k === 'arrow' ? [{ label:k === 'arrow' ? 'Ohne Pfeilspitze' : 'Mit Pfeilspitze', fn:() => set('shape', k === 'arrow' ? 'line' : 'arrow') }] : []),
+    ...(k === 'rect' || k === 'round' ? [{ label:k === 'round' ? 'Eckig' : 'Runde Ecken', fn:() => set('shape', k === 'round' ? 'rect' : 'round') }] : []),
+    ...(k === 'poly' ? [{ label:'Ecken', row:[3, 4, 5, 6, 8].map(n => ({ label:String(n), on:pts.length === n, fn:() => set('pts', regular(n)) })) }] : []),
+    ...(!/^(rect|round|ellipse)$/.test(k) ? [{ label:'Punkt hinzufügen (auf der längsten Kante)', fn:() => {
+      let best = 0, bl = -1; const n = pts.length, m = open ? n - 1 : n;
+      for (let i = 0; i < m; i++) { const a = pts[i], b = pts[(i + 1) % n], l = Math.hypot(a[0] - b[0], a[1] - b[1]); if (l > bl) { bl = l; best = i; } }
+      const a = pts[best], b = pts[(best + 1) % n]; pts.splice(best + 1, 0, [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]);
+      set('pts', pts.map(p => p.map(v => v.toFixed(3)).join(',')).join(' ')); selectShape(el);
+    } },
+    ...(pts.length > (open ? 2 : 3) ? [{ label:'Letzten Punkt entfernen', fn:() => set('pts', pts.slice(0, -1).map(p => p.join(',')).join(' ')) }] : [])] : []),
+    '-',
+    { label:'Form löschen (Entf)', danger:true, fn:() => { el.remove(); onEditorInput(); } }
+  ]);
+}
+$('#btn-shape').addEventListener('mousedown', e => e.preventDefault());
+$('#btn-shape').addEventListener('click', e => {
+  openFx(e.currentTarget, '<div class="fx-t">Form frei auf die Seite legen</div><div class="fx-grid">' + SHAPES.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('') + '</div>', insertShape);
+});
+
 /* ---------- Suche ---------- */
 const searchEl = $('#search'), searchInp = searchEl.querySelector('input');
 let searchHl = 0, searchRes = [];
@@ -3537,7 +3670,7 @@ const headLevel = n => n.type === 'akt' ? 1 : n.type === 'szene' ? 3 : 2;
 function exportBody(n, keepImages = true) {
   const t = document.createElement('template'); t.innerHTML = cleanHTML(n.text || '');
   flattenBlocks(t.content);
-  for (const x of t.content.querySelectorAll('.note,.ii,script,style')) x.remove();
+  for (const x of t.content.querySelectorAll('.note,.ii,.shape,script,style')) x.remove();
   if (!keepImages) for (const x of t.content.querySelectorAll('.pic,img')) x.remove();
   for (const a of t.content.querySelectorAll('a')) a.replaceWith(...a.childNodes);
   return t.innerHTML;
