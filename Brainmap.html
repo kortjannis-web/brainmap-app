@@ -419,6 +419,15 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v=zitat]{border:0;border-left:3px solid var(--tb,#b5a77f);border-radius:0;background:none;font-family:Georgia,'Times New Roman',serif;font-style:italic;padding:4px 22px}
 .tbox[data-v=dialog]{border:0;border-radius:20px 20px 20px 4px;background:color-mix(in srgb,var(--tb,#2f6fd6) 14%,transparent);width:fit-content;max-width:80%}
 .tbox[data-v=rahmen]{background:none;border:2px dashed var(--tb,#b9ad8c)}
+/* Spalten: fließend (Zeitung) oder getrennt nebeneinander */
+.cols{column-gap:32px;column-rule:1px solid var(--line);margin:12px 0}
+.cols[data-n="2"]{column-count:2}.cols[data-n="3"]{column-count:3}
+.cols>:first-child{margin-top:0}
+.grid{display:grid;gap:20px;margin:12px 0}
+.grid[data-n="2"]{grid-template-columns:1fr 1fr}.grid[data-n="3"]{grid-template-columns:repeat(3,1fr)}
+.gcol{min-width:0;padding:2px 10px;border-radius:8px;outline:1px dashed transparent;outline-offset:2px}
+.gcol>:first-child{margin-top:0}
+#editor .grid:hover .gcol,#editor .gcol:focus-within{outline-color:var(--line)}
 /* Kästen mit Stil */
 .tbox{position:relative}
 .tbox[data-v=pergament]{border:0;border-radius:4px;background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%);box-shadow:inset 0 0 28px rgba(140,100,40,.35),0 2px 6px rgba(80,60,20,.2);font-family:Georgia,serif;color:#3b2f1e}
@@ -952,6 +961,7 @@ body.focus .mg{display:none}
       <span class="sep"></span>
       <button class="tb fx-btn" id="btn-list" title="Liste: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schnell: am Zeilenanfang - , -> , * , 1. oder [] und Leertaste" aria-label="Liste" aria-haspopup="true">• Liste ▾</button>
       <button class="tb fx-btn" id="btn-rede" title="Wörtliche Rede und innerer Dialog: Stil wählen, Markierung umwandeln (Strg+Umschalt+8 / 9)" aria-label="Wörtliche Rede und innerer Dialog" aria-haspopup="true">„Rede“ ▾</button>
+      <button class="tb fx-btn" id="btn-cols" title="Spalten: 2 oder 3, fließend wie in der Zeitung oder getrennt nebeneinander" aria-label="Spalten" aria-haspopup="true">▥ Spalten ▾</button>
       <button class="tb fx-btn" id="btn-tbox" title="Absätze in einen Kasten setzen: beige, Hinweis, Zitat, Dialog, Rahmen" aria-label="Kasten um Absätze" aria-haspopup="true">Kasten ▾</button>
       <button class="tb" data-cmd="removeFormat" title="Formatierung entfernen" aria-label="Formatierung entfernen">⌫ Format</button>
       <span class="sep"></span>
@@ -1028,6 +1038,7 @@ body.focus .mg{display:none}
     <tr><td>Wörtliche Rede</td><td>Satz markieren, dann Strg+Umschalt+8 (oder Rechtsklick, oder „Rede“ ▾). Innerer Dialog: Strg+Umschalt+9. Den Stil wählst du einmal unter „Rede“ ▾ (6 für Rede, 4 für Gedanken), er gilt sofort für das ganze Buch und auch im Export. Getippte Anführungszeichen am Rand werden dabei entfernt.</td></tr>
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Frost, Gift, Schatten, Eingraviert, Siegel, Sternenstaub, Leuchtstift schräg, Zittrig, Handschrift, Verzerrt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
+    <tr><td>Spalten</td><td>In einen Absatz klicken oder mehrere markieren, dann ▥ Spalten ▾: 2 oder 3 Spalten, fließend (Text läuft weiter wie in der Zeitung) oder getrennt nebeneinander (jede Spalte eigener Text). Nochmal ▥ Spalten ▾ im Bereich: umstellen oder auflösen.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Magie, Ornament, Glas, Karte. Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
@@ -3012,7 +3023,7 @@ function makeBlock(kind, title = '', sub = '') {
 const blkHead = b => b.querySelector(':scope>.blk-head'), blkBody = b => b.querySelector(':scope>.blk-body');
 const blkField = (b, f) => b.querySelector(':scope>.blk-head .blk-' + f);
 const emptyP = () => { const p = document.createElement('p'); p.innerHTML = '<br>'; return p; };
-const isFlowBox = el => el === editor || (el.classList && (el.classList.contains('blk-body') || el.classList.contains('tbox')));
+const isFlowBox = el => el === editor || (el.classList && ['blk-body','tbox','cols','gcol'].some(c => el.classList.contains(c)));
 // Zeile oder Kasten, in dem ein Knoten liegt (direktes Kind des Blatts oder eines Kasten-Inhalts)
 function flowItem(node) {
   while (node && node !== editor) { if (node.parentNode && isFlowBox(node.parentNode)) return node.nodeType === 1 ? node : null; node = node.parentNode; }
@@ -3053,7 +3064,10 @@ function normalizeBlocks() {
     if (!body.firstChild) body.appendChild(emptyP());
     if (body.lastElementChild && body.lastElementChild.matches('section.blk,.tbox')) body.appendChild(emptyP());
   }
-  for (const t of [...editor.querySelectorAll('.tbox')]) if (!t.textContent.trim() && !t.querySelector('img,hr,svg,.pic')) t.remove();
+  for (const t of [...editor.querySelectorAll('.tbox,.cols')]) if (!t.textContent.trim() && !t.querySelector('img,hr,svg,.pic')) t.remove();
+  for (const g of editor.querySelectorAll('.gcol')) if (!g.firstChild) g.appendChild(emptyP());
+  for (const g of [...editor.querySelectorAll('.grid')]) if (!g.querySelector('.gcol')) g.remove();
+  for (const b of [editor, ...editor.querySelectorAll('.blk-body')]) if (b.lastElementChild && b.lastElementChild.matches('.grid,.cols')) b.appendChild(emptyP());
   if (editor.lastElementChild && editor.lastElementChild.matches('section.blk,.tbox')) editor.appendChild(emptyP());
 }
 // Wortzahl und automatische Kennung im Kopf (nur Anzeige, wird nicht gespeichert)
@@ -3117,6 +3131,7 @@ function blockKeys(e) {
       caretIn(blkField(par.parentNode, 'title')); return true;
     }
     if (prev && prev.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
+    if (!prev && par.classList.contains('gcol')) { e.preventDefault(); return true; }
     if (prev && prev.matches('section.blk')) {
       e.preventDefault();
       if (isEmptyLine(line)) { line.remove(); onEditorInput(); }
@@ -3128,6 +3143,7 @@ function blockKeys(e) {
     r.setStart(s.anchorNode, s.anchorOffset); if (r.toString().length) return false;
     const next = line.nextElementSibling;
     if (next && next.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
+    if (!next && line.parentNode.classList.contains('gcol')) { e.preventDefault(); return true; }
     if (next && next.matches('section.blk')) { e.preventDefault(); if (isEmptyLine(line) && line.previousElementSibling) { line.remove(); onEditorInput(); } return true; }
     if (!next && line.parentNode.classList.contains('blk-body')) { e.preventDefault(); return true; }
   }
@@ -3504,6 +3520,46 @@ function applyTbox(v, color) {
   if (!box.nextElementSibling) box.after(emptyP());
   normalizeBlocks(); onEditorInput(); caretIn(lines[lines.length - 1]);
 }
+// Spalten
+function applyCols(v) {
+  const r = savedRange; if (!r || !editor.contains(r.startContainer)) { toast('Erst in den Text klicken'); return; }
+  const cur = elOf(r.startContainer).closest('.cols,.grid');
+  if (v === 'none') {
+    if (!cur) return;
+    if (cur.classList.contains('cols')) cur.replaceWith(...cur.childNodes);
+    else cur.replaceWith(...[...cur.querySelectorAll(':scope>.gcol')].flatMap(g => [...g.childNodes]));
+    normalizeBlocks(); onEditorInput(); return;
+  }
+  const [kind, n] = v.split('-');
+  if (cur && editor.contains(cur)) {                    // vorhandene Spalten umstellen
+    if (cur.classList.contains(kind === 'f' ? 'cols' : 'grid')) {
+      cur.dataset.n = n;
+      if (kind === 'g') { while (cur.children.length < +n) { const g = document.createElement('div'); g.className = 'gcol'; g.appendChild(emptyP()); cur.appendChild(g); }
+        while (cur.children.length > +n) { const last = cur.lastElementChild; cur.children[cur.children.length - 2].append(...last.childNodes); last.remove(); } }
+      onEditorInput(); return;
+    }
+    applyCols('none'); savedRange = r;
+  }
+  const lines = rangeLines(r); if (!lines.length) { toast('Erst in einen Absatz klicken'); return; }
+  let box;
+  if (kind === 'f') { box = document.createElement('div'); box.className = 'cols'; box.dataset.n = n; lines[0].before(box); box.append(...lines); }
+  else {
+    box = document.createElement('div'); box.className = 'grid'; box.dataset.n = n; lines[0].before(box);
+    for (let i = 0; i < +n; i++) { const g = document.createElement('div'); g.className = 'gcol'; if (i === 0) g.append(...lines); else g.appendChild(emptyP()); box.appendChild(g); }
+  }
+  normalizeBlocks(); onEditorInput(); caretIn(lines[lines.length - 1]);
+}
+$('#btn-cols').addEventListener('mousedown', e => e.preventDefault());
+$('#btn-cols').addEventListener('click', e => {
+  const cur = savedRange && elOf(savedRange.startContainer).closest('.cols,.grid');
+  const cv = cur ? (cur.classList.contains('cols') ? 'f-' : 'g-') + cur.dataset.n : '';
+  const pv = (n, sep) => `<span style="display:flex;gap:4px;margin-bottom:4px">${Array.from({ length:n }, () => `<i style="flex:1;height:22px;border-radius:3px;background:repeating-linear-gradient(var(--muted) 0 1px,transparent 1px 5px);opacity:.5;${sep ? 'outline:1px dashed var(--line);outline-offset:1px' : ''}"></i>`).join('')}</span>`;
+  openFx(e.currentTarget, '<div class="fx-t">Spalten</div><div class="fx-grid">' +
+    [['f-2','2 Spalten, fließend',2,0],['f-3','3 Spalten, fließend',3,0],['g-2','2 nebeneinander, getrennt',2,1],['g-3','3 nebeneinander, getrennt',3,1]]
+      .map(([v, l, n, s]) => `<button data-v="${v}" class="${cv === v ? 'on' : ''}">${pv(n, s)}${l}</button>`).join('') + '</div>' +
+    '<div class="fx-t" style="margin-top:8px;text-transform:none;letter-spacing:0">Fließend: der Text läuft von Spalte zu Spalte. Getrennt: jede Spalte hat eigenen Text.</div>' +
+    (cur ? '<button class="fx-del" data-v="none">Spalten auflösen (Text bleibt)</button>' : ''), applyCols);
+});
 $('#btn-tbox').addEventListener('mousedown', e => e.preventDefault());
 $('#btn-tbox').addEventListener('click', e => {
   const cur = savedRange && elOf(savedRange.startContainer).closest('.tbox');
@@ -4050,7 +4106,7 @@ function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
-h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.mk-blood{color:#8a0d0d}.mk-ember{color:#d9480f}.mk-magic{color:#7b3fd1}.mk-gold{color:#a57a14}.mk-ink{color:#1c2a52}.mk-ghost{color:#888;font-style:italic}.mk-frost{color:#2b7bb9}.mk-poison{color:#3c8d0d}.mk-seal{color:#b3261e;border:2px solid #b3261e;padding:0 .3em;text-transform:uppercase}.mk-stardust{color:#7b3fd1}.mk-hand{font-family:'Segoe Script',cursive;color:#23407a}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
+h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.mk-blood{color:#8a0d0d}.mk-ember{color:#d9480f}.mk-magic{color:#7b3fd1}.mk-gold{color:#a57a14}.mk-ink{color:#1c2a52}.mk-ghost{color:#888;font-style:italic}.mk-frost{color:#2b7bb9}.mk-poison{color:#3c8d0d}.mk-seal{color:#b3261e;border:2px solid #b3261e;padding:0 .3em;text-transform:uppercase}.mk-stardust{color:#7b3fd1}.mk-hand{font-family:'Segoe Script',cursive;color:#23407a}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.cols[data-n="2"]{column-count:2;column-gap:2em}.cols[data-n="3"]{column-count:3;column-gap:2em}.grid{display:grid;gap:1.5em}.grid[data-n="2"]{grid-template-columns:1fr 1fr}.grid[data-n="3"]{grid-template-columns:1fr 1fr 1fr}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
 img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}` + pageCSS();
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
