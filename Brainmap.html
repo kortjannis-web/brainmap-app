@@ -423,6 +423,40 @@ body.focus #editor{font-size:19px;line-height:1.8}
 :root[data-theme=dark] .blk[data-kind=notiz]>.blk-head .blk-title{color:#e6cf7a}
 .sn-row.k-notiz small{color:#b0961f}
 #sheet.book .blk[data-kind=notiz]{background:#fff8d8}
+/* Designs für Kapitel-, Szenen- und Teil-Kästen (data-d) */
+.blk[data-d=buch]{border:0;border-top:1px solid var(--line);border-radius:0;background:none}
+.blk[data-d=buch]>.blk-head{flex-direction:column;align-items:stretch;text-align:center;padding:20px 40px 10px;position:relative}
+.blk[data-d=buch]>.blk-head .blk-tog{position:absolute;left:4px;top:10px}
+.blk[data-d=buch]>.blk-head .blk-grip{position:absolute;right:4px;top:10px}
+.blk[data-d=buch]>.blk-head .blk-meta{position:absolute;right:38px;top:12px;margin:0}
+.blk[data-d=buch]>.blk-head .blk-label{margin:0 auto 4px;font-family:Georgia,serif;font-weight:400;letter-spacing:.3em;color:var(--muted)}
+.blk[data-d=buch]>.blk-head .blk-title{font-family:Georgia,serif;font-weight:400;font-size:1.8em}
+.blk[data-d=buch]>.blk-body{padding:4px 24px 12px}
+.blk[data-d=pergament]{border:0;border-radius:6px;background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%);box-shadow:inset 0 0 30px rgba(140,100,40,.3),0 2px 6px rgba(80,60,20,.2);color:#3b2f1e}
+.blk[data-d=pergament]>.blk-head .blk-title{font-family:Georgia,serif}
+.blk[data-d=pergament]>.blk-head .blk-label{color:#8a5a1e}
+.blk[data-d=dunkel]{border:1px solid #3a3c44;background:#23252b;color:#e6e4dc}
+.blk[data-d=dunkel]>.blk-head .blk-label{color:#d9b25c}
+.blk[data-d=dunkel]>.blk-head:hover{background:rgba(255,255,255,.04)}
+.blk[data-d=dunkel]>.blk-head .blk-tog,.blk[data-d=dunkel]>.blk-head .blk-grip,.blk[data-d=dunkel]>.blk-head .blk-meta{color:#9a9890}
+.blk[data-d=linie]{border:0;border-left:4px solid var(--accent);border-radius:0;background:none}
+.blk[data-d=linie][data-kind=szene]{border-left-color:var(--muted)}
+.blk[data-d=linie][data-kind=teil]{border-left-width:8px;border-left-color:var(--ink)}
+.blk[data-d=linie]>.blk-head .blk-title{font-size:1.5em}
+.blk[data-d=banner]{border:0;background:var(--panel);box-shadow:0 8px 24px -12px rgba(0,0,0,.3)}
+.blk[data-d=banner]>.blk-head{background:linear-gradient(135deg,var(--accent),#a8301f);color:#fff;border-radius:16px 16px 0 0}
+.blk[data-d=banner][data-kind=szene]>.blk-head{background:linear-gradient(135deg,#6b6e76,#45474e)}
+.blk[data-d=banner].closed>.blk-head{border-radius:16px}
+.blk[data-d=banner]>.blk-head .blk-label,.blk[data-d=banner]>.blk-head .blk-sub,.blk[data-d=banner]>.blk-head .blk-title:empty::before{color:rgba(255,255,255,.8)}
+.blk[data-d=banner]>.blk-head .blk-tog,.blk[data-d=banner]>.blk-head .blk-grip,.blk[data-d=banner]>.blk-head .blk-meta{color:rgba(255,255,255,.85)}
+.blk[data-d=banner]>.blk-body{padding-top:12px}
+.blk[data-d=magie]{border:1.5px solid #b48cff;background:linear-gradient(135deg,rgba(123,63,209,.08),rgba(47,111,214,.08));box-shadow:0 0 16px rgba(140,90,255,.3)}
+.blk[data-d=magie]>.blk-head .blk-label{color:#7b3fd1;text-shadow:0 0 6px rgba(160,100,255,.6)}
+.blk[data-d=gold]{border:2px solid #c9a227;outline:1px solid #c9a227;outline-offset:3px;border-radius:4px;background:#fffaf0;color:#3b2f1e;margin:18px 4px}
+.blk[data-d=gold]>.blk-head .blk-label{color:#a07d12;font-family:Georgia,serif;letter-spacing:.2em}
+.blk[data-d=gold]>.blk-head .blk-title{font-family:Georgia,serif}
+.blk[data-d=karte]{border:0;border-radius:18px;background:var(--panel);box-shadow:0 14px 34px -14px rgba(0,0,0,.35),0 2px 6px rgba(0,0,0,.06)}
+:root[data-theme=dark] .blk[data-d=magie]{background:linear-gradient(135deg,rgba(123,63,209,.16),rgba(47,111,214,.16))}
 .blk.flash{animation:blkflash 1.2s ease}
 .blk.moving{opacity:.35}
 .blk.drop-in{box-shadow:0 0 0 3px var(--accent)}
@@ -798,9 +832,9 @@ body.focus .mg{display:none}
 :root[data-theme=dark] #sheet-nav{background:#232428;border-right-color:var(--line)}
 :root[data-theme=dark] .sn-row:hover,:root[data-theme=dark] .sn-head button:hover{background:rgba(255,255,255,.06)}
 :root[data-theme=dark] #sheet-navbtn:hover{background:#383a40}
-:root[data-theme=dark] .blk{background:#2d2f34}
-:root[data-theme=dark] .blk[data-kind=teil]{background:#33343a;border-color:#5a5c66}
-:root[data-theme=dark] .blk[data-kind=szene]{background:#28292d}
+:root[data-theme=dark] .blk:not([data-d]){background:#2d2f34}
+:root[data-theme=dark] .blk[data-kind=teil]:not([data-d]){background:#33343a;border-color:#5a5c66}
+:root[data-theme=dark] .blk[data-kind=szene]:not([data-d]){background:#28292d}
 :root[data-theme=dark] .blk-head:hover{background:rgba(255,255,255,.03)}
 :root[data-theme=dark] .blk-tog:hover,:root[data-theme=dark] .blk-grip:hover{background:rgba(255,255,255,.08)}
 :root[data-theme=dark] .blk-title:empty::before,:root[data-theme=dark] .blk-sub:empty::before{color:#6f7178}
@@ -1115,7 +1149,7 @@ body.focus .mg{display:none}
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Im Kasten nochmal Kasten ▾: Zeichen oben und unten, links und rechts oder keine, und ein eigenes Symbol, an jedem Kasten. Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Notiz-Kasten</td><td>+ Notiz (Strg+Umschalt+4) oder Rechtsklick › Rang › Notiz: ein schmaler gelber Balken, aufklappbar wie Kapitel und Szene, aber ohne Nummer und Untertitel. Darf überall stehen, auch in Kapiteln und Szenen, und erscheint nicht im Export.</td></tr>
-    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
+    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, Design (Standard, Buch, Pergament, Dunkel, Linie, Banner, Magie, Gold, Karte), Design für alle Kästen dieser Art übernehmen, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Trenner</td><td>Im Textblatt: Trenner ▾: Szenenwechsel (* * *), Linie, Punkte, Stern, Welle, Seitenumbruch. Alles erscheint im Export.</td></tr>
     <tr><td>Listen</td><td>• Liste ▾: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schneller: am Zeilenanfang - , -> , * , 1. , [] oder o tippen und Leertaste. Im Text wird -> zu →, <- zu ← und => zu ⇒.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
@@ -3096,6 +3130,7 @@ const BLK_GRIP = '<svg viewBox="0 0 24 24"><path d="M9 5h.01M15 5h.01M9 12h.01M1
 function makeBlock(kind, title = '', sub = '') {
   const s = document.createElement('section');
   s.className = 'blk'; s.dataset.kind = kind;
+  const dd = doc.page.bd && doc.page.bd[kind]; if (dd) s.dataset.d = dd;
   s.innerHTML = `<div class="blk-head" contenteditable="false"><span class="blk-tog" title="Auf- oder zuklappen">${BLK_CHEV}</span>` +
     '<div class="blk-txt"><span class="blk-label" contenteditable="true" title="Kennung: leer zählt automatisch, eigener Text ersetzt sie"></span><div class="blk-title" contenteditable="true"></div><div class="blk-sub" contenteditable="true"></div></div>' +
     `<span class="blk-meta"></span><span class="blk-grip" title="Ziehen verschiebt den Kasten, Rechtsklick: Rang und mehr">${BLK_GRIP}</span></div><div class="blk-body"><p><br></p></div>`;
@@ -3433,12 +3468,30 @@ function lineFormatKeys(e) {
   if (!n.textContent) { n.innerHTML = '<br>'; caretIn(n, false); }
   return true;
 }
+const BLK_DESIGNS = [['','Standard'],['buch','Buch'],['pergament','Pergament'],['dunkel','Dunkel'],['linie','Linie'],['banner','Banner'],['magie','Magie'],['gold','Gold'],['karte','Karte']];
+function setBlockDesign(b, d) { if (d) b.dataset.d = d; else delete b.dataset.d; }
+// Design für alle Kästen dieser Art im ganzen Buch, auch für neue
+function designAll(kind, d) {
+  doc.page = { ...doc.page, bd:{ ...(doc.page.bd || {}), [kind]:d } }; if (!d) delete doc.page.bd[kind];
+  for (const b of editor.querySelectorAll(`section.blk[data-kind="${kind}"]`)) setBlockDesign(b, d);
+  const t = document.createElement('template');
+  for (const n of Object.values(doc.nodes)) {
+    if (n.id === sheetId || !n.text || !n.text.includes(`data-kind="${kind}"`)) continue;
+    t.innerHTML = n.text;
+    for (const b of t.content.querySelectorAll(`section.blk[data-kind="${kind}"]`)) setBlockDesign(b, d);
+    n.text = t.innerHTML;
+  }
+  onEditorInput(); commit();
+}
 function blockMenu(b, x, y) {
   const closed = b.classList.contains('closed'), kids = blkBody(b).querySelectorAll('section.blk');
   const r = document.createRange(); r.selectNodeContents(blkField(b, 'title'));
   const move = up => { let s = up ? b.previousElementSibling : b.nextElementSibling; while (s && isEmptyLine(s)) s = up ? s.previousElementSibling : s.nextElementSibling; if (s) { up ? s.before(b) : s.after(b); normalizeBlocks(); onEditorInput(); } };
   showMenu(x, y, [
     rankRow(r, b.dataset.kind),
+    { label:'Design', row:BLK_DESIGNS.slice(0, 5).map(([d, l]) => ({ label:l, on:(b.dataset.d || '') === d, fn:() => { setBlockDesign(b, d); onEditorInput(); } })) },
+    { label:'', row:BLK_DESIGNS.slice(5).map(([d, l]) => ({ label:l, on:(b.dataset.d || '') === d, fn:() => { setBlockDesign(b, d); onEditorInput(); } })) },
+    { label:`Dieses Design für alle ${({ teil:'Teile', kapitel:'Kapitel', szene:'Szenen', notiz:'Notizen' })[b.dataset.kind]} im Buch`, fn:() => designAll(b.dataset.kind, b.dataset.d || '') },
     '-',
     { label:closed ? 'Aufklappen' : 'Zuklappen', fn:() => setBlockOpen(b, closed) },
     ...(kids.length ? [
@@ -4611,7 +4664,8 @@ function cleanTree(t) {
 function cleanPage(p) {
   p = p && typeof p === 'object' ? p : {};
   return { w:+p.w >= 200 && +p.w <= 4000 ? Math.round(+p.w) : null, mode:p.mode === 'book' ? 'book' : 'flow',
-    fmt:['tb','roman','a5'].includes(p.fmt) ? p.fmt : 'tb', nums:['off','mid','out'].includes(p.nums) ? p.nums : 'mid' };
+    fmt:['tb','roman','a5'].includes(p.fmt) ? p.fmt : 'tb', nums:['off','mid','out'].includes(p.nums) ? p.nums : 'mid',
+    bd:Object.fromEntries(Object.entries(p.bd && typeof p.bd === 'object' ? p.bd : {}).filter(([k, v]) => ['teil','kapitel','szene','notiz'].includes(k) && /^[a-z]{2,12}$/.test(v))) };
 }
 function cleanStyle(st, def) {
   const o = {};
