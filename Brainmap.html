@@ -399,6 +399,15 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v=rahmen]{background:none;border:2px dashed var(--tb,#b9ad8c)}
 :root[data-theme=dark] .tbox{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
 :root[data-theme=dark] .tbox[data-v=zitat],:root[data-theme=dark] .tbox[data-v=rahmen]{background:none}
+/* Marker-Stile: Farbe über --mk */
+.mk{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.mk-half{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--mk) 45%,transparent) 62%)}
+.mk-brush{background-repeat:no-repeat;background-size:100% .5em;background-position:0 100%;padding-bottom:.1em}
+.mk-wave{text-decoration:underline wavy var(--mk);text-decoration-thickness:2px;text-underline-offset:4px}
+.mk-under{text-decoration:underline solid var(--mk);text-decoration-thickness:.16em;text-underline-offset:3px}
+.mk-circle{border:2px solid var(--mk);border-radius:999px;padding:0 .35em}
+.mk-pill{background:color-mix(in srgb,var(--mk) 22%,transparent);border-radius:.45em;padding:.05em .35em}
+.mk-box{background:color-mix(in srgb,var(--mk) 12%,transparent);border:1.5px solid color-mix(in srgb,var(--mk) 70%,transparent);border-radius:6px;padding:0 .3em}
 /* Gliederung links im Textblatt */
 #sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
 #sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
@@ -789,6 +798,7 @@ body.focus #sheet-navbtn{display:none}
       <span class="tlabel">Marker</span>
       <span id="hili-sw" style="display:flex;gap:4px"></span>
       <label class="cpick" title="Eigene Markerfarbe"><input type="color" id="hili-custom" value="#fff176" aria-label="Eigene Markerfarbe"></label>
+      <button class="tb fx-btn" id="btn-mk" title="Marker-Stil für die Markierung: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen" aria-label="Marker-Stil" aria-haspopup="true">Stil ▾</button>
       <span class="sep"></span>
       <button class="tb" data-cmd="insertUnorderedList" title="Aufzählung" aria-label="Aufzählung">• Liste</button>
       <button class="tb" data-cmd="insertOrderedList" title="Nummerierung" aria-label="Nummerierung">1. Liste</button>
@@ -863,6 +873,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
+    <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen. Farbe darunter wählen. Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
@@ -3197,6 +3208,42 @@ $('#btn-tbox').addEventListener('click', e => {
     (cur ? '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
 });
 
+// Marker-Stile für markierten Text innerhalb einer Zeile
+const MK = [['half','halbhoch'],['brush','Pinselstrich'],['wave','wellig'],['under','unterstrichen'],['circle','eingekreist'],['pill','Pille'],['box','Kästchen']];
+const MK_COLORS = ['#34a853','#f2c200','#e07b00','#d1343b','#e05a9b','#2f6fd6','#7b3fd1'];
+let mkColor = '#34a853';
+const brushBg = c => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><path d='M2 8 C 25 3, 55 11, 98 5' fill='none' stroke='${c}' stroke-width='4.5' stroke-linecap='round' opacity='.85'/></svg>`)}")`;
+function paintMk(span, style, color) {
+  span.className = 'mk mk-' + style; span.style.setProperty('--mk', color);
+  span.style.backgroundImage = style === 'brush' ? brushBg(color) : '';
+}
+function applyMk(v, color) {
+  const r = savedRange;
+  const cur = r && elOf(r.startContainer).closest('.mk');
+  if (v === 'none') { if (cur) { cur.replaceWith(...cur.childNodes); onEditorInput(); } return; }
+  if (v === 'c') { mkColor = color; if (cur) { paintMk(cur, cur.className.match(/mk-(\w+)/)[1], color); onEditorInput(); } return; }
+  if (cur && (r.collapsed || r.toString() === cur.textContent)) { paintMk(cur, v, cur.style.getPropertyValue('--mk') || mkColor); onEditorInput(); return; }
+  if (!r || r.collapsed || !editor.contains(r.commonAncestorContainer)) { toast('Erst Text markieren'); return; }
+  if (flowItem(r.startContainer) !== flowItem(r.endContainer)) { toast('Bitte innerhalb einer Zeile markieren'); return; }
+  if (elOf(r.commonAncestorContainer).closest('.blk-head')) { toast('Im Kasten-Kopf geht das nicht'); return; }
+  const span = document.createElement('span');
+  span.appendChild(r.extractContents());
+  for (const x of span.querySelectorAll('.mk')) x.replaceWith(...x.childNodes);
+  paintMk(span, v, mkColor);
+  r.insertNode(span);
+  const nr = document.createRange(); nr.selectNodeContents(span); savedRange = nr;
+  const s = getSelection(); s.removeAllRanges(); s.addRange(nr);
+  onEditorInput();
+}
+$('#btn-mk').addEventListener('mousedown', e => e.preventDefault());
+$('#btn-mk').addEventListener('click', e => {
+  const cur = savedRange && elOf(savedRange.startContainer).closest('.mk');
+  const col = cur ? cur.style.getPropertyValue('--mk').trim() : mkColor;
+  openFx(e.currentTarget, '<div class="fx-t">Marker-Stil</div><div class="fx-grid">' +
+    MK.map(([v, l]) => `<button data-v="${v}"><span class="mk mk-${v}" style="--mk:${col};${v === 'brush' ? 'background-image:' + brushBg(col).replace(/"/g, '&quot;') : ''}">${l}</span></button>`).join('') + '</div>' +
+    fxSwatches(MK_COLORS, col) + (cur ? '<button class="fx-del" data-v="none">Marker-Stil entfernen</button>' : ''), applyMk);
+});
+
 /* ---------- Suche ---------- */
 const searchEl = $('#search'), searchInp = searchEl.querySelector('input');
 let searchHl = 0, searchRes = [];
@@ -3434,7 +3481,7 @@ function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
-h2.chapter{text-align:center}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
+h2.chapter{text-align:center}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
 img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}`;
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
