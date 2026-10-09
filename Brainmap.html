@@ -315,7 +315,6 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #sheet-focus[aria-pressed=true]{background:var(--accent-soft);color:var(--accent)}
 #sheet-width{width:44px;height:44px;border:0;border-radius:10px;background:none;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
 #sheet-width:hover{background:#f1eee5}
-#sheet-width[aria-pressed=true]{background:var(--accent-soft);color:var(--accent)}
 #sheet-close{width:44px;height:44px;border:0;border-radius:10px;background:none;cursor:pointer;display:grid;place-items:center}
 #sheet-close:hover{background:#f1eee5}
 .sheet-tools{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:6px 16px;border-bottom:1px solid #eee9dc;background:#fbf8f0}
@@ -548,7 +547,11 @@ body.focus #sheet-navbtn{display:none}
 .lk-switch input:checked+i::after{transform:translateX(14px)}
 .lk-switch input:focus-visible+i{outline:2px solid var(--accent);outline-offset:2px}
 .lk-switch b{font-weight:400}.lk-switch input:not(:checked)~b.l-all,.lk-switch input:checked~b.l-once{color:var(--ink);font-weight:600}
-#sheet.narrow #editor,#sheet.narrow #backlinks,#sheet.narrow #linklegend{max-width:880px}
+.sheet-body{position:relative}
+.mg{position:absolute;top:0;bottom:0;width:16px;margin-left:-8px;cursor:col-resize;z-index:4}
+.mg::after{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--accent);opacity:.1;transition:opacity .15s}
+.mg:hover::after,.mg.drag::after{opacity:.45}
+body.focus .mg{display:none}
 #linklegend{margin:0 auto;padding:0 72px 18px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
 #linklegend span{display:inline-flex;align-items:center;gap:5px}
 #linklegend i{font-style:normal;border-radius:3px;padding:0 4px}
@@ -842,7 +845,7 @@ body.focus #sheet-navbtn{display:none}
       <button id="sheet-navbtn" aria-label="Gliederung links" aria-pressed="true" title="Gliederung links ein- oder ausblenden"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
       <input id="sheet-title" placeholder="Überschrift" aria-label="Überschrift">
       <div class="sheet-stat"><span id="sheet-words"></span><span class="bar" id="sheet-bar" hidden><i></i></span><label>Ziel <input id="sheet-goal" type="number" min="0" step="100" aria-label="Wortziel dieses Textes"></label></div>
-      <button id="sheet-width" aria-label="Lesebreite" aria-pressed="false" title="Lesebreite: Text schmaler in der Mitte statt über die ganze Breite"><svg class="ico" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
+      <button id="sheet-width" class="fx-btn" aria-label="Seite und Breite" aria-haspopup="true" title="Seite: Breite der Schreibfläche (oder Ränder links und rechts ziehen)"><svg class="ico" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
       <button id="sheet-focus" aria-label="Fokus-Modus" aria-pressed="false" title="Fokus-Modus: nur der Text (Strg+Umschalt+F, Esc beendet)">⤢</button>
       <button id="sheet-close" aria-label="Schließen" title="Schließen (Esc)"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
@@ -893,7 +896,7 @@ body.focus #sheet-navbtn{display:none}
       <div class="sn-head"><b>Gliederung</b><button id="sn-close-all" title="Alle Kästen zuklappen">alle zu</button><button id="sn-open-all" title="Alle Kästen aufklappen">alle auf</button></div>
       <div id="sn-tree"></div>
     </nav>
-    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
+    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div class="mg" id="mg-l" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div class="mg" id="mg-r" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
       <div id="linklegend" aria-label="Legende der Link-Farben">
         <span><i style="color:var(--lk-box);background:var(--lk-box-bg);text-decoration:underline">Begriff</i> andere Box</span>
         <span><i style="color:var(--lk-sub);background:var(--lk-sub-bg);text-decoration:underline">Begriff</i> Unterstrang</span>
@@ -940,7 +943,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Bilder</td><td>Rechtsklick auf die Fläche: Bild hier einfügen. Bild auf einen Block ziehen setzt es als Hintergrund. Im Text: Knopf Bild, Strg+V oder hineinziehen. Rechtsklick aufs Bild für Umfluss, Größe, Rahmen. Bild im Text ziehen verschiebt es.</td></tr>
     <tr><td>Sortieren</td><td>Links: Raster-Knopf (Einrasten beim Ziehen) und Aufräumen-Knopf (ordnet Äste als Baum, mit Auswahl nur diesen Ast). Bei Mehrfachauswahl rechts: Ausrichten und Verteilen.</td></tr>
     <tr><td>Schriftgröße</td><td>Block ausgewählt: Strg+↑ / Strg+↓. Im Text: Wort markieren, dann Strg+↑ / Strg+↓ oder im Größenfeld die Pfeiltasten.</td></tr>
-    <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster, Knopf ↔ oben schaltet auf Lesebreite.</td></tr>
+    <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster. Ränder links und rechts vom Text ziehen ändert die Breite (Doppelklick: volle Breite), Knopf ↔ oben bietet feste Breiten.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
@@ -1024,7 +1027,8 @@ const ICONS = {"user":["Person","<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4
 const ICON_CATS = [["Figuren","user",["user","users","baby","person-standing","crown","t:chess-king","t:chess-queen","t:chess-knight","t:helmet","drama","t:mask","heart","heart-crack","brain","t:mood-happy","t:mood-sad","t:mood-angry","bot","smile","frown","angry","laugh","hand-heart","handshake","ear","fingerprint","venetian-mask","shield-user"]],["Kreaturen","t:dragon",["t:dragon","t:bat","t:spider","ghost","t:ghost-2","t:alien","skull","t:horse","t:deer","bird","cat","dog","fish","rabbit","rat","snail","turtle","worm","bug","t:butterfly","t:paw","feather","bone","egg","squirrel","shrimp"]],["Waffen","sword",["sword","swords","axe","t:bow","bow-arrow","hammer","pickaxe","shield","shield-half","crosshair","bomb","anvil","gavel","wrench","shovel","shield-alert"]],["Magie","wand-sparkles",["wand","wand-sparkles","sparkles","stars","t:crystal-ball","t:pentagram","t:alphabet-runes","moon-star","orbit","eye","infinity","hexagon","scroll-text","book-key","t:cards","t:dice","sparkle","cross","radio","scan-eye","diamond"]],["Alchemie","flask-round",["flask-conical","flask-round","t:flask-2","test-tube","test-tubes","t:vaccine-bottle","beaker","pill","t:mushroom","t:seedling","t:leaf-maple","amphora","scale","atom","t:dna","radiation","biohazard","gem","t:diamond","coins","t:candle","syringe","flower","flower-2","clover","wheat","apple","cherry","grape","wine","beer","coffee","cookie","candy"]],["Elemente","flame",["flame","t:campfire","droplet","droplets","waves","wind","tornado","cloud-lightning","zap","snowflake","t:iceberg","t:volcano","mountain","earth","sun","moon","t:meteor","t:planet","t:rainbow","leaf","sprout","cloud","cloud-snow","mountain-snow","rainbow","thermometer","tree-deciduous","palmtree"]],["Orte","castle",["house","castle","t:building-castle","t:tower","church","landmark","tent","trees","tree-pine","t:grave","t:coffin","map","map-pin","compass","ship","anchor","door-open","vault","building","building-2","tent-tree","globe","sailboat","door-closed","bed","hotel","warehouse","store","factory","fence","bridge","route","signpost","milestone","cable-car","train-front"]],["Handlung","key",["flag","target","key","lock","lock-open","eye-off","footprints","puzzle","gift","hourglass","clock","calendar","sunrise","sunset","cloud-rain","t:olympic-torch","bell","trophy","medal","award","timer","wallet","package","dices","search","zoom-in","unlink","heart-handshake","hand","thumbs-up","thumbs-down","check","x","info","ban","trash-2","share-2","git-branch","git-merge","split"]],["Schreiben","pencil",["lightbulb","star","circle-check","pencil","circle-alert","circle-help","book-open","bookmark","quote","message-circle","scroll","link","music","book","book-marked","library","file-text","files","folder","notebook","notebook-pen","sticky-note","tag","languages","type","highlighter","eraser","pen-tool","brush","palette","image","mic","megaphone","newspaper","mail","send","list","list-checks","table","layers","network","workflow","lightbulb-off"]]];
 const AUTOSAVE_KEY = 'brainmap:autosave';
 
-let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' } };
+const DEF_PAGE = { w:null, mode:'flow', fmt:'tb', nums:'mid' };
+let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' }, page:{ ...DEF_PAGE } };
 let multi = new Set();
 const FRAME_COLORS = ['#e5412d','#2f8f4e','#e07b00','#d1343b','#7b3fd1','#2f6fd6','#8a7a5c','#6b6b72'];
 const frameEls = new Map();
@@ -2364,13 +2368,43 @@ $('#btn-icon').addEventListener('click', e => {
 });
 
 /* ---------- Textblatt ---------- */
-// Lesebreite: Text schmal in der Mitte oder über die ganze Breite, gilt für alle Blätter
-function setNarrow(on) {
-  sheet.classList.toggle('narrow', on); $('#sheet-width').setAttribute('aria-pressed', String(on));
-  try { localStorage.setItem('bm-sheet-narrow', on ? '1' : ''); } catch (_) {}
+// Breite der Schreibfläche: Ränder links und rechts ziehen. Gilt fürs ganze Buch (doc.page.w, null = volle Breite)
+const PAD_X = 72;
+function applyTextWidth() {
+  const w = !document.body.classList.contains('focus') && doc.page && doc.page.w;
+  for (const el of [editor, $('#backlinks'), $('#linklegend')]) el.style.maxWidth = w ? (w + PAD_X * 2) + 'px' : '';
+  placeMargins();
 }
-try { setNarrow(localStorage.getItem('bm-sheet-narrow') === '1'); } catch (_) {}
-$('#sheet-width').addEventListener('click', () => setNarrow(!sheet.classList.contains('narrow')));
+function placeMargins() {
+  if (!sheetId) return;
+  const cs = getComputedStyle(editor);
+  $('#mg-l').style.left = (editor.offsetLeft + parseFloat(cs.paddingLeft)) + 'px';
+  $('#mg-r').style.left = (editor.offsetLeft + editor.offsetWidth - parseFloat(cs.paddingRight)) + 'px';
+}
+function setTextWidth(w) { doc.page = { ...doc.page, w }; applyTextWidth(); touch(); }
+for (const h of [$('#mg-l'), $('#mg-r')]) {
+  h.addEventListener('mousedown', e => {
+    if (e.button) return;
+    e.preventDefault();
+    const b = editor.parentNode.getBoundingClientRect(), cx = b.left + b.width / 2, max = b.width - PAD_X * 2;
+    h.classList.add('drag');
+    drag = {
+      move(ev) { const w = clamp(Math.round(Math.abs(ev.clientX - cx) * 2), 240, max); doc.page = { ...doc.page, w:w >= max - 6 ? null : w }; applyTextWidth(); },
+      up() { h.classList.remove('drag'); touch(); }
+    };
+  });
+  h.addEventListener('dblclick', () => setTextWidth(null));
+}
+new ResizeObserver(placeMargins).observe(paper);
+function pageMenu(btn) {
+  const w = doc.page.w;
+  openFx(btn, '<div class="fx-t">Breite der Schreibfläche</div><div class="fx-grid">' +
+    [['full','Volle Breite',null],['read','Lesebreite',680],['narrow','Schmal',520]].map(([v, l, x]) => `<button data-v="w:${v}" class="${w === x ? 'on' : ''}">${l}</button>`).join('') +
+    '</div><div class="fx-t" style="margin-top:8px;text-transform:none;letter-spacing:0">Oder die Ränder links und rechts vom Text ziehen.</div>',
+    v => { const k = v.split(':')[1]; setTextWidth({ full:null, read:680, narrow:520 }[k]); });
+}
+$('#sheet-width').addEventListener('mousedown', e => e.preventDefault());
+$('#sheet-width').addEventListener('click', e => pageMenu(e.currentTarget));
 // Nur aufrufen, solange das Blatt ohne Transform steht: misst das echte Blatt
 function nodeTransform(id) {
   const hn = doc.nodes[id], el = (hn && hn.host && document.querySelector(`.chap[data-cid="${id}"]`)) || nodeEls.get(id), s = sheet.getBoundingClientRect();
@@ -2388,7 +2422,7 @@ function openSheet(id) {
   sheetTitle.readOnly = ICON_TOKEN.test(n.title || ''); ICON_TOKEN.lastIndex = 0;
   sheetTitle.title = sheetTitle.readOnly ? 'Überschrift mit Icons: bitte im Block bearbeiten' : '';
   editor.innerHTML = n.text || '';
-  migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav();
+  migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav(); applyTextWidth();
   requestAnimationFrame(() => { for (const s of editor.querySelectorAll('.shape')) renderShape(s); });
   editor.style.fontFamily = n.style && n.style.font ? fontStack(n.style.font) : '';
   applyAutoLinks(); markBrokenLinks(); renderBacklinks(id);
@@ -2438,7 +2472,7 @@ let syncT = 0;
 function onEditorInput() { normalizeBlocks(); updateSheetStat(); clearTimeout(syncT); syncT = setTimeout(syncSheet, 300); touch(); }
 function toggleFocus(on) {
   on = on === undefined ? !document.body.classList.contains('focus') : on;
-  document.body.classList.toggle('focus', on); $('#sheet-focus').setAttribute('aria-pressed', String(on));
+  document.body.classList.toggle('focus', on); $('#sheet-focus').setAttribute('aria-pressed', String(on)); applyTextWidth();
   if (on) { editor.focus(); centerCaret(); }
 }
 // Schreibmaschinen-Effekt: die Zeile mit der Schreibmarke bleibt etwa in der Mitte
@@ -3645,7 +3679,7 @@ function commit() {
 function touch() { dirty = true; updateTitle(); scheduleAutosave(); }
 function restoreSnap(s) {
   const o = JSON.parse(s);
-  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech };
+  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page };
   if (sel && !selObj()) sel = null;
   renderAll(); updateSidebar();
 }
@@ -3986,6 +4020,11 @@ function cleanHTML(html) {
   }
   return t.innerHTML;
 }
+function cleanPage(p) {
+  p = p && typeof p === 'object' ? p : {};
+  return { w:+p.w >= 200 && +p.w <= 4000 ? Math.round(+p.w) : null, mode:p.mode === 'book' ? 'book' : 'flow',
+    fmt:['tb','roman','a5'].includes(p.fmt) ? p.fmt : 'tb', nums:['off','mid','out'].includes(p.nums) ? p.nums : 'mid' };
+}
 function cleanStyle(st, def) {
   const o = {};
   if (!st || typeof st !== 'object') return o;
@@ -4001,7 +4040,7 @@ function cleanStyle(st, def) {
   return o;
 }
 function fileData() {
-  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, speech:doc.speech, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
+  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
 }
 function loadData(o) {
   if (!o || o.app !== 'Brainmap' || typeof o.nodes !== 'object') throw new Error('format');
@@ -4029,7 +4068,8 @@ function loadData(o) {
   }
   const sp = o.speech && typeof o.speech === 'object' ? o.speech : {};
   doc = { nodes, edges, frames, bookGoal:Math.round(clamp(+o.bookGoal || 0, 0, 10000000)),
-    speech:{ rede:REDE.some(r => r[0] === sp.rede) ? sp.rede : 'de', innen:INNEN.some(r => r[0] === sp.innen) ? sp.innen : 'kursiv' } };
+    speech:{ rede:REDE.some(r => r[0] === sp.rede) ? sp.rede : 'de', innen:INNEN.some(r => r[0] === sp.innen) ? sp.innen : 'kursiv' },
+    page:cleanPage(o.page) };
   applySpeech();
   renderAll();
   if (o.view && isFinite(o.view.x) && isFinite(o.view.y) && isFinite(o.view.s)) { view = { x:+o.view.x, y:+o.view.y, s:clamp(+o.view.s, .1, 4) }; applyView(); }
