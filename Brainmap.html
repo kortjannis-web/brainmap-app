@@ -289,6 +289,29 @@ input[type=color]{width:36px;height:28px;padding:0;border:1px solid var(--line);
 .arrange .btn{font-size:12px;padding:6px 8px}
 .check{display:flex;align-items:center;gap:8px;font-size:13px;margin:8px 0}
 
+/* Reiter unten: Mindmaps, Texte, Ordner. Eingeklappt nur eine schmale Zeile */
+#tabs{position:fixed;left:76px;right:12px;bottom:0;z-index:45;display:flex;align-items:flex-end;pointer-events:none;font:12px/1.2 system-ui,sans-serif}
+#tabs>*{pointer-events:auto}
+.t-mini{display:flex;align-items:center;gap:6px;height:22px;max-width:100%;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:var(--panel);color:var(--muted);cursor:pointer;box-shadow:0 -2px 8px rgba(0,0,0,.05);font:inherit;white-space:nowrap;overflow:hidden}
+.t-mini b{font-weight:600;color:var(--ink);overflow:hidden;text-overflow:ellipsis}
+#tabs:not(.mini) .t-mini{display:none}
+.t-row{display:flex;align-items:flex-end;gap:2px;max-width:100%;overflow-x:auto;scrollbar-width:none;transition:transform .22s ease,opacity .22s}
+#tabs.mini .t-row{position:absolute;transform:translateY(100%);opacity:0;pointer-events:none}
+.t-btn{flex:none;border:1px solid var(--line);border-bottom:0;background:var(--panel);color:var(--muted);height:28px;min-width:30px;border-radius:9px 9px 0 0;cursor:pointer;display:grid;place-items:center;font:inherit;padding:0 6px}
+.t-btn:hover,.tab:hover{color:var(--ink)}
+.t-path{flex:none;display:flex;align-items:center;height:28px;padding:0 4px;color:var(--muted);white-space:nowrap;background:color-mix(in srgb,var(--panel) 80%,transparent);border-radius:9px 9px 0 0}
+.t-path button{border:0;background:none;color:inherit;cursor:pointer;padding:3px 5px;border-radius:5px;font:inherit}
+.t-path button:hover{background:var(--accent-soft);color:var(--ink)}
+.t-path button.drop{outline:2px solid var(--accent)}
+.tab{flex:none;display:flex;align-items:center;gap:6px;height:27px;padding:0 12px;border:1px solid var(--line);border-bottom:0;border-radius:9px 9px 0 0;background:color-mix(in srgb,var(--panel) 75%,transparent);color:var(--muted);cursor:pointer;white-space:nowrap;max-width:200px;font:inherit}
+.tab.on{background:var(--panel);color:var(--ink);height:31px;box-shadow:0 -2px 8px rgba(0,0,0,.07);font-weight:600}
+.tab.k-folder .t-name::after{content:" ›";color:var(--muted)}
+.tab.drop{outline:2px solid var(--accent);outline-offset:-2px}
+.tab.drop-before{box-shadow:inset 3px 0 0 var(--accent)}
+.tab svg,.t-btn svg,.t-mini svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tab .t-name{overflow:hidden;text-overflow:ellipsis;outline:none}
+.tab .t-name[contenteditable=true]{background:var(--accent-soft);border-radius:4px;padding:0 4px;text-overflow:clip;cursor:text}
+body.focus #tabs{display:none}
 /* Textblatt */
 #sheet-backdrop{position:fixed;inset:0;background:rgba(24,24,32,.38);opacity:0;transition:opacity .3s;z-index:40;display:none}
 #sheet-backdrop.show{opacity:1}
@@ -697,6 +720,15 @@ body.focus .mg{display:none}
 
 <div id="docname">Unbenannt</div>
 <div id="zoomlbl" title="Klicken: alles anzeigen">100%</div>
+<nav id="tabs" class="mini" aria-label="Mindmaps, Texte und Ordner">
+  <button class="t-mini" id="t-mini" title="Reiter ausklappen: Mindmaps, Texte, Ordner"></button>
+  <div class="t-row">
+    <button class="t-btn" id="t-fold" title="Reiter einklappen" aria-label="Reiter einklappen"><svg viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></button>
+    <div class="t-path" id="t-path"></div>
+    <div id="t-list" style="display:flex;align-items:flex-end;gap:2px"></div>
+    <button class="t-btn" id="t-add" title="Neu: Mindmap, Text oder Ordner" aria-label="Neu anlegen"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  </div>
+</nav>
 
 <nav id="toolbar" aria-label="Werkzeuge">
   <button id="btn-add" title="Neuer Block (klicken, dann auf die Fläche setzen)" aria-label="Neuer Block"><svg viewBox="0 0 24 24"><rect x="2.5" y="7" width="15" height="11" rx="3"/><path d="M20 2.5v6M17 5.5h6"/></svg></button>
@@ -961,6 +993,7 @@ body.focus .mg{display:none}
     <tr><td>Sortieren</td><td>Links: Raster-Knopf (Einrasten beim Ziehen) und Aufräumen-Knopf (ordnet Äste als Baum, mit Auswahl nur diesen Ast). Bei Mehrfachauswahl rechts: Ausrichten und Verteilen.</td></tr>
     <tr><td>Schriftgröße</td><td>Block ausgewählt: Strg+↑ / Strg+↓. Im Text: Wort markieren, dann Strg+↑ / Strg+↓ oder im Größenfeld die Pfeiltasten.</td></tr>
     <tr><td>Buchseiten</td><td>Im Textblatt Knopf ↔ oben: „Buchseiten“ zeigt echte Seiten nebeneinander (Taschenbuch, Roman oder A5), mit Seitenumbruch mitten im Absatz und Buchsatz (eingerückte Absätze). Mausrad blättert, Strg+Mausrad vergrößert. Seitenzahlen: keine, Mitte oder außen. Beim Export als PDF oder Druck gelten Format und Seitenzahlen mit.</td></tr>
+    <tr><td>Reiter unten</td><td>Die schmale Leiste unten klappt per Klick aus: Pfad (Projekt › Ordner) und Reiter für Mindmaps, Texte und Ordner. + legt Neues an. Klick auf einen Ordner zeigt seinen Inhalt, Klick im Pfad geht zurück. Doppelklick benennt um, Rechtsklick: umbenennen, verschieben, löschen. Reiter ziehen: auf einen Ordner oder in den Pfad legt hinein, zwischen andere Reiter sortiert um.</td></tr>
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster. Ränder links und rechts vom Text ziehen ändert die Breite (Doppelklick: volle Breite), Knopf ↔ oben bietet feste Breiten.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
@@ -1049,7 +1082,7 @@ const DEF_PAGE = { w:null, mode:'flow', fmt:'tb', nums:'mid' };
 const MAIN = 'main';
 const defTree = () => ({ items:{ [MAIN]:{ id:MAIN, kind:'map', name:'Mindmap', parent:'', ord:0 } }, map:MAIN, active:MAIN, dir:'' });
 let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' }, page:{ ...DEF_PAGE }, tree:defTree() };
-const mapOf = x => (x && x.m) || MAIN;
+const mapOf = x => (x && x.host && doc.nodes[x.host] ? doc.nodes[x.host].m : x && x.m) || MAIN;
 let multi = new Set();
 const FRAME_COLORS = ['#e5412d','#2f8f4e','#e07b00','#d1343b','#7b3fd1','#2f6fd6','#8a7a5c','#6b6b72'];
 const frameEls = new Map();
@@ -1236,6 +1269,7 @@ function chapMenu(cid, x, y) {
 }
 function renderNode(n) {
   if (isHosted(n)) { renderChaps(doc.nodes[n.host]); return; }
+  if (n.solo) return;                                    // eigenständiger Text: kein Block auf der Fläche
   const el = nodeEl(n), st = { ...DEF_NODE, ...n.style };
   /* Text passt sich dem Hintergrund an, solange keine eigene Textfarbe gesetzt ist */
   { const m = /^#([0-9a-f]{6})$/i.exec(st.bg || ''), ns = n.style || {};
@@ -2600,6 +2634,7 @@ function closeSheet(instant) {
   syncSheet(); commit();
   const id = sheetId; sheetId = null; const tok = ++sheetToken;
   hideMenu(); hidePicker();
+  if (doc.tree.active !== doc.tree.map) { doc.tree.active = doc.tree.map; renderTabs(); }
   sheet.classList.remove('open'); backdrop.classList.remove('show');
   if (document.activeElement && sheet.contains(document.activeElement)) document.activeElement.blur();
   if (instant) { scroller.style.display = 'none'; backdrop.style.display = 'none'; return Promise.resolve(); }
@@ -2634,7 +2669,7 @@ function markBrokenLinks() {
 backdrop.addEventListener('mousedown', () => closeSheet());
 scroller.addEventListener('mousedown', e => { if (e.target === scroller) closeSheet(); });
 $('#sheet-close').onclick = () => closeSheet();
-sheetTitle.addEventListener('input', () => { const n = doc.nodes[sheetId]; if (n) { n.title = sheetTitle.value; renderNode(n); touch(); } });
+sheetTitle.addEventListener('input', () => { const n = doc.nodes[sheetId]; if (n) { n.title = sheetTitle.value; renderNode(n); if (n.solo) renderTabs(); touch(); } });
 sheetTitle.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editor.focus(); } });
 editor.addEventListener('input', onEditorInput);
 editor.addEventListener('keydown', e => {
@@ -3790,7 +3825,7 @@ function touch() { dirty = true; updateTitle(); scheduleAutosave(); }
 function restoreSnap(s) {
   const o = JSON.parse(s);
   doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page, tree:{ ...doc.tree, items:o.tree || doc.tree.items } };
-  fixTreeRefs();
+  fixTreeRefs(); renderTabs();
   if (sel && !selObj()) sel = null;
   renderAll(); updateSidebar();
 }
@@ -4129,6 +4164,136 @@ function renderAll() {
   renderEdges(); updateEmpty();
 }
 
+/* ---------- Reiter: Mindmaps, Texte, Ordner ---------- */
+const TAB_ICON = {
+  map:'<svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.3 11 15.7 7M8.3 13l7.4 4"/></svg>',
+  text:'<svg viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>',
+  folder:'<svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>'
+};
+const tabName = it => it.kind === 'text' ? (stripIcons((doc.nodes[it.id] || {}).title || '') || 'Unbenannter Text') : (it.name || (it.kind === 'folder' ? 'Ordner' : 'Mindmap'));
+const tabKids = dir => Object.values(doc.tree.items).filter(it => it.parent === dir).sort((a, b) => a.ord - b.ord || tabName(a).localeCompare(tabName(b), 'de'));
+function tabPath(dir) { const out = []; for (let d = dir; d && doc.tree.items[d]; d = doc.tree.items[d].parent) out.unshift(doc.tree.items[d]); return out; }
+function renderTabs() {
+  const t = doc.tree, path = tabPath(t.dir), act = t.items[t.active];
+  $('#t-path').innerHTML = `<button data-dir="">Projekt</button>` + path.map(f => ` › <button data-dir="${esc(f.id)}">${esc(tabName(f))}</button>`).join('') + ' ›';
+  $('#t-list').innerHTML = tabKids(t.dir).map(it =>
+    `<button class="tab k-${it.kind}${it.id === t.active ? ' on' : ''}" data-id="${esc(it.id)}" draggable="true" title="${it.kind === 'folder' ? 'Ordner öffnen' : 'Öffnen'}, Doppelklick: umbenennen, Rechtsklick: mehr">${TAB_ICON[it.kind]}<span class="t-name">${esc(tabName(it))}</span></button>`).join('');
+  $('#t-mini').innerHTML = '<svg viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></svg>' + esc(['Projekt', ...tabPath(act ? act.parent : '').map(tabName)].join(' › ')) + ' › <b>' + esc(act ? tabName(act) : '') + '</b>';
+}
+function setTabsOpen(on) {
+  $('#tabs').classList.toggle('mini', !on);
+  try { localStorage.setItem('bm-tabs-open', on ? '1' : ''); } catch (_) {}
+}
+try { setTabsOpen(localStorage.getItem('bm-tabs-open') === '1'); } catch (_) {}
+$('#t-mini').onclick = () => setTabsOpen(true);
+$('#t-fold').onclick = () => setTabsOpen(false);
+function openTab(id) {
+  const it = doc.tree.items[id]; if (!it) return;
+  if (it.kind === 'folder') { doc.tree.dir = id; renderTabs(); return; }
+  if (it.kind === 'map') { switchMap(id); return; }
+  if (sheetId !== id) openSheet(id);
+  doc.tree.active = id; renderTabs();
+}
+const nextOrd = dir => Math.max(0, ...tabKids(dir).map(x => x.ord + 1));
+function newTabItem(kind, dir = doc.tree.dir) {
+  const id = uid(), it = { id, kind, parent:dir, ord:nextOrd(dir), name:kind === 'map' ? 'Neue Mindmap' : kind === 'folder' ? 'Neuer Ordner' : '' };
+  doc.tree.items[id] = it;
+  if (kind === 'text') doc.nodes[id] = { id, x:0, y:0, title:'Neuer Text', sub:'', text:'', style:{}, solo:true };
+  if (kind === 'map') {
+    switchMap(id); view = { x:innerWidth / 2, y:innerHeight / 2, s:1 }; applyView();
+    const n = createNode(0, 0, { title:'Zentrales Thema' }); select({ type:'node', id:n.id });
+  }
+  commit(); renderTabs();
+  if (kind === 'text') openTab(id);
+  if (kind !== 'text') setTimeout(() => renameTab(id), 30);
+  return it;
+}
+function renameTab(id) {
+  const it = doc.tree.items[id], el = $(`#t-list .tab[data-id="${CSS.escape(id)}"] .t-name`); if (!it || !el) return;
+  setTabsOpen(true);
+  el.contentEditable = 'true'; el.focus();
+  const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+  const done = ok => {
+    el.removeEventListener('blur', onBlur); el.contentEditable = 'false';
+    const v = el.textContent.replace(/\s+/g, ' ').trim().slice(0, 80);
+    if (ok && v) { if (it.kind === 'text') { doc.nodes[id].title = v; if (sheetId === id) sheetTitle.value = v; } else it.name = v; commit(); }
+    renderTabs();
+  };
+  const onBlur = () => done(true);
+  el.addEventListener('blur', onBlur);
+  el.onkeydown = e => { e.stopPropagation(); if (e.key === 'Enter') { e.preventDefault(); el.blur(); } else if (e.key === 'Escape') { e.preventDefault(); el.removeEventListener('blur', onBlur); el.contentEditable = 'false'; renderTabs(); } };
+}
+// Löschen: Mindmap mit ihren Blöcken, Text, Ordner mit allem darin. Die letzte Mindmap bleibt
+function tabSubtree(id) { const out = [id]; for (const k of Object.values(doc.tree.items)) if (k.parent === id) out.push(...tabSubtree(k.id)); return out; }
+async function deleteTab(id, x, y) {
+  const ids = tabSubtree(id), maps = ids.filter(i => doc.tree.items[i].kind === 'map');
+  if (Object.values(doc.tree.items).filter(i => i.kind === 'map').length - maps.length < 1) { toast('Die letzte Mindmap kann nicht gelöscht werden'); return; }
+  const blocks = Object.values(doc.nodes).filter(n => maps.includes(mapOf(n)) || ids.includes(n.id)).length;
+  if (!(await ask(`„${tabName(doc.tree.items[id])}“ löschen${blocks ? ` (${blocks} Blöcke und Texte)` : ''}?`, { x, y, yes:'Löschen' }))) return;
+  if (sheetId && ids.includes(sheetId)) closeSheet(true);
+  for (const n of Object.values(doc.nodes)) if (maps.includes(mapOf(n)) || ids.includes(n.id)) deleteNode(n.id);
+  for (const f of Object.values(doc.frames)) if (maps.includes(mapOf(f))) delete doc.frames[f.id];
+  for (const i of ids) delete doc.tree.items[i];
+  if (!doc.tree.items[doc.tree.dir]) doc.tree.dir = '';
+  if (maps.includes(doc.tree.map)) switchMap(Object.values(doc.tree.items).find(i => i.kind === 'map').id);
+  renderFrames(); commit(); renderTabs();
+}
+function moveTab(id, dir, before) {
+  const it = doc.tree.items[id]; if (!it) return;
+  if (dir && tabSubtree(id).includes(dir)) { toast('Ein Ordner kann nicht in sich selbst'); return; }
+  it.parent = dir;
+  const list = tabKids(dir).filter(x => x.id !== id), i = before ? list.findIndex(x => x.id === before) : -1;
+  list.splice(i < 0 ? list.length : i, 0, it);
+  list.forEach((x, k) => { x.ord = k; });
+  commit(); renderTabs();
+}
+function addMenu(x, y, dir) {
+  showMenu(x, y, [
+    { label:'Neue Mindmap', fn:() => newTabItem('map', dir) },
+    { label:'Neuer Text', fn:() => newTabItem('text', dir) },
+    { label:'Neuer Ordner', fn:() => newTabItem('folder', dir) }
+  ]);
+}
+$('#t-add').onclick = e => { const r = e.currentTarget.getBoundingClientRect(); addMenu(r.left, r.top - 120, doc.tree.dir); };
+$('#t-path').onclick = e => { const b = e.target.closest('[data-dir]'); if (b) { doc.tree.dir = b.dataset.dir; renderTabs(); } };
+$('#t-list').addEventListener('click', e => { const b = e.target.closest('.tab'); if (b && !e.target.isContentEditable) openTab(b.dataset.id); });
+$('#t-list').addEventListener('dblclick', e => { const b = e.target.closest('.tab'); if (b) renameTab(b.dataset.id); });
+$('#t-list').addEventListener('contextmenu', e => {
+  const b = e.target.closest('.tab'); if (!b) return;
+  e.preventDefault();
+  const id = b.dataset.id, it = doc.tree.items[id], par = it.parent;
+  showMenu(e.clientX, e.clientY - 10, [
+    { label:it.kind === 'folder' ? 'Ordner öffnen' : 'Öffnen', fn:() => openTab(id) },
+    { label:'Umbenennen', fn:() => renameTab(id) },
+    ...(it.kind === 'folder' ? [{ label:'Darin neu …', fn:() => addMenu(e.clientX, e.clientY - 120, id) }] : []),
+    ...(par ? [{ label:'Eine Ebene nach oben verschieben', fn:() => moveTab(id, doc.tree.items[par].parent) }] : []),
+    '-',
+    { label:'Löschen …', danger:true, fn:() => deleteTab(id, e.clientX, e.clientY - 120) }
+  ]);
+});
+// Ziehen: auf einen Ordner oder in den Pfad = hinein, auf einen anderen Reiter = davor einsortieren
+let tabDrag = null;
+$('#t-list').addEventListener('dragstart', e => { const b = e.target.closest('.tab'); if (!b) return; tabDrag = b.dataset.id; e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', tabDrag); });
+const clearTabDrop = () => { for (const x of document.querySelectorAll('#tabs .drop,#tabs .drop-before')) x.classList.remove('drop', 'drop-before'); };
+for (const zone of [$('#t-list'), $('#t-path')]) {
+  zone.addEventListener('dragover', e => {
+    if (!tabDrag) return;
+    const b = e.target.closest('.tab,[data-dir]'); if (!b || b.dataset.id === tabDrag) return;
+    e.preventDefault(); clearTabDrop();
+    const intoFolder = b.dataset.dir !== undefined || (doc.tree.items[b.dataset.id].kind === 'folder' && Math.abs(e.offsetX - b.offsetWidth / 2) < b.offsetWidth * .3);
+    b.classList.add(intoFolder ? 'drop' : 'drop-before');
+  });
+  zone.addEventListener('drop', e => {
+    const b = e.target.closest('.tab,[data-dir]'), id = tabDrag; clearTabDrop(); tabDrag = null;
+    if (!b || !id) return;
+    e.preventDefault();
+    if (b.dataset.dir !== undefined) moveTab(id, b.dataset.dir);
+    else if (b.classList.contains('drop') || (doc.tree.items[b.dataset.id].kind === 'folder' && Math.abs(e.offsetX - b.offsetWidth / 2) < b.offsetWidth * .3)) moveTab(id, b.dataset.id);
+    else moveTab(id, doc.tree.dir, b.dataset.id);
+  });
+}
+document.addEventListener('dragend', () => { tabDrag = null; clearTabDrop(); });
+
 /* ---------- Dateien ---------- */
 function cleanHTML(html) {
   const t = document.createElement('template'); t.innerHTML = html;
@@ -4218,7 +4383,7 @@ function loadData(o) {
     speech:{ rede:REDE.some(r => r[0] === sp.rede) ? sp.rede : 'de', innen:INNEN.some(r => r[0] === sp.innen) ? sp.innen : 'kursiv' },
     page:cleanPage(o.page) };
   applySpeech();
-  renderAll();
+  renderAll(); renderTabs();
   if (o.view && isFinite(o.view.x) && isFinite(o.view.y) && isFinite(o.view.s)) { view = { x:+o.view.x, y:+o.view.y, s:clamp(+o.view.s, .1, 4) }; applyView(); }
   else { applyView(); fitAll(); }
   undoStack = []; redoStack = []; lastSnap = serialize();
@@ -4503,7 +4668,7 @@ window.addEventListener('keyup', e => { if (e.key === ' ') spaceDown = false; })
     const n = createNode(0, 0, { title:'Zentrales Thema' });
     lastSnap = serialize();
   }
-  updateTitle(); updateSidebar(); updateEmpty();
+  updateTitle(); updateSidebar(); updateEmpty(); renderTabs();
 })();
 </script>
 </body>
