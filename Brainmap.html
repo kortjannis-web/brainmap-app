@@ -408,6 +408,18 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .mk-circle{border:2px solid var(--mk);border-radius:999px;padding:0 .35em}
 .mk-pill{background:color-mix(in srgb,var(--mk) 22%,transparent);border-radius:.45em;padding:.05em .35em}
 .mk-box{background:color-mix(in srgb,var(--mk) 12%,transparent);border:1.5px solid color-mix(in srgb,var(--mk) 70%,transparent);border-radius:6px;padding:0 .3em}
+/* Listen-Zeichen und Trennlinien */
+ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none;padding-left:1.8em}
+ul.l-dash>li::before,ul.l-arrow>li::before,ul.l-check>li::before,ul.l-circle>li::before{display:inline-block;width:1.4em;margin-left:-1.4em;color:var(--muted);font-weight:700}
+ul.l-dash>li::before{content:"-"}
+ul.l-arrow>li::before{content:"→";color:var(--accent)}
+ul.l-check>li::before{content:"✓";color:#2f8f4e}
+ul.l-circle>li::before{content:"○";font-weight:400}
+hr.deco-line{border:0;border-top:1.5px solid var(--line);margin:1.4em 20%}
+hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;height:auto;margin:1.1em 0;text-align:center;color:var(--muted);white-space:pre}
+hr.deco-dots::after{content:"•   •   •"}
+hr.deco-star::after{content:"✦"}
+hr.deco-wave::after{content:"~   ~   ~"}
 /* Gliederung links im Textblatt */
 #sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
 #sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
@@ -800,15 +812,13 @@ body.focus #sheet-navbtn{display:none}
       <label class="cpick" title="Eigene Markerfarbe"><input type="color" id="hili-custom" value="#fff176" aria-label="Eigene Markerfarbe"></label>
       <button class="tb fx-btn" id="btn-mk" title="Marker-Stil für die Markierung: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen" aria-label="Marker-Stil" aria-haspopup="true">Stil ▾</button>
       <span class="sep"></span>
-      <button class="tb" data-cmd="insertUnorderedList" title="Aufzählung" aria-label="Aufzählung">• Liste</button>
-      <button class="tb" data-cmd="insertOrderedList" title="Nummerierung" aria-label="Nummerierung">1. Liste</button>
+      <button class="tb fx-btn" id="btn-list" title="Liste: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schnell: am Zeilenanfang - , -> , * , 1. oder [] und Leertaste" aria-label="Liste" aria-haspopup="true">• Liste ▾</button>
       <button class="tb fx-btn" id="btn-tbox" title="Absätze in einen Kasten setzen: beige, Hinweis, Zitat, Dialog, Rahmen" aria-label="Kasten um Absätze" aria-haspopup="true">Kasten ▾</button>
       <button class="tb" data-cmd="removeFormat" title="Formatierung entfernen" aria-label="Formatierung entfernen">⌫ Format</button>
       <span class="sep"></span>
       <button class="tb" id="btn-kap" title="Kapitel-Kasten einfügen (Strg+Umschalt+2). Rechtsklick auf Text: Rang vergeben" aria-label="Kapitel-Kasten einfügen">+ Kapitel</button>
       <button class="tb" id="btn-szene" title="Szenen-Kasten einfügen (Strg+Umschalt+3)" aria-label="Szenen-Kasten einfügen">+ Szene</button>
-      <button class="tb" id="btn-scene" title="Szenenwechsel (* * *)" aria-label="Szenenwechsel">* * *</button>
-      <button class="tb" id="btn-pbreak" title="Seitenumbruch (im Export neue Seite)" aria-label="Seitenumbruch">⤓ Seite</button>
+      <button class="tb fx-btn" id="btn-sep" title="Trenner einfügen: Szenenwechsel, Linie, Punkte, Stern, Welle, Seitenumbruch" aria-label="Trenner einfügen" aria-haspopup="true">Trenner ▾</button>
       <span class="sep"></span>
       <button class="tb" id="btn-note" title="Notiz (Sticky Note) in den Text einfügen" aria-label="Notiz einfügen">🗒 Notiz</button>
       <button class="tb" id="btn-icon" title="Icon in den Text einfügen" aria-label="Icon einfügen">★ Icon</button>
@@ -877,7 +887,8 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
-    <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
+    <tr><td>Trenner</td><td>Im Textblatt: Trenner ▾: Szenenwechsel (* * *), Linie, Punkte, Stern, Welle, Seitenumbruch. Alles erscheint im Export.</td></tr>
+    <tr><td>Listen</td><td>• Liste ▾: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schneller: am Zeilenanfang - , -> , * , 1. , [] oder o tippen und Leertaste. Im Text wird -> zu →, <- zu ← und => zu ⇒.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
     <tr><td>Gliederung</td><td>Liste links (Knopf in der Werkzeugleiste): Baum aus Blöcken und Kapiteln. Klick springt, Doppelklick öffnet den Text, Ziehen sortiert Geschwister um (gilt auch fürs Manuskript).</td></tr>
     <tr><td>Manuskript, Export</td><td>Knopf Manuskript: alle Kapitel in Reihenfolge lesen und bearbeiten. Exportieren als Word, Markdown, HTML oder PDF. Umfang: ganze Mindmap, Ast oder Auswahl. Auch per Rechtsklick auf einen Block.</td></tr>
@@ -2454,11 +2465,9 @@ for (const b of document.querySelectorAll('.tb[data-cmd]')) {
   b.addEventListener('mousedown', e => e.preventDefault());
   b.addEventListener('click', () => cmd(b.dataset.cmd));
 }
-for (const id of ['btn-kap', 'btn-szene', 'btn-scene', 'btn-pbreak']) $('#' + id).addEventListener('mousedown', e => e.preventDefault());
+for (const id of ['btn-kap', 'btn-szene', 'btn-list', 'btn-sep']) $('#' + id).addEventListener('mousedown', e => e.preventDefault());
 $('#btn-kap').addEventListener('click', () => insertBlock('kapitel'));
 $('#btn-szene').addEventListener('click', () => insertBlock('szene'));
-$('#btn-scene').addEventListener('click', () => { restoreSel(); document.execCommand('insertHTML', false, '<hr class="scene"><p><br></p>'); onEditorInput(); });
-$('#btn-pbreak').addEventListener('click', () => { restoreSel(); document.execCommand('insertHTML', false, '<div class="pagebreak" contenteditable="false"><span>Seitenumbruch</span></div><p><br></p>'); onEditorInput(); });
 $('#fmt-block').addEventListener('change', e => cmd('formatBlock', `<${e.target.value}>`));
 const fontOpts = FONTS.map(f => `<option value="${esc(f[0])}" style="font-family:${esc(f[2])}">${esc(f[1])}</option>`).join('');
 $('#sb-font').innerHTML = fontOpts;
@@ -3019,10 +3028,27 @@ function lineFormatKeys(e) {
     setLineTag(l, e.code === 'Digit0' ? 'p' : 'h' + e.code[5]); return true;
   }
   if (e.key !== ' ' || e.ctrlKey || e.metaKey || e.altKey) return false;
-  const s = getSelection(); if (!s.isCollapsed) return false;
+  const s = getSelection(); if (!s.isCollapsed || !s.rangeCount) return false;
+  // Pfeile: -> wird →, <- wird ←, => wird ⇒
+  const tn = s.anchorNode, off = s.anchorOffset;
+  if (tn.nodeType === 3 && off >= 2 && !elOf(tn).closest('.blk-head')) {
+    const arrow = { '->':'→', '<-':'←', '=>':'⇒' }[tn.data.slice(off - 2, off)];
+    if (arrow && !(off === 2 && tn.data.slice(0, 2) === '->' && currentLine())) {
+      e.preventDefault();
+      const ar = document.createRange(); ar.setStart(tn, off - 2); ar.setEnd(tn, off); s.removeAllRanges(); s.addRange(ar);
+      document.execCommand('insertText', false, arrow + ' '); return true;
+    }
+  }
   const l = currentLine(); if (!l) return false;
   const r = document.createRange(); r.selectNodeContents(l); r.setEnd(s.anchorNode, s.anchorOffset);
-  const before = r.toString(), m = /^(#{1,3})$/.exec(before);
+  const before = r.toString(), lst = { '-':'dash', '->':'arrow', '*':'disc', '1.':'num', '[]':'check', 'o':'circle' }[before];
+  if (lst) {
+    e.preventDefault(); r.deleteContents();
+    if (!l.textContent) l.innerHTML = '<br>';
+    caretIn(l, false); savedRange = getSelection().getRangeAt(0).cloneRange();
+    applyList(lst); return true;
+  }
+  const m = /^(#{1,3})$/.exec(before);
   if (!m) return false;
   e.preventDefault();
   r.deleteContents();
@@ -3242,6 +3268,46 @@ $('#btn-mk').addEventListener('click', e => {
   openFx(e.currentTarget, '<div class="fx-t">Marker-Stil</div><div class="fx-grid">' +
     MK.map(([v, l]) => `<button data-v="${v}"><span class="mk mk-${v}" style="--mk:${col};${v === 'brush' ? 'background-image:' + brushBg(col).replace(/"/g, '&quot;') : ''}">${l}</span></button>`).join('') + '</div>' +
     fxSwatches(MK_COLORS, col) + (cur ? '<button class="fx-del" data-v="none">Marker-Stil entfernen</button>' : ''), applyMk);
+});
+
+// Listen mit verschiedenen Zeichen
+const LISTS = [['disc','• Punkte'],['num','1. Zahlen'],['dash','- Striche'],['arrow','→ Pfeile'],['check','✓ Haken'],['circle','○ Kreise']];
+function applyList(v) {
+  restoreSel();
+  const s = getSelection(); if (!s.rangeCount || !editor.contains(s.anchorNode)) return;
+  let ul = elOf(s.anchorNode).closest('ul,ol');
+  if (ul && !editor.contains(ul)) ul = null;
+  if (v === 'none') { if (ul) document.execCommand(ul.nodeName === 'OL' ? 'insertOrderedList' : 'insertUnorderedList'); onEditorInput(); return; }
+  const ol = v === 'num';
+  if (!ul || (ul.nodeName === 'OL') !== ol) {
+    document.execCommand(ol ? 'insertOrderedList' : 'insertUnorderedList');
+    const a = getSelection().anchorNode; ul = a && elOf(a).closest('ul,ol');
+  }
+  if (ul) {
+    ul.classList.remove('l-dash', 'l-arrow', 'l-check', 'l-circle');
+    if (!ol && v !== 'disc') ul.classList.add('l-' + v);
+    if (!ul.className) ul.removeAttribute('class');
+    // execCommand legt die Liste manchmal in einen Absatz: herausheben, Schreibmarke behalten
+    const p = ul.parentNode;
+    if (p.nodeName === 'P' && p.textContent === ul.textContent) {
+      const s2 = getSelection(), keep = s2.rangeCount ? s2.getRangeAt(0).cloneRange() : null;
+      p.replaceWith(ul); if (keep) { s2.removeAllRanges(); s2.addRange(keep); }
+    }
+  }
+  onEditorInput();
+}
+$('#btn-list').addEventListener('click', e => {
+  const cur = savedRange && elOf(savedRange.startContainer).closest('ul,ol');
+  openFx(e.currentTarget, '<div class="fx-t">Liste</div><div class="fx-grid">' + LISTS.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('') + '</div>' +
+    (cur ? '<button class="fx-del" data-v="none">Liste aufheben</button>' : ''), applyList);
+});
+// Trenner
+const SEPS = [['scene','* * *  Szenenwechsel'],['deco-line','Linie'],['deco-dots','•  •  •  Punkte'],['deco-star','✦  Stern'],['deco-wave','~  ~  ~  Welle'],['pagebreak','⤓  Seitenumbruch']];
+$('#btn-sep').addEventListener('click', e => {
+  openFx(e.currentTarget, '<div class="fx-t">Trenner einfügen</div><div class="fx-grid">' + SEPS.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('') + '</div>', v => {
+    document.execCommand('insertHTML', false, (v === 'pagebreak' ? '<div class="pagebreak" contenteditable="false"><span>Seitenumbruch</span></div>' : `<hr class="${v}">`) + '<p><br></p>');
+    onEditorInput();
+  });
 });
 
 /* ---------- Suche ---------- */
@@ -3481,7 +3547,7 @@ function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
-h2.chapter{text-align:center}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
+h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
 img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}`;
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
