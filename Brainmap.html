@@ -419,8 +419,35 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v=zitat]{border:0;border-left:3px solid var(--tb,#b5a77f);border-radius:0;background:none;font-family:Georgia,'Times New Roman',serif;font-style:italic;padding:4px 22px}
 .tbox[data-v=dialog]{border:0;border-radius:20px 20px 20px 4px;background:color-mix(in srgb,var(--tb,#2f6fd6) 14%,transparent);width:fit-content;max-width:80%}
 .tbox[data-v=rahmen]{background:none;border:2px dashed var(--tb,#b9ad8c)}
+/* Kästen mit Stil */
+.tbox{position:relative}
+.tbox[data-v=pergament]{border:0;border-radius:4px;background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%);box-shadow:inset 0 0 28px rgba(140,100,40,.35),0 2px 6px rgba(80,60,20,.2);font-family:Georgia,serif;color:#3b2f1e}
+.tbox[data-v=rolle]{border:0;border-left:14px solid #cfb173;border-right:14px solid #cfb173;border-radius:16px;background:linear-gradient(#fbf1d6,#f3e3b8);color:#3b2f1e;font-family:Georgia,serif;
+  box-shadow:inset 7px 0 7px -5px rgba(0,0,0,.35),inset -7px 0 7px -5px rgba(0,0,0,.35),0 3px 8px rgba(80,60,20,.25)}
+.tbox[data-v=tafel]{border:9px solid #6b4a2b;border-radius:6px;background:#2f4a3a;color:#f1f1e8;font-family:'Segoe Print','Comic Sans MS',cursive;text-shadow:0 0 1px rgba(255,255,255,.55);box-shadow:inset 0 0 22px rgba(0,0,0,.45)}
+.tbox[data-v=notizbuch]{border:0;border-radius:3px;color:#222;line-height:1.75em;padding:.15em 18px .15em 46px;box-shadow:0 2px 6px rgba(0,0,0,.12);
+  background:linear-gradient(90deg,transparent 32px,#e57373 32px,#e57373 34px,transparent 34px),repeating-linear-gradient(#fffef6 0 calc(1.75em - 1px),#c6d8ee calc(1.75em - 1px) 1.75em)}
+.tbox[data-v=notizbuch] p,.tbox[data-v=karteikarte] p{margin:0}
+.tbox[data-v=karteikarte]{border:0;border-radius:3px;color:#222;line-height:1.75em;padding:2.1em 18px .4em;box-shadow:0 3px 10px rgba(0,0,0,.15);
+  background:linear-gradient(#fff 0 1.6em,#e57373 1.6em calc(1.6em + 2px),transparent calc(1.6em + 2px)),repeating-linear-gradient(#fff 0 calc(1.75em - 1px),#cfe0f3 calc(1.75em - 1px) 1.75em) 0 .45em}
+.tbox[data-v=brief]{border:7px solid transparent;border-radius:0;color:#222;background:#fffdf6 padding-box;border-image:repeating-linear-gradient(45deg,#d1343b 0 9px,#fff 9px 18px,#2f6fd6 18px 27px,#fff 27px 36px) 7;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.tbox[data-v=magie]{border:1.5px solid #b48cff;border-radius:16px;background:linear-gradient(135deg,rgba(123,63,209,.1),rgba(47,111,214,.1));box-shadow:0 0 16px rgba(140,90,255,.35),inset 0 0 18px rgba(140,90,255,.14)}
+.tbox[data-v=ornament]{border:3px double #a08a5a;border-radius:2px;background:#fdf8ec;color:#3b2f1e;padding:20px 28px;font-family:Georgia,serif}
+.tbox[data-v=ornament]::before,.tbox[data-v=ornament]::after{content:"❦";position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;background:#fdf8ec;color:#a08a5a;font-size:16px;line-height:1}
+.tbox[data-v=ornament]::before{top:-.6em}.tbox[data-v=ornament]::after{bottom:-.6em;transform:translateX(-50%) rotate(180deg)}
+.tbox[data-v=glas]{border:1px solid rgba(255,255,255,.85);border-radius:18px;background:rgba(255,255,255,.5);box-shadow:0 8px 24px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.95)}
+.tbox[data-v=karte]{border:0;border-radius:16px;background:var(--panel);box-shadow:0 12px 30px -10px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.06)}
 :root[data-theme=dark] .tbox{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
 :root[data-theme=dark] .tbox[data-v=zitat],:root[data-theme=dark] .tbox[data-v=rahmen]{background:none}
+:root[data-theme=dark] .tbox[data-v=pergament]{background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%)}
+:root[data-theme=dark] .tbox[data-v=rolle]{background:linear-gradient(#fbf1d6,#f3e3b8)}
+:root[data-theme=dark] .tbox[data-v=tafel]{background:#2f4a3a}
+:root[data-theme=dark] .tbox[data-v=notizbuch]{background:linear-gradient(90deg,transparent 32px,#e57373 32px,#e57373 34px,transparent 34px),repeating-linear-gradient(#fffef6 0 calc(1.75em - 1px),#c6d8ee calc(1.75em - 1px) 1.75em)}
+:root[data-theme=dark] .tbox[data-v=karteikarte]{background:linear-gradient(#fff 0 1.6em,#e57373 1.6em calc(1.6em + 2px),transparent calc(1.6em + 2px)),repeating-linear-gradient(#fff 0 calc(1.75em - 1px),#cfe0f3 calc(1.75em - 1px) 1.75em) 0 .45em}
+:root[data-theme=dark] .tbox[data-v=brief]{background:#fffdf6 padding-box}
+:root[data-theme=dark] .tbox[data-v=ornament],:root[data-theme=dark] .tbox[data-v=ornament]::before,:root[data-theme=dark] .tbox[data-v=ornament]::after{background:#fdf8ec}
+:root[data-theme=dark] .tbox[data-v=glas]{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18)}
+:root[data-theme=dark] .tbox[data-v=magie]{background:linear-gradient(135deg,rgba(123,63,209,.18),rgba(47,111,214,.18))}
 /* Marker-Stile: Farbe über --mk */
 .mk{-webkit-box-decoration-break:clone;box-decoration-break:clone}
 .mk-half{background:linear-gradient(transparent 62%,color-mix(in srgb,var(--mk) 45%,transparent) 62%)}
@@ -1001,7 +1028,7 @@ body.focus .mg{display:none}
     <tr><td>Wörtliche Rede</td><td>Satz markieren, dann Strg+Umschalt+8 (oder Rechtsklick, oder „Rede“ ▾). Innerer Dialog: Strg+Umschalt+9. Den Stil wählst du einmal unter „Rede“ ▾ (6 für Rede, 4 für Gedanken), er gilt sofort für das ganze Buch und auch im Export. Getippte Anführungszeichen am Rand werden dabei entfernt.</td></tr>
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Frost, Gift, Schatten, Eingraviert, Siegel, Sternenstaub, Leuchtstift schräg, Zittrig, Handschrift, Verzerrt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
-    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
+    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Magie, Ornament, Glas, Karte. Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Trenner</td><td>Im Textblatt: Trenner ▾: Szenenwechsel (* * *), Linie, Punkte, Stern, Welle, Seitenumbruch. Alles erscheint im Export.</td></tr>
@@ -3459,6 +3486,7 @@ function rangeLines(r) {
 const fxSwatches = (cols, cur) => '<div class="fx-cols"><span class="tlabel">Farbe</span>' + cols.map(c => `<button class="sw${c === cur ? ' on' : ''}" style="background:${c}" data-v="c" data-c="${c}" title="${c}" aria-label="Farbe ${c}"></button>`).join('') + '</div>';
 // Kästen um Absätze
 const TBOX = [['beige','Beige'],['hinweis','Hinweis'],['zitat','Zitat'],['dialog','Dialog'],['rahmen','Rahmen']];
+const TBOX_FX = [['pergament','Pergament'],['rolle','Schriftrolle'],['tafel','Tafel'],['notizbuch','Notizbuch'],['karteikarte','Karteikarte'],['brief','Brief'],['magie','Magie'],['ornament','Ornament'],['glas','Glas'],['karte','Karte']];
 const TBOX_COLORS = ['#d9c89c','#34a853','#2f6fd6','#e07b00','#d1343b','#7b3fd1','#8a8472'];
 function applyTbox(v, color) {
   const r = savedRange; if (!r || !editor.contains(r.startContainer)) { toast('Erst in den Text klicken'); return; }
@@ -3481,6 +3509,8 @@ $('#btn-tbox').addEventListener('click', e => {
   const cur = savedRange && elOf(savedRange.startContainer).closest('.tbox');
   openFx(e.currentTarget, '<div class="fx-t">Kasten um die Absätze</div><div class="fx-grid">' +
     TBOX.map(([v, l]) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:0;padding:4px 10px;display:block">${l}</span></button>`).join('') + '</div>' +
+    '<div class="fx-t" style="margin-top:10px">Mit Stil</div><div class="fx-grid">' +
+    TBOX_FX.map(([v, l]) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:${v === 'ornament' ? '6px 0' : '0'};padding:${v === 'karteikarte' ? '14px 10px 2px' : v === 'notizbuch' ? '2px 8px 2px 40px' : '4px 10px'};display:block">${l}</span></button>`).join('') + '</div>' +
     fxSwatches(TBOX_COLORS, cur && cur.style.getPropertyValue('--tb').trim()) +
     (cur ? '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
 });
