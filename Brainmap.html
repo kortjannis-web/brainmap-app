@@ -433,6 +433,11 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #menu button:disabled{color:#aaa;cursor:default}
 #menu button.danger{color:var(--danger)}
 #menu hr{border:0;border-top:1px solid var(--line);margin:4px 0}
+#menu .mrow{display:flex;align-items:center;gap:2px;padding:2px}
+#menu .mrow span{font-size:11px;color:var(--muted);padding:0 6px 0 8px}
+#menu .mrow i{width:1px;align-self:stretch;margin:4px 3px;background:var(--line)}
+#menu .mrow button{width:auto;flex:none;padding:6px 8px;text-align:center;white-space:nowrap}
+#menu .mrow button.on{background:var(--accent-soft);color:var(--accent)}
 #picker{width:280px;padding:8px}
 #minipop{display:none;position:fixed;z-index:80;width:300px;max-width:calc(100vw - 16px);background:var(--lk-mini-bg);border:1.5px solid var(--lk-mini);border-radius:16px;box-shadow:0 10px 30px rgba(60,30,110,.25);padding:8px 12px 10px;animation:mpin .14s ease-out}
 @keyframes mpin{from{opacity:0;transform:translateY(-6px) scale(.97)}}
@@ -798,7 +803,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster, Knopf ↔ oben schaltet auf Lesebreite.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
-    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
+    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
     <tr><td>Gliederung</td><td>Liste links (Knopf in der Werkzeugleiste): Baum aus Blöcken und Kapiteln. Klick springt, Doppelklick öffnet den Text, Ziehen sortiert Geschwister um (gilt auch fürs Manuskript).</td></tr>
@@ -1954,6 +1959,19 @@ function showMenu(x, y, items) {
   menu.innerHTML = '';
   for (const it of items) {
     if (it === '-') { menu.appendChild(document.createElement('hr')); continue; }
+    if (it.row) {
+      const d = document.createElement('div'); d.className = 'mrow';
+      if (it.label) { const l = document.createElement('span'); l.textContent = it.label; d.appendChild(l); }
+      for (const r of it.row) {
+        if (r === '|') { d.appendChild(document.createElement('i')); continue; }
+        const b = document.createElement('button');
+        b.textContent = r.label; b.title = r.title || ''; b.setAttribute('role', 'menuitem');
+        if (r.on) b.className = 'on';
+        b.onclick = () => { hideMenu(); r.fn(); };
+        d.appendChild(b);
+      }
+      menu.appendChild(d); continue;
+    }
     const b = document.createElement('button');
     b.textContent = it.label; b.disabled = !!it.disabled; b.setAttribute('role', 'menuitem');
     if (it.danger) b.className = 'danger';
@@ -2436,6 +2454,8 @@ editor.addEventListener('contextmenu', e => {
   if (fig) { picMenu(fig, e.clientX, e.clientY); return; }
   const note = e.target.closest('.note-head') && e.target.closest('.note');
   if (note) { noteMenu(note, e.clientX, e.clientY); return; }
+  const head = e.target.closest('.blk-head');
+  if (head && !e.target.closest('.nlink')) { blockMenu(head.parentNode, e.clientX, e.clientY); return; }
   const link = e.target.closest('.nlink');
   if (link) {
     showMenu(e.clientX, e.clientY, [
@@ -2452,9 +2472,11 @@ editor.addEventListener('contextmenu', e => {
   }
   let range = currentRange();
   if (!range || !range.getBoundingClientRect || !inRect(range, e.clientX, e.clientY)) range = wordRangeAt(e.clientX, e.clientY) || range;
+  const sel0 = currentRange(), rankRange = sel0 && inRect(sel0, e.clientX, e.clientY) ? sel0 : caretRangeAt(e.clientX, e.clientY);
+  const ranks = rankRange ? [rankRow(rankRange), '-'] : [];
   if (range && range.toString().trim()) {
     const w = range.toString().trim(), label = w.length > 28 ? w.slice(0, 26) + '…' : w;
-    showMenu(e.clientX, e.clientY, [
+    showMenu(e.clientX, e.clientY, [...ranks,
       { label:lkOnce.checked ? `„${label}“ verlinken, nur dieser Begriff …` : `„${label}“ verlinken, alle gleichen Begriffe …`, fn:() => pickTarget(e.clientX, e.clientY, id => makeLink(range, id)) },
       { label:lkOnce.checked ? 'Schalter oben: auf „Alle Begriffe“ stellen' : 'Schalter oben: auf „Nur dieser“ stellen', fn:() => { lkOnce.checked = !lkOnce.checked; } },
       '-',
@@ -2462,7 +2484,7 @@ editor.addEventListener('contextmenu', e => {
       { label:'Mini-Block erstellen (sichtbar, Lila)', fn:() => makeSub(range, 'mini') },
       { label:'Mini-Block erstellen (unsichtbar, Lila mit ○)', fn:() => makeSub(range, 'hidden') }
     ]);
-  } else showMenu(e.clientX, e.clientY, [{ label:'Rechtsklick auf ein Wort, um es zu verlinken', disabled:true }]);
+  } else showMenu(e.clientX, e.clientY, [...ranks, { label:'Rechtsklick auf ein Wort, um es zu verlinken', disabled:true }]);
 });
 function inRect(range, x, y) {
   for (const r of range.getClientRects()) if (x >= r.left - 2 && x <= r.right + 2 && y >= r.top - 2 && y <= r.bottom + 2) return true;
@@ -2704,6 +2726,105 @@ document.addEventListener('keydown', e => {
   const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene' }[e.code];
   if (kind) { e.preventDefault(); insertBlock(kind); }
 }, true);
+// Rang vergeben: Markierung oder Zeile wird Teil, Kapitel, Szene oder Überschrift, jederzeit umschaltbar
+function caretRangeAt(x, y) {
+  let r = null;
+  if (document.caretRangeFromPoint) r = document.caretRangeFromPoint(x, y);
+  else if (document.caretPositionFromPoint) { const p = document.caretPositionFromPoint(x, y); if (p) { r = document.createRange(); r.setStart(p.offsetNode, p.offset); } }
+  return r && editor.contains(r.startContainer) ? r : null;
+}
+const RANK_ROW = [['teil','Teil'],['kapitel','Kapitel'],['szene','Szene'],'|',['h1','Ü1','Überschrift 1'],['h2','Ü2','Überschrift 2'],['h3','Ü3','Überschrift 3'],['p','Text','Normaler Text']];
+function rankRow(range, cur) {
+  return { label:'Rang', row:RANK_ROW.map(r => r === '|' ? r : { label:r[1], title:r[2] || r[1], on:r[0] === cur, fn:() => applyRank(r[0], range) }) };
+}
+function retag(el, tag) {
+  if (el.nodeName.toLowerCase() === tag) return el;
+  const n = document.createElement(tag); n.append(...el.childNodes); el.replaceWith(n); return n;
+}
+// Kasten raus aus Eltern-Kästen mit gleichem oder niedrigerem Rang; was danach kommt, gehört dann zu ihm
+function liftBlock(b) {
+  while (b.parentNode !== editor) {
+    const pb = b.parentNode.parentNode;
+    if (!pb || !pb.matches('section.blk') || BLK_RANK[pb.dataset.kind] < BLK_RANK[b.dataset.kind]) break;
+    const rest = []; for (let x = b.nextSibling; x; x = x.nextSibling) rest.push(x);
+    pb.after(b);
+    const body = blkBody(b);
+    if (rest.length) { if (body.children.length === 1 && isEmptyLine(body.firstElementChild)) body.firstElementChild.remove(); body.append(...rest); }
+  }
+}
+function unwrapBlock(b, tag) {
+  const get = f => blkField(b, f) ? blkField(b, f).textContent.trim() : '';
+  const out = [], title = get('title') || get('label'), sub = get('sub');
+  if (title || tag !== 'p') { const h = document.createElement(tag); h.textContent = title; if (!title) h.innerHTML = '<br>'; out.push(h); }
+  if (sub) { const p = document.createElement('p'); p.innerHTML = '<i></i>'; p.firstChild.textContent = sub; out.push(p); }
+  const body = blkBody(b);
+  b.replaceWith(...out, ...(body ? body.childNodes : []));
+  normalizeBlocks(); onEditorInput();
+  if (out[0]) caretIn(out[0]);
+}
+function applyRank(kind, range) {
+  if (!range || !editor.contains(range.startContainer)) return;
+  const el0 = range.startContainer.nodeType === 1 ? range.startContainer : range.startContainer.parentNode;
+  const heading = !BLK_KINDS[kind], head = el0.closest('.blk-head');
+  if (head) {                                            // Kasten selbst umstellen
+    const b = head.parentNode;
+    if (heading) { unwrapBlock(b, kind); return; }
+    b.dataset.kind = kind; liftBlock(b); normalizeBlocks(); onEditorInput(); b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+    return;
+  }
+  const a = flowItem(range.startContainer); if (!a) return;
+  let z = flowItem(range.endContainer);
+  while (z && z.parentNode !== a.parentNode) z = z.parentNode === editor ? null : z.parentNode;
+  const multi = !!z && z !== a && !range.collapsed;
+  if (heading) {                                         // Zeilen umformatieren
+    const lines = []; for (let x = a; x; x = x.nextSibling) { lines.push(x); if (!multi || x === z) break; }
+    let last = null;
+    for (const l of lines) if (l.nodeType === 1 && /^(P|H1|H2|H3)$/.test(l.nodeName) || l.nodeType === 1 && l.nodeName === 'DIV' && !l.className) last = retag(l, kind);
+    if (last) caretIn(last);
+    onEditorInput(); return;
+  }
+  if (a.matches('section.blk')) return;
+  const whole = range.collapsed || multi || range.toString().trim() === a.textContent.trim();
+  let title = whole ? a.textContent : range.toString();
+  title = title.trim().replace(/^(teil|kapitel|szene)\s+[\divxlc]+\b\s*[:.\-–]?\s*/i, '');
+  const b = makeBlock(kind, title), body = blkBody(b); body.innerHTML = '';
+  if (!whole) range.deleteContents();
+  a.before(b);
+  const stop = multi ? z.nextSibling : null;
+  let x = a.nextSibling;
+  if (!whole && !isEmptyLine(a)) body.appendChild(a); else a.remove();
+  while (x && x !== stop) {
+    if (!multi && x.nodeType === 1 && x.matches('section.blk') && BLK_RANK[x.dataset.kind] <= BLK_RANK[kind]) break;
+    const nx = x.nextSibling; body.appendChild(x); x = nx;
+  }
+  if (!body.firstChild) body.appendChild(emptyP());
+  liftBlock(b); normalizeBlocks(); onEditorInput();
+  caretIn(blkField(b, 'title')); b.classList.add('flash');
+}
+function blockMenu(b, x, y) {
+  const closed = b.classList.contains('closed'), kids = blkBody(b).querySelectorAll('section.blk');
+  const r = document.createRange(); r.selectNodeContents(blkField(b, 'title'));
+  const move = up => { let s = up ? b.previousElementSibling : b.nextElementSibling; while (s && isEmptyLine(s)) s = up ? s.previousElementSibling : s.nextElementSibling; if (s) { up ? s.before(b) : s.after(b); normalizeBlocks(); onEditorInput(); } };
+  showMenu(x, y, [
+    rankRow(r, b.dataset.kind),
+    '-',
+    { label:closed ? 'Aufklappen' : 'Zuklappen', fn:() => setBlockOpen(b, closed) },
+    ...(kids.length ? [
+      { label:'Alle Unterkästen zuklappen', fn:() => { b.classList.remove('closed'); for (const k of kids) k.classList.add('closed'); onEditorInput(); } },
+      { label:'Alle Unterkästen aufklappen', fn:() => { b.classList.remove('closed'); for (const k of kids) k.classList.remove('closed'); onEditorInput(); } }] : []),
+    { label:'Eine Stelle nach oben (Alt+↑)', fn:() => move(true) },
+    { label:'Eine Stelle nach unten (Alt+↓)', fn:() => move(false) },
+    { label:'Leere Zeile davor', fn:() => { const p = emptyP(); b.before(p); caretIn(p); onEditorInput(); } },
+    { label:'Leere Zeile danach', fn:() => { const p = emptyP(); b.after(p); caretIn(p); onEditorInput(); } },
+    '-',
+    { label:'Kasten auflösen (Text bleibt)', fn:() => unwrapBlock(b, 'h2') },
+    { label:'Kasten mit Inhalt löschen', danger:true, fn:async () => {
+      const w = (blkBody(b).textContent.match(/[\p{L}\p{N}]+/gu) || []).length;
+      if (w && !(await ask(`Kasten mit ${w.toLocaleString('de-DE')} Wörtern löschen?`, { x, y, yes:'Löschen' }))) return;
+      b.remove(); normalizeBlocks(); onEditorInput();
+    } }
+  ]);
+}
 // Kasten am Griff ziehen: Linie zeigt, wo er landet (davor, danach), Rahmen zeigt „hinein“
 function blockDropAt(x, y, moving) {
   let el = document.elementFromPoint(x, y);
