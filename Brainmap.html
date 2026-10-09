@@ -446,7 +446,44 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v=ornament]::before{top:-.6em}.tbox[data-v=ornament]::after{bottom:-.6em;transform:translateX(-50%) rotate(180deg)}
 .tbox[data-v=glas]{border:1px solid rgba(255,255,255,.85);border-radius:18px;background:rgba(255,255,255,.5);box-shadow:0 8px 24px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.95)}
 .tbox[data-v=karte]{border:0;border-radius:16px;background:var(--panel);box-shadow:0 12px 30px -10px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.06)}
-:root[data-theme=dark] .tbox{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
+/* Weitere Karten */
+.tbox[data-v=karte-dunkel]{border:0;border-radius:16px;background:#24262b;color:#ecebe6;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+.tbox[data-v=karte-band]{border:0;border-top:6px solid var(--tb,#2f6fd6);border-radius:14px;background:var(--panel);box-shadow:0 10px 26px -12px rgba(0,0,0,.3)}
+.tbox[data-v=karte-kante]{border:0;border-left:6px solid var(--tb,#e07b00);border-radius:6px 14px 14px 6px;background:var(--panel);box-shadow:0 8px 22px -12px rgba(0,0,0,.3)}
+.tbox[data-v=karte-polaroid]{border:0;border-radius:4px;background:#fff;color:#222;padding:14px 16px 30px;transform:rotate(-1.2deg);box-shadow:0 10px 24px -8px rgba(0,0,0,.35)}
+/* Weitere Magie */
+.tbox[data-v=magie-feuer]{border:1.5px solid #ff8a3d;border-radius:16px;background:linear-gradient(135deg,rgba(255,120,40,.13),rgba(255,40,40,.08));box-shadow:0 0 16px rgba(255,110,30,.45),inset 0 0 18px rgba(255,90,20,.15)}
+.tbox[data-v=magie-eis]{border:1.5px solid #7fd3ff;border-radius:16px;background:linear-gradient(135deg,rgba(140,220,255,.16),rgba(200,240,255,.1));box-shadow:0 0 16px rgba(110,200,255,.5),inset 0 0 18px rgba(150,220,255,.2)}
+.tbox[data-v=magie-natur]{border:1.5px solid #5fcf7a;border-radius:16px;background:linear-gradient(135deg,rgba(90,200,110,.13),rgba(200,230,120,.1));box-shadow:0 0 16px rgba(80,200,110,.4),inset 0 0 18px rgba(80,200,110,.15)}
+.tbox[data-v=magie-schatten]{border:1px solid #6b4fb0;border-radius:16px;background:linear-gradient(135deg,#2a1f3d,#14101f);color:#e8e0ff;box-shadow:0 0 18px rgba(80,40,160,.5),inset 0 0 26px rgba(0,0,0,.6)}
+.tbox[data-v=magie-runen]{border:1.5px dashed #b48cff;border-radius:16px;background:rgba(123,63,209,.07);box-shadow:0 0 14px rgba(140,90,255,.3);padding-top:22px}
+.tbox[data-v=magie-runen]::before{content:"ᚠ ᚱ ᚨ ᚾ ᛟ";position:absolute;top:4px;left:16px;font-size:11px;letter-spacing:.3em;color:#9b6dff;text-shadow:0 0 6px rgba(155,109,255,.8)}
+/* Weitere Ornamente (Zeichen oben und unten wie beim Ornament) */
+.tbox[data-v^=ornament-]{padding:20px 28px;font-family:Georgia,serif}
+.tbox[data-v^=ornament-]::before,.tbox[data-v^=ornament-]::after{position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;font-size:16px;line-height:1}
+.tbox[data-v^=ornament-]::before{top:-.6em}.tbox[data-v^=ornament-]::after{bottom:-.6em}
+.tbox[data-v=ornament-gold]{border:2px solid #c9a227;outline:1px solid #c9a227;outline-offset:4px;border-radius:2px;background:#fffaf0;color:#3b2f1e}
+.tbox[data-v=ornament-gold]::before,.tbox[data-v=ornament-gold]::after{content:"❖";background:#fffaf0;color:#c9a227}
+.tbox[data-v=ornament-ecken]{border:0;border-radius:0;color:#3b2f1e;background:
+  linear-gradient(#a08a5a,#a08a5a) top left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top left/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) top right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top right/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) bottom left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom left/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) bottom right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom right/2px 24px no-repeat,#fdf8ec}
+.tbox[data-v=ornament-blume]{border:1.5px solid #b57a8a;border-radius:26px;background:#fff7f8;color:#4a2f36}
+.tbox[data-v=ornament-blume]::before,.tbox[data-v=ornament-blume]::after{content:"✿";background:#fff7f8;color:#b57a8a}
+.tbox[data-v=ornament-gotisch]{border:2px solid #8a6d3b;outline:1px solid #8a6d3b;outline-offset:-8px;border-radius:2px;background:#1f1b16;color:#efe6d2}
+.tbox[data-v=ornament-gotisch]::before,.tbox[data-v=ornament-gotisch]::after{content:"⚜";background:#1f1b16;color:#c9a227}
+:root[data-theme=dark] .tbox[data-v=karte-polaroid]{background:#fff}
+:root[data-theme=dark] .tbox[data-v=ornament-gold]{background:#fffaf0}
+:root[data-theme=dark] .tbox[data-v=ornament-blume]{background:#fff7f8}
+:root[data-theme=dark] .tbox[data-v=ornament-gotisch]{background:#1f1b16}
+:root[data-theme=dark] .tbox[data-v=magie-schatten]{background:linear-gradient(135deg,#2a1f3d,#14101f)}
+:root[data-theme=dark] .tbox[data-v=ornament-ecken]{background:
+  linear-gradient(#a08a5a,#a08a5a) top left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top left/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) top right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top right/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) bottom left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom left/2px 24px no-repeat,
+  linear-gradient(#a08a5a,#a08a5a) bottom right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom right/2px 24px no-repeat,#fdf8ec}
+:root[data-theme=dark] .tbox:not([data-v]),:root[data-theme=dark] .tbox[data-v=beige]{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
 :root[data-theme=dark] .tbox[data-v=zitat],:root[data-theme=dark] .tbox[data-v=rahmen]{background:none}
 :root[data-theme=dark] .tbox[data-v=pergament]{background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%)}
 :root[data-theme=dark] .tbox[data-v=rolle]{background:linear-gradient(#fbf1d6,#f3e3b8)}
@@ -1039,7 +1076,7 @@ body.focus .mg{display:none}
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Frost, Gift, Schatten, Eingraviert, Siegel, Sternenstaub, Leuchtstift schräg, Zittrig, Handschrift, Verzerrt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Spalten</td><td>In einen Absatz klicken oder mehrere markieren, dann ▥ Spalten ▾: 2 oder 3 Spalten, fließend (Text läuft weiter wie in der Zeitung) oder getrennt nebeneinander (jede Spalte eigener Text). Nochmal ▥ Spalten ▾ im Bereich: umstellen oder auflösen.</td></tr>
-    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Magie, Ornament, Glas, Karte. Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
+    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Trenner</td><td>Im Textblatt: Trenner ▾: Szenenwechsel (* * *), Linie, Punkte, Stern, Welle, Seitenumbruch. Alles erscheint im Export.</td></tr>
@@ -3502,6 +3539,11 @@ function rangeLines(r) {
 const fxSwatches = (cols, cur) => '<div class="fx-cols"><span class="tlabel">Farbe</span>' + cols.map(c => `<button class="sw${c === cur ? ' on' : ''}" style="background:${c}" data-v="c" data-c="${c}" title="${c}" aria-label="Farbe ${c}"></button>`).join('') + '</div>';
 // Kästen um Absätze
 const TBOX = [['beige','Beige'],['hinweis','Hinweis'],['zitat','Zitat'],['dialog','Dialog'],['rahmen','Rahmen']];
+const TBOX_MORE = [
+  ['Karten', [['karte','Karte'],['karte-dunkel','Dunkel'],['karte-band','Farbband'],['karte-kante','Farbkante'],['karte-polaroid','Polaroid']]],
+  ['Magie', [['magie','Arkan'],['magie-feuer','Feuer'],['magie-eis','Eis'],['magie-natur','Natur'],['magie-schatten','Schatten'],['magie-runen','Runen']]],
+  ['Ornamente', [['ornament','Ranke'],['ornament-gold','Gold'],['ornament-ecken','Ecken'],['ornament-blume','Blume'],['ornament-gotisch','Gotisch']]]
+];
 const TBOX_FX = [['pergament','Pergament'],['rolle','Schriftrolle'],['tafel','Tafel'],['notizbuch','Notizbuch'],['karteikarte','Karteikarte'],['brief','Brief'],['magie','Magie'],['ornament','Ornament'],['glas','Glas'],['karte','Karte']];
 const TBOX_COLORS = ['#d9c89c','#34a853','#2f6fd6','#e07b00','#d1343b','#7b3fd1','#8a8472'];
 function applyTbox(v, color) {
@@ -3560,13 +3602,15 @@ $('#btn-cols').addEventListener('click', e => {
     '<div class="fx-t" style="margin-top:8px;text-transform:none;letter-spacing:0">Fließend: der Text läuft von Spalte zu Spalte. Getrennt: jede Spalte hat eigenen Text.</div>' +
     (cur ? '<button class="fx-del" data-v="none">Spalten auflösen (Text bleibt)</button>' : ''), applyCols);
 });
+const tboxPv = (v, l) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:${/^ornament/.test(v) ? '6px 0' : '0'};padding:${v === 'karteikarte' ? '14px 10px 2px' : v === 'notizbuch' ? '2px 8px 2px 40px' : v === 'magie-runen' ? '16px 10px 4px' : '4px 10px'};display:block">${l}</span></button>`;
 $('#btn-tbox').addEventListener('mousedown', e => e.preventDefault());
 $('#btn-tbox').addEventListener('click', e => {
   const cur = savedRange && elOf(savedRange.startContainer).closest('.tbox');
   openFx(e.currentTarget, '<div class="fx-t">Kasten um die Absätze</div><div class="fx-grid">' +
     TBOX.map(([v, l]) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:0;padding:4px 10px;display:block">${l}</span></button>`).join('') + '</div>' +
     '<div class="fx-t" style="margin-top:10px">Mit Stil</div><div class="fx-grid">' +
-    TBOX_FX.map(([v, l]) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:${v === 'ornament' ? '6px 0' : '0'};padding:${v === 'karteikarte' ? '14px 10px 2px' : v === 'notizbuch' ? '2px 8px 2px 40px' : '4px 10px'};display:block">${l}</span></button>`).join('') + '</div>' +
+    TBOX_FX.filter(([v]) => !['magie','ornament','karte'].includes(v)).map(([v, l]) => tboxPv(v, l)).join('') + '</div>' +
+    TBOX_MORE.map(([g, list]) => `<div class="fx-t" style="margin-top:10px">${g}</div><div class="fx-grid">` + list.map(([v, l]) => tboxPv(v, l)).join('') + '</div>').join('') +
     fxSwatches(TBOX_COLORS, cur && cur.style.getPropertyValue('--tb').trim()) +
     (cur ? '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
 });
