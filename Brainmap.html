@@ -397,6 +397,21 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .blk-body{position:relative;padding:0 14px 12px 44px}
 .blk-body>section.blk{margin-left:-30px}
 .blk.closed>.blk-body{display:none}
+/* Zettel am Wort: Wort ist markiert (Punkt), Zettel liegt frei mit Linie oder klappt beim Klick aufs Wort auf */
+.anchor{border-bottom:2px dotted color-mix(in srgb,var(--sc,#f2d64b) 80%,#000);cursor:pointer}
+.anchor::after{content:"";display:inline-block;width:.42em;height:.42em;border-radius:50%;background:color-mix(in srgb,var(--sc,#f2d64b) 80%,#000);margin-left:2px;vertical-align:.5em}
+.sticky{position:absolute;z-index:4;width:210px;min-width:120px;min-height:70px;background:var(--sc,#fff3a8);color:#222;border-radius:10px;box-shadow:0 10px 22px -8px rgba(60,40,0,.4),0 2px 4px rgba(0,0,0,.08);resize:both;overflow:hidden;display:flex;flex-direction:column;font:14px/1.45 system-ui,sans-serif;text-align:left;text-indent:0}
+.sticky[data-mode=hide]:not(.open){display:none}
+.st-head{display:flex;align-items:center;gap:6px;padding:4px 6px 2px 10px;cursor:move;user-select:none;font:600 11px system-ui,sans-serif;color:rgba(0,0,0,.5)}
+.st-word{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.st-x{border:0;background:none;cursor:pointer;color:rgba(0,0,0,.45);font-size:16px;line-height:1;padding:0 4px;border-radius:4px}
+.st-x:hover{background:rgba(0,0,0,.08)}
+.st-body{flex:1;overflow:auto;padding:0 10px 8px;outline:none;cursor:text}
+.st-body p{margin:.2em 0;text-indent:0}
+.st-body:empty::before{content:"Notiz zum Wort …";color:rgba(0,0,0,.35)}
+#stlines{position:absolute;left:0;top:0;width:1px;height:1px;pointer-events:none;overflow:visible;z-index:3}
+#stlines path{fill:none;stroke-width:1.6;stroke-dasharray:5 4;stroke-linecap:round}
+#m-page .sticky{display:none}
 /* Notiz-Kasten: schmaler Balken, ohne Kennung und Untertitel, gehört nicht ins Buch */
 .blk[data-kind=notiz]{border-radius:10px;border-color:#e6d27f;background:#fff8d8;margin:8px 0}
 .blk[data-kind=notiz]>.blk-head{padding:3px 8px 3px 4px;align-items:center}
@@ -1031,7 +1046,7 @@ body.focus .mg{display:none}
       <div class="sn-head"><b>Gliederung</b><button id="sn-close-all" title="Alle Kästen zuklappen">alle zu</button><button id="sn-open-all" title="Alle Kästen aufklappen">alle auf</button></div>
       <div id="sn-tree"></div>
     </nav>
-    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="pgnums" aria-hidden="true"></div><div class="mg" id="mg-l" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div class="mg" id="mg-r" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
+    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="pgnums" aria-hidden="true"></div><svg id="stlines" aria-hidden="true"></svg><div class="mg" id="mg-l" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div class="mg" id="mg-r" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
       <div id="linklegend" aria-label="Legende der Link-Farben">
         <span><i style="color:var(--lk-box);background:var(--lk-box-bg);text-decoration:underline">Begriff</i> andere Box</span>
         <span><i style="color:var(--lk-sub);background:var(--lk-sub-bg);text-decoration:underline">Begriff</i> Unterstrang</span>
@@ -1088,6 +1103,7 @@ body.focus .mg{display:none}
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Frost, Gift, Schatten, Eingraviert, Siegel, Sternenstaub, Leuchtstift schräg, Zittrig, Handschrift, Verzerrt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Spalten</td><td>In einen Absatz klicken oder mehrere markieren, dann ▥ Spalten ▾: 2 oder 3 Spalten, fließend (Text läuft weiter wie in der Zeitung) oder getrennt nebeneinander (jede Spalte eigener Text). Nochmal ▥ Spalten ▾ im Bereich: umstellen oder auflösen.</td></tr>
+    <tr><td>Zettel am Wort</td><td>Wort markieren, dann 🗒 Zettel oder Rechtsklick › Zettel: „sichtbar mit Linie“ legt einen frei verschiebbaren Zettel neben das Wort, eine Linie verbindet beide. „versteckt“: das Wort bekommt einen Punkt, Klick aufs Wort klappt den Zettel auf. × am Zettel versteckt ihn. Rechtsklick auf den Zettelkopf: Farbe, sichtbar oder versteckt, löschen.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Notiz-Kasten</td><td>+ Notiz (Strg+Umschalt+4) oder Rechtsklick › Rang › Notiz: ein schmaler gelber Balken, aufklappbar wie Kapitel und Szene, aber ohne Nummer und Untertitel. Darf überall stehen, auch in Kapiteln und Szenen, und erscheint nicht im Export.</td></tr>
@@ -2413,9 +2429,12 @@ function noteMenu(note, x, y) {
   ]);
 }
 $('#btn-note').addEventListener('mousedown', e => e.preventDefault());
-$('#btn-note').addEventListener('click', insertNote);
+$('#btn-note').addEventListener('click', () => {
+  const r = savedRange;
+  if (r && !r.collapsed && editor.contains(r.commonAncestorContainer) && r.toString().trim()) makeSticky(r, 'show'); else insertNote();
+});
 // Größe per Ecke ziehen speichern
-new MutationObserver(list => { if (sheetId && list.some(m => m.target.classList && m.target.classList.contains('note'))) onEditorInput(); })
+new MutationObserver(list => { if (sheetId && list.some(m => m.target.classList && (m.target.classList.contains('note') || m.target.classList.contains('sticky')))) { onEditorInput(); renderStickyLines(); } })
   .observe(editor, { attributes:true, subtree:true, attributeFilter:['style'] });
 function picMenu(fig, x, y) {
   const set = (group, cls) => { fig.classList.remove(...group); if (cls) fig.classList.add(cls); if (group === S) fig.style.width = ''; if (group === W) unfreeFig(fig); onEditorInput(); };
@@ -2460,7 +2479,7 @@ function startFreeMove(el, e) {
   const sx = e.clientX, sy = e.clientY, l0 = el.offsetLeft, t0 = el.offsetTop, W = el.parentNode.clientWidth;
   drag = {
     move(ev) {
-      el.style.left = clamp((l0 + ev.clientX - sx) / W * 100, -10, 100).toFixed(1) + '%';
+      el.style.left = clamp((l0 + ev.clientX - sx) / W * 100, -40, 160).toFixed(1) + '%';
       el.style.top = Math.max(0, Math.round(t0 + ev.clientY - sy)) + 'px';
     },
     up() { onEditorInput(); }
@@ -2652,6 +2671,7 @@ function openSheet(id) {
   sheetTitle.title = sheetTitle.readOnly ? 'Überschrift mit Icons: bitte im Block bearbeiten' : '';
   editor.innerHTML = n.text || '';
   migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav(); applyTextWidth(); applyBook();
+  requestAnimationFrame(renderStickyLines);
   requestAnimationFrame(() => { for (const s of editor.querySelectorAll('.shape')) renderShape(s); });
   editor.style.fontFamily = n.style && n.style.font ? fontStack(n.style.font) : '';
   applyAutoLinks(); markBrokenLinks(); renderBacklinks(id);
@@ -2685,6 +2705,7 @@ function syncSheet() {
   for (const x of c.querySelectorAll('.blk.flash')) x.classList.remove('flash');
   for (const x of c.querySelectorAll('.sh-pt,.sh-rs')) x.remove();
   for (const x of c.querySelectorAll('.shape.sel')) x.classList.remove('sel');
+  for (const x of c.querySelectorAll('.sticky.open')) x.classList.remove('open');
   for (const a of c.querySelectorAll('.nlink')) { a.classList.remove('broken', 'tomini', 'tosub', 'tonote', 'once'); a.removeAttribute('title'); }
   n.text = cleanHTML(c.innerHTML);
   if (!c.textContent.trim()) n.text = '';
@@ -2698,7 +2719,7 @@ function updateSheetStat() {
 }
 $('#sheet-goal').addEventListener('change', e => { const n = doc.nodes[sheetId]; if (!n) return; const v = Math.round(+e.target.value); if (v > 0) n.goal = v; else delete n.goal; renderNode(n); updateSheetStat(); commit(); });
 let syncT = 0;
-function onEditorInput() { normalizeBlocks(); updateSheetStat(); clearTimeout(syncT); syncT = setTimeout(syncSheet, 300); touch(); }
+function onEditorInput() { normalizeBlocks(); fixStickies(); renderStickyLines(); updateSheetStat(); clearTimeout(syncT); syncT = setTimeout(syncSheet, 300); touch(); }
 function toggleFocus(on) {
   on = on === undefined ? !document.body.classList.contains('focus') : on;
   document.body.classList.toggle('focus', on); $('#sheet-focus').setAttribute('aria-pressed', String(on)); applyTextWidth(); applyBook();
@@ -2873,7 +2894,7 @@ function applyAutoLinks() {
   if (!map.size) return;
   const escRe = x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const re = new RegExp('(?<![\\p{L}\\p{N}])(' + [...map.keys()].sort((a, b) => b.length - a.length).map(escRe).join('|') + ')(?![\\p{L}\\p{N}])', 'giu');
-  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, { acceptNode:n => n.parentNode.closest('a,.pic,.ii,.note-head,.blk-head') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
+  const walker = document.createTreeWalker(editor, NodeFilter.SHOW_TEXT, { acceptNode:n => n.parentNode.closest('a,.pic,.ii,.note-head,.blk-head,.st-head') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT });
   const texts = []; while (walker.nextNode()) texts.push(walker.currentNode);
   for (const tn of texts) {
     const str = tn.data; re.lastIndex = 0;
@@ -2940,7 +2961,7 @@ editor.addEventListener('contextmenu', e => {
   let range = currentRange();
   if (!range || !range.getBoundingClientRect || !inRect(range, e.clientX, e.clientY)) range = wordRangeAt(e.clientX, e.clientY) || range;
   const sel0 = currentRange(), rankRange = sel0 && inRect(sel0, e.clientX, e.clientY) ? sel0 : caretRangeAt(e.clientX, e.clientY);
-  const ranks = [...speechItems(e.target, sel0), ...(rankRange ? [rankRow(rankRange), '-'] : [])];
+  const ranks = [...stickyItems(e.target, sel0), ...speechItems(e.target, sel0), ...(rankRange ? [rankRow(rankRange), '-'] : [])];
   if (range && range.toString().trim()) {
     const w = range.toString().trim(), label = w.length > 28 ? w.slice(0, 26) + '…' : w;
     showMenu(e.clientX, e.clientY, [...ranks,
@@ -2995,6 +3016,8 @@ minipop.querySelector('.mp-x').onclick = () => { closeMiniPop(); editor.focus();
 minipop.querySelector('.mp-go').onclick = () => { const id = miniPopId; closeMiniPop(); if (id) followLink(id); };
 document.addEventListener('mousedown', e => { if (miniPopId !== null && !minipop.contains(e.target) && !e.target.closest('.nlink')) closeMiniPop(); }, true);
 editor.addEventListener('click', e => {
+  const an = e.target.closest('.anchor');
+  if (an && !e.target.closest('.nlink')) { toggleSticky(an); return; }
   const l = e.target.closest('.nlink');
   if (!l) return;
   e.preventDefault();
@@ -3182,7 +3205,7 @@ function blockKeys(e) {
       if (isEmptyLine(line) && par.children.length > 1) { line.remove(); onEditorInput(); }
       caretIn(blkField(par.parentNode, 'title')); return true;
     }
-    if (prev && prev.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
+    if (prev && prev.matches('.shape,.pic.free,.sticky')) { e.preventDefault(); return true; }
     if (!prev && par.classList.contains('gcol')) { e.preventDefault(); return true; }
     if (prev && prev.matches('section.blk')) {
       e.preventDefault();
@@ -3194,7 +3217,7 @@ function blockKeys(e) {
   } else {
     r.setStart(s.anchorNode, s.anchorOffset); if (r.toString().length) return false;
     const next = line.nextElementSibling;
-    if (next && next.matches('.shape,.pic.free')) { e.preventDefault(); return true; }
+    if (next && next.matches('.shape,.pic.free,.sticky')) { e.preventDefault(); return true; }
     if (!next && line.parentNode.classList.contains('gcol')) { e.preventDefault(); return true; }
     if (next && next.matches('section.blk')) { e.preventDefault(); if (isEmptyLine(line) && line.previousElementSibling) { line.remove(); onEditorInput(); } return true; }
     if (!next && line.parentNode.classList.contains('blk-body')) { e.preventDefault(); return true; }
@@ -3919,6 +3942,100 @@ $('#btn-rede').addEventListener('click', e => {
     });
 });
 
+// Zettel am Wort
+const stickyOf = id => editor.querySelector(`.sticky[data-sn="${CSS.escape(id)}"]`), anchorOf = id => editor.querySelector(`.anchor[data-sn="${CSS.escape(id)}"]`);
+function makeSticky(r, mode) {
+  if (flowItem(r.startContainer) !== flowItem(r.endContainer)) { toast('Bitte ein Wort oder einen Teil einer Zeile markieren'); return; }
+  if (elOf(r.commonAncestorContainer).closest('.blk-head,.sticky')) return;
+  const id = uid(), c = NOTE_COLORS[0][1];
+  const a = document.createElement('span'); a.className = 'anchor'; a.dataset.sn = id; a.style.setProperty('--sc', c);
+  a.appendChild(r.extractContents()); r.insertNode(a);
+  const st = document.createElement('div'); st.className = 'sticky'; st.dataset.sn = id; st.dataset.mode = mode; st.contentEditable = 'false';
+  st.style.setProperty('--sc', c);
+  st.innerHTML = '<div class="st-head" title="Ziehen verschiebt, Rechtsklick: Farbe und mehr"><span class="st-word"></span><button class="st-x" title="Einklappen (Zettel versteckt sich, Klick aufs Wort öffnet ihn)">×</button></div><div class="st-body" contenteditable="true"></div>';
+  st.querySelector('.st-word').textContent = a.textContent.trim().slice(0, 40);
+  editor.appendChild(st);
+  placeStickyNear(st, a, true);
+  if (mode === 'hide') st.classList.add('open');
+  normalizeBlocks(); onEditorInput();
+  caretIn(st.querySelector('.st-body'));
+}
+// Zettel neben das Wort legen: rechts davon, sonst darunter
+function placeStickyNear(st, a, toSide) {
+  const er = editor.getBoundingClientRect(), ar = a.getClientRects()[0] || a.getBoundingClientRect(), W = editor.clientWidth;
+  const room = paper.getBoundingClientRect().right - er.right;   // freier Rand rechts neben der Schreibfläche
+  let x = toSide ? (room > 250 ? er.width + 12 : ar.right - er.left + 60) : ar.left - er.left;
+  if (!(toSide && room > 250)) x = clamp(x, 8, W - 230);
+  const y = ar.top - er.top + (toSide ? -10 : ar.height + 10);
+  st.style.left = (x / W * 100).toFixed(1) + '%'; st.style.top = Math.max(0, Math.round(y)) + 'px';
+}
+function toggleSticky(a) {
+  const st = stickyOf(a.dataset.sn); if (!st) return;
+  if (st.dataset.mode === 'hide') {
+    const open = !st.classList.contains('open');
+    for (const o of editor.querySelectorAll('.sticky.open')) o.classList.remove('open');
+    if (open) { st.classList.add('open'); placeStickyNear(st, a, false); }
+  } else { st.style.animation = 'none'; void st.offsetWidth; st.style.animation = 'blkflash 1s ease'; }
+  renderStickyLines();
+}
+// Wort weg: Zettel auch weg. Zettel weg: Wort nicht mehr markiert
+function fixStickies() {
+  for (const a of [...editor.querySelectorAll('.anchor')]) if (!stickyOf(a.dataset.sn)) { a.replaceWith(...a.childNodes); }
+  for (const st of [...editor.querySelectorAll('.sticky')]) {
+    const a = anchorOf(st.dataset.sn);
+    if (!a) { st.remove(); continue; }
+    const w = st.querySelector('.st-word'); if (w && w.textContent !== a.textContent.trim().slice(0, 40)) w.textContent = a.textContent.trim().slice(0, 40);
+  }
+}
+// Linien vom Wort zum sichtbaren Zettel
+function renderStickyLines() {
+  const svg = $('#stlines'); if (!svg) return;
+  if (!sheetId) { svg.innerHTML = ''; return; }
+  const base = editor.parentNode.getBoundingClientRect(); let h = '';
+  for (const st of editor.querySelectorAll('.sticky')) {
+    if (!st.offsetParent) continue;
+    const a = anchorOf(st.dataset.sn), rs = a && a.getClientRects(); if (!rs || !rs.length) continue;
+    const ar = rs[0], sr = st.getBoundingClientRect(), c = st.style.getPropertyValue('--sc') || '#fff3a8';
+    const ax = ar.left + ar.width / 2 - base.left, ay = ar.bottom - base.top;
+    const side = sr.left > ar.right + 10 ? 'l' : sr.right < ar.left - 10 ? 'r' : '';
+    const sx = (side === 'l' ? sr.left : side === 'r' ? sr.right : sr.left + sr.width / 2) - base.left;
+    const sy = (side ? sr.top + 14 : sr.top > ar.bottom ? sr.top : sr.bottom) - base.top;
+    h += `<path d="M${ax.toFixed(1)} ${ay.toFixed(1)} Q ${ax.toFixed(1)} ${sy.toFixed(1)} ${sx.toFixed(1)} ${sy.toFixed(1)}" style="stroke:color-mix(in srgb,${c} 55%,#000)"/>`;
+  }
+  svg.innerHTML = h;
+}
+new ResizeObserver(() => { if (sheetId) renderStickyLines(); }).observe(paper);
+function stickyMenu(st, x, y) {
+  const a = anchorOf(st.dataset.sn), hide = st.dataset.mode === 'hide';
+  const color = c => { st.style.setProperty('--sc', c); if (a) a.style.setProperty('--sc', c); onEditorInput(); };
+  showMenu(x, y, [
+    { label:'Farbe', row:NOTE_COLORS.map(([n, c]) => ({ label:'●', color:c, title:n, on:st.style.getPropertyValue('--sc') === c, fn:() => color(c) })) },
+    { label:hide ? 'Immer sichtbar, mit Linie zum Wort' : 'Verstecken, Klick aufs Wort öffnet', fn:() => { st.dataset.mode = hide ? 'show' : 'hide'; st.classList.toggle('open', false); if (hide && a) placeStickyNear(st, a, true); onEditorInput(); } },
+    ...(a ? [{ label:'Neben das Wort legen', fn:() => { placeStickyNear(st, a, true); onEditorInput(); } }] : []),
+    { label:'Größe automatisch', fn:() => { st.style.width = ''; st.style.height = ''; onEditorInput(); } },
+    '-',
+    { label:'Zettel löschen (Wort bleibt)', danger:true, fn:() => { st.remove(); onEditorInput(); } }
+  ]);
+}
+function stickyItems(target, sel) {
+  const a = target.closest && (target.closest('.anchor') || (target.closest('.st-head') && target.closest('.sticky')));
+  if (a && editor.contains(a)) { const st = a.classList.contains('sticky') ? a : stickyOf(a.dataset.sn); return st ? [{ label:'Zettel: Farbe, sichtbar oder versteckt …', fn:() => stickyMenu(st, lastMouse.x, lastMouse.y) }, '-'] : []; }
+  if (!sel || !sel.toString().trim()) return [];
+  return [{ label:'Zettel', row:[{ label:'sichtbar mit Linie', fn:() => makeSticky(sel, 'show') }, { label:'versteckt (Klick aufs Wort)', fn:() => makeSticky(sel, 'hide') }] }, '-'];
+}
+// Kopf ziehen verschiebt, × klappt ein
+editor.addEventListener('mousedown', e => {
+  const head = e.target.closest('.st-head'); if (!head || e.button !== 0) return;
+  const st = head.closest('.sticky');
+  if (e.target.closest('.st-x')) { e.preventDefault(); if (st.dataset.mode === 'show') st.dataset.mode = 'hide'; st.classList.remove('open'); onEditorInput(); return; }
+  e.preventDefault();
+  startFreeMove(st, e); const mv = drag.move; drag.move = ev => { mv(ev); renderStickyLines(); };
+});
+editor.addEventListener('contextmenu', e => {
+  const head = e.target.closest('.st-head'); if (!head) return;
+  e.preventDefault(); e.stopImmediatePropagation(); stickyMenu(head.closest('.sticky'), e.clientX, e.clientY);
+}, true);
+
 /* ---------- Suche ---------- */
 const searchEl = $('#search'), searchInp = searchEl.querySelector('input');
 let searchHl = 0, searchRes = [];
@@ -4147,7 +4264,8 @@ const headLevel = n => n.type === 'akt' ? 1 : n.type === 'szene' ? 3 : 2;
 function exportBody(n, keepImages = true) {
   const t = document.createElement('template'); t.innerHTML = cleanHTML(n.text || '');
   flattenBlocks(t.content); speechToText(t.content);
-  for (const x of t.content.querySelectorAll('.note,.ii,.shape,script,style')) x.remove();
+  for (const x of t.content.querySelectorAll('.note,.ii,.shape,.sticky,script,style')) x.remove();
+  for (const a of t.content.querySelectorAll('.anchor')) a.replaceWith(...a.childNodes);
   if (!keepImages) for (const x of t.content.querySelectorAll('.pic,img')) x.remove();
   for (const a of t.content.querySelectorAll('a')) a.replaceWith(...a.childNodes);
   return t.innerHTML;
