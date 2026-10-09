@@ -376,6 +376,10 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .blk-body{padding:0 20px 12px 44px}
 .blk.closed>.blk-body{display:none}
 .blk.flash{animation:blkflash 1.2s ease}
+.blk.moving{opacity:.35}
+.blk.drop-in{box-shadow:0 0 0 3px var(--accent)}
+#dropline{position:absolute;height:3px;border-radius:2px;background:var(--accent);pointer-events:none;display:none;z-index:5}
+#dropline::before{content:"";position:absolute;left:-6px;top:-3px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
 @keyframes blkflash{0%,40%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
 #backlinks{margin:0 auto;padding:0 72px 40px;font-size:13px;color:var(--muted)}
 #backlinks:empty{display:none}
@@ -745,7 +749,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
     </div>
     </div>
     <div class="sheet-main">
-    <div id="paper"><div class="sheet-body"><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
+    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
       <div id="linklegend" aria-label="Legende der Link-Farben">
         <span><i style="color:var(--lk-box);background:var(--lk-box-bg);text-decoration:underline">Begriff</i> andere Box</span>
         <span><i style="color:var(--lk-sub);background:var(--lk-sub-bg);text-decoration:underline">Begriff</i> Unterstrang</span>
@@ -794,7 +798,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster, Knopf ↔ oben schaltet auf Lesebreite.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
-    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen lassen sich ineinander stecken. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
+    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
     <tr><td>Gliederung</td><td>Liste links (Knopf in der Werkzeugleiste): Baum aus Blöcken und Kapiteln. Klick springt, Doppelklick öffnet den Text, Ziehen sortiert Geschwister um (gilt auch fürs Manuskript).</td></tr>
@@ -2700,6 +2704,91 @@ document.addEventListener('keydown', e => {
   const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene' }[e.code];
   if (kind) { e.preventDefault(); insertBlock(kind); }
 }, true);
+// Kasten am Griff ziehen: Linie zeigt, wo er landet (davor, danach), Rahmen zeigt „hinein“
+function blockDropAt(x, y, moving) {
+  let el = document.elementFromPoint(x, y);
+  if (!el || !editor.contains(el)) {
+    const r = editor.getBoundingClientRect();
+    if (x < r.left || x > r.right) return null;
+    el = editor;
+  }
+  if (moving.contains(el)) return null;
+  let item;
+  if (isFlowBox(el)) {
+    const kids = [...el.children].filter(k => k !== moving);
+    if (!kids.length) return el === editor ? null : { mode:'into', box:el.parentNode };
+    item = kids.find(k => k.getBoundingClientRect().bottom > y) || kids[kids.length - 1];
+  } else item = flowItem(el);
+  if (!item || item === moving || moving.contains(item)) return null;
+  const r = item.getBoundingClientRect();
+  if (item.matches('section.blk')) {
+    const h = blkHead(item).getBoundingClientRect();
+    if (y > h.top + h.height * .35 && y < h.bottom) return { mode:'into', box:item };
+  }
+  return { mode:y < r.top + r.height / 2 ? 'before' : 'after', item };
+}
+function showDrop(t) {
+  const line = $('#dropline');
+  for (const x of editor.querySelectorAll('.drop-in')) x.classList.remove('drop-in');
+  line.style.display = 'none';
+  if (!t) return;
+  if (t.mode === 'into') { t.box.classList.add('drop-in'); return; }
+  const r = t.item.getBoundingClientRect(), p = paper.getBoundingClientRect();
+  const sib = t.mode === 'before' ? t.item.previousElementSibling : t.item.nextElementSibling;
+  let y = t.mode === 'before' ? r.top : r.bottom;
+  if (sib) { const s = sib.getBoundingClientRect(); y = (y + (t.mode === 'before' ? s.bottom : s.top)) / 2; }
+  line.style.cssText = `display:block;left:${r.left - p.left}px;width:${r.width}px;top:${y - p.top + paper.scrollTop - 1}px`;
+}
+function placeBlock(b, t) {
+  if (t.mode === 'before') t.item.before(b);
+  else if (t.mode === 'after') t.item.after(b);
+  else {
+    const body = blkBody(t.box), first = body.firstElementChild;
+    if (t.box.classList.contains('closed')) body.appendChild(b);
+    else if (first && isEmptyLine(first) && body.children.length === 1) first.replaceWith(b);
+    else body.prepend(b);
+  }
+  normalizeBlocks(); onEditorInput();
+  b.classList.remove('flash'); void b.offsetWidth; b.classList.add('flash');
+}
+function startBlockDrag(b, e) {
+  const sx = e.clientX, sy = e.clientY; let moved = false, target = null, scrollT = 0, last = e;
+  const auto = () => {
+    const p = paper.getBoundingClientRect(), d = last.clientY < p.top + 50 ? -14 : last.clientY > p.bottom - 50 ? 14 : 0;
+    if (d) { paper.scrollTop += d; target = blockDropAt(last.clientX, last.clientY, b); showDrop(target); }
+    scrollT = requestAnimationFrame(auto);
+  };
+  drag = {
+    move(ev) {
+      last = ev;
+      if (!moved && Math.hypot(ev.clientX - sx, ev.clientY - sy) < 5) return;
+      if (!moved) { moved = true; b.classList.add('moving'); scrollT = requestAnimationFrame(auto); }
+      target = blockDropAt(ev.clientX, ev.clientY, b); showDrop(target);
+    },
+    up() {
+      cancelAnimationFrame(scrollT); b.classList.remove('moving'); showDrop(null);
+      if (moved && target) placeBlock(b, target);
+    }
+  };
+}
+editor.addEventListener('mousedown', e => {
+  const grip = e.target.closest('.blk-grip'); if (!grip || e.button !== 0) return;
+  e.preventDefault(); startBlockDrag(grip.closest('section.blk'), e);
+});
+// Alt+Pfeil hoch/runter im Kasten-Kopf: Kasten eine Stelle verschieben
+editor.addEventListener('keydown', e => {
+  if (!e.altKey || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+  const f = e.target.closest && e.target.closest('.blk-head'); if (!f) return;
+  e.preventDefault();
+  const b = f.parentNode, up = e.key === 'ArrowUp';
+  let sib = up ? b.previousElementSibling : b.nextElementSibling;
+  while (sib && isEmptyLine(sib)) sib = up ? sib.previousElementSibling : sib.nextElementSibling;
+  if (!sib) return;
+  const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0).cloneRange() : null;
+  if (up) sib.before(b); else sib.after(b);
+  normalizeBlocks(); onEditorInput();
+  if (r) { s.removeAllRanges(); s.addRange(r); }
+});
 // Für Export und Manuskript: Kästen werden zu Überschriften, Szenen ohne Titel zu * * *
 function flattenBlocks(root) {
   const cnt = { teil:0, kapitel:0, szene:0 }, roman = n => { let s = ''; for (const [v, c] of [[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]) while (n >= v) { s += c; n -= v; } return s; };
