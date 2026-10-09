@@ -14,7 +14,9 @@ Script-Abschnitte (Kommentare `/* ---------- Name ---------- */`, Reihenfolge wi
 | Rahmen und Mehrfachauswahl | `renderFrames`, `createFrame`, `frameAround`, `startFrameDrag` (nimmt Blöcke mit), `startBand` |
 | Popups | `showMenu`, `ask()` (Promise), `toast` |
 | Bilder | `imageToData` (WebP, max 1600 px), Block-Hintergrund, `insertPicture`, `picMenu`, Ziehen im Text |
-| Textblatt | `openSheet/closeSheet` (FLIP), `syncSheet`, Formatierung per `execCommand`, `renderBacklinks` |
+| Textblatt | `openSheet/closeSheet` (FLIP), `syncSheet`, Formatierung per `execCommand`, `renderBacklinks`, Lesebreite `setNarrow`. Blatt füllt das Fenster: `.sheet-top` (Leisten), `#sheet-nav` (Gliederung), `#paper` (scrollt) |
+| Kästen im Text | `section.blk[data-kind=teil|kapitel|szene]` mit `.blk-head` (contenteditable=false: Kennung, Titel, Untertitel, Griff) und `.blk-body`. `normalizeBlocks`, `refreshBlocks` (Kennung `data-auto`, Wortzahl), `blockKeys` (Kopf nie löschen), `applyRank`/`liftBlock`/`unwrapBlock` (Rechtsklick-Rang), `startBlockDrag`, `renderSheetNav`, `lineFormatKeys` (Strg+1/2/3, # und Listen-Kürzel), `flattenBlocks` (Export) |
+| Gestaltung im Text | Popup `openFx`. `.tbox[data-v]` (Kasten um Absätze, Farbe `--tb`), `.mk.mk-*` (Marker-Stile, Farbe `--mk`), `ul.l-*` (Listenzeichen), `hr.deco-*` (Trenner), `.shape` (freie Formen: `data-shape/pts/stroke/fill/sw/dash`, `renderShape`). Frei schwebend (`.pic.free`, `.shape`): `makeFree`, `startFreeMove` |
 | Verlinkung | `<a class="nlink" data-node>`, `makeSub` (Unterpunkt/Mini aus Wort), `followLink`, `focusNode` |
 | Kapitel-Streifen | `isHosted`, `chaptersOf`, `renderChaps`, `addChapter/moveChapter/removeChapter/detachChapter`, `chapMenu` (vor `renderNode`) |
 | Icons und Emojis | `makePicker` (Seitenleiste und Popup), `PICK_CATS`, `EMOJI_CATS`, `insertAtCaret` |
@@ -45,3 +47,5 @@ Daten: `%APPDATA%\de.brainmap.app\` (autosave.json, Sicherungen\<Dateiname>\).
 - Syntaxcheck: Python zieht das letzte `<script>` nach `%TEMP%\bm.js`, dann `node --check`.
 - Icons neu erzeugen: `npm pack lucide-static` und `npm pack @tabler/icons` im Scratchpad, Pfade aus den
   SVGs lesen und die Zeilen `const ICONS = …;` und `const ICON_CATS = …;` ersetzen. Tabler-Schlüssel mit `t:`.
+
+Laufzeitwerte im Blatt-HTML (`data-auto`, `data-w`, `.sh-pt`, `.sel`, `.flash`) entfernt `syncSheet` vor dem Speichern.
