@@ -428,6 +428,30 @@ hr.deco-wave::after{content:"~   ~   ~"}
 .sh-pt,.sh-rs{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:#fff;border:2px solid var(--accent);pointer-events:auto;cursor:crosshair;z-index:1}
 .sh-rs{border-radius:3px;cursor:nwse-resize;left:100%;top:100%}
 #m-page .shape{display:none}
+/* Wörtliche Rede und innerer Dialog */
+:root{--rede:#2f6fd6;--rede-bg:#e3edfc;--innen:#76659a;--innen-bg:#efe8fa}
+:root[data-theme=dark]{--rede:#8ab4f8;--rede-bg:#26324a;--innen:#b9a7dd;--innen-bg:#322c42}
+.rede,.innen{-webkit-box-decoration-break:clone;box-decoration-break:clone}
+body[data-rede=de] .rede::before,body[data-rede=farbe] .rede::before{content:"„"}
+body[data-rede=de] .rede::after,body[data-rede=farbe] .rede::after{content:"“"}
+body[data-rede=buch] .rede::before,body[data-rede=blase] .rede::before{content:"»"}
+body[data-rede=buch] .rede::after,body[data-rede=blase] .rede::after{content:"«"}
+body[data-rede=fr] .rede::before{content:"«"}
+body[data-rede=fr] .rede::after{content:"»"}
+body[data-rede=en] .rede::before{content:"“"}
+body[data-rede=en] .rede::after{content:"”"}
+body[data-rede=farbe] .rede{color:var(--rede)}
+body[data-rede=blase] .rede{background:var(--rede-bg);border-radius:.7em;padding:.05em .4em}
+.innen{font-style:italic}
+body[data-innen=klammer] .innen::before{content:"›"}
+body[data-innen=klammer] .innen::after{content:"‹"}
+body[data-innen=leise] .innen{color:var(--innen)}
+body[data-innen=blase] .innen{background:var(--innen-bg);border-radius:.7em;padding:.05em .4em}
+#fxpop .fx-grid button.on{border-color:var(--accent);background:var(--accent-soft)}
+#fxpop .fx-grid small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+#fxpop .fx-act{display:block;width:100%;text-align:left;border:0;background:none;padding:9px 6px;border-radius:6px;cursor:pointer;font-size:13px;color:var(--ink)}
+#fxpop .fx-act:hover{background:var(--accent-soft)}
+#fxpop .fx-act kbd{float:right;font:11px system-ui,sans-serif;color:var(--muted)}
 /* Gliederung links im Textblatt */
 #sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
 #sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
@@ -821,6 +845,7 @@ body.focus #sheet-navbtn{display:none}
       <button class="tb fx-btn" id="btn-mk" title="Marker-Stil für die Markierung: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen" aria-label="Marker-Stil" aria-haspopup="true">Stil ▾</button>
       <span class="sep"></span>
       <button class="tb fx-btn" id="btn-list" title="Liste: Punkte, Zahlen, Striche, Pfeile, Haken, Kreise. Schnell: am Zeilenanfang - , -> , * , 1. oder [] und Leertaste" aria-label="Liste" aria-haspopup="true">• Liste ▾</button>
+      <button class="tb fx-btn" id="btn-rede" title="Wörtliche Rede und innerer Dialog: Stil wählen, Markierung umwandeln (Strg+Umschalt+8 / 9)" aria-label="Wörtliche Rede und innerer Dialog" aria-haspopup="true">„Rede“ ▾</button>
       <button class="tb fx-btn" id="btn-tbox" title="Absätze in einen Kasten setzen: beige, Hinweis, Zitat, Dialog, Rahmen" aria-label="Kasten um Absätze" aria-haspopup="true">Kasten ▾</button>
       <button class="tb" data-cmd="removeFormat" title="Formatierung entfernen" aria-label="Formatierung entfernen">⌫ Format</button>
       <span class="sep"></span>
@@ -892,6 +917,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
+    <tr><td>Wörtliche Rede</td><td>Satz markieren, dann Strg+Umschalt+8 (oder Rechtsklick, oder „Rede“ ▾). Innerer Dialog: Strg+Umschalt+9. Den Stil wählst du einmal unter „Rede“ ▾ (6 für Rede, 4 für Gedanken), er gilt sofort für das ganze Buch und auch im Export. Getippte Anführungszeichen am Rand werden dabei entfernt.</td></tr>
     <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen. Farbe darunter wählen. Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
@@ -971,7 +997,7 @@ const ICONS = {"user":["Person","<path d=\"M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4
 const ICON_CATS = [["Figuren","user",["user","users","baby","person-standing","crown","t:chess-king","t:chess-queen","t:chess-knight","t:helmet","drama","t:mask","heart","heart-crack","brain","t:mood-happy","t:mood-sad","t:mood-angry","bot","smile","frown","angry","laugh","hand-heart","handshake","ear","fingerprint","venetian-mask","shield-user"]],["Kreaturen","t:dragon",["t:dragon","t:bat","t:spider","ghost","t:ghost-2","t:alien","skull","t:horse","t:deer","bird","cat","dog","fish","rabbit","rat","snail","turtle","worm","bug","t:butterfly","t:paw","feather","bone","egg","squirrel","shrimp"]],["Waffen","sword",["sword","swords","axe","t:bow","bow-arrow","hammer","pickaxe","shield","shield-half","crosshair","bomb","anvil","gavel","wrench","shovel","shield-alert"]],["Magie","wand-sparkles",["wand","wand-sparkles","sparkles","stars","t:crystal-ball","t:pentagram","t:alphabet-runes","moon-star","orbit","eye","infinity","hexagon","scroll-text","book-key","t:cards","t:dice","sparkle","cross","radio","scan-eye","diamond"]],["Alchemie","flask-round",["flask-conical","flask-round","t:flask-2","test-tube","test-tubes","t:vaccine-bottle","beaker","pill","t:mushroom","t:seedling","t:leaf-maple","amphora","scale","atom","t:dna","radiation","biohazard","gem","t:diamond","coins","t:candle","syringe","flower","flower-2","clover","wheat","apple","cherry","grape","wine","beer","coffee","cookie","candy"]],["Elemente","flame",["flame","t:campfire","droplet","droplets","waves","wind","tornado","cloud-lightning","zap","snowflake","t:iceberg","t:volcano","mountain","earth","sun","moon","t:meteor","t:planet","t:rainbow","leaf","sprout","cloud","cloud-snow","mountain-snow","rainbow","thermometer","tree-deciduous","palmtree"]],["Orte","castle",["house","castle","t:building-castle","t:tower","church","landmark","tent","trees","tree-pine","t:grave","t:coffin","map","map-pin","compass","ship","anchor","door-open","vault","building","building-2","tent-tree","globe","sailboat","door-closed","bed","hotel","warehouse","store","factory","fence","bridge","route","signpost","milestone","cable-car","train-front"]],["Handlung","key",["flag","target","key","lock","lock-open","eye-off","footprints","puzzle","gift","hourglass","clock","calendar","sunrise","sunset","cloud-rain","t:olympic-torch","bell","trophy","medal","award","timer","wallet","package","dices","search","zoom-in","unlink","heart-handshake","hand","thumbs-up","thumbs-down","check","x","info","ban","trash-2","share-2","git-branch","git-merge","split"]],["Schreiben","pencil",["lightbulb","star","circle-check","pencil","circle-alert","circle-help","book-open","bookmark","quote","message-circle","scroll","link","music","book","book-marked","library","file-text","files","folder","notebook","notebook-pen","sticky-note","tag","languages","type","highlighter","eraser","pen-tool","brush","palette","image","mic","megaphone","newspaper","mail","send","list","list-checks","table","layers","network","workflow","lightbulb-off"]]];
 const AUTOSAVE_KEY = 'brainmap:autosave';
 
-let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0 };
+let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' } };
 let multi = new Set();
 const FRAME_COLORS = ['#e5412d','#2f8f4e','#e07b00','#d1343b','#7b3fd1','#2f6fd6','#8a7a5c','#6b6b72'];
 const frameEls = new Map();
@@ -2622,7 +2648,7 @@ editor.addEventListener('contextmenu', e => {
   let range = currentRange();
   if (!range || !range.getBoundingClientRect || !inRect(range, e.clientX, e.clientY)) range = wordRangeAt(e.clientX, e.clientY) || range;
   const sel0 = currentRange(), rankRange = sel0 && inRect(sel0, e.clientX, e.clientY) ? sel0 : caretRangeAt(e.clientX, e.clientY);
-  const ranks = rankRange ? [rankRow(rankRange), '-'] : [];
+  const ranks = [...speechItems(e.target, sel0), ...(rankRange ? [rankRow(rankRange), '-'] : [])];
   if (range && range.toString().trim()) {
     const w = range.toString().trim(), label = w.length > 28 ? w.slice(0, 26) + '…' : w;
     showMenu(e.clientX, e.clientY, [...ranks,
@@ -2888,8 +2914,9 @@ editor.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => {
   if (!sheetId || !(e.ctrlKey || e.metaKey) || !e.shiftKey) return;
-  const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene' }[e.code];
-  if (kind) { e.preventDefault(); insertBlock(kind); }
+  const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene', Digit8:'rede', Digit9:'innen' }[e.code];
+  if (kind === 'rede' || kind === 'innen') { e.preventDefault(); makeSpeech(kind); }
+  else if (kind) { e.preventDefault(); insertBlock(kind); }
 }, true);
 // Gliederung links: Kästen und Überschriften, Klick springt hin, Pfeil klappt
 let navItems = [];
@@ -3443,6 +3470,97 @@ $('#btn-shape').addEventListener('click', e => {
   openFx(e.currentTarget, '<div class="fx-t">Form frei auf die Seite legen</div><div class="fx-grid">' + SHAPES.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('') + '</div>', insertShape);
 });
 
+// Wörtliche Rede und innerer Dialog: Markierung wird <span class="rede|innen">, Zeichen und Aussehen kommen aus dem gewählten Stil
+const REDE = [['de','Deutsch','„','“'],['buch','Buch','»','«'],['fr','Französisch','«','»'],['en','Englisch','“','”'],['farbe','Farbig','„','“'],['blase','Sprechblase','»','«']];
+const INNEN = [['kursiv','Kursiv','',''],['klammer','Kursiv in Winkeln','›','‹'],['leise','Kursiv, leise','',''],['blase','Gedankenblase','','']];
+const QUOTE_CH = '„“”"»«‚‘’\'›‹';
+function applySpeech() {
+  const s = doc.speech || {};
+  document.body.dataset.rede = REDE.some(r => r[0] === s.rede) ? s.rede : 'de';
+  document.body.dataset.innen = INNEN.some(r => r[0] === s.innen) ? s.innen : 'kursiv';
+}
+applySpeech();
+const speechMarks = kind => { const l = kind === 'rede' ? REDE : INNEN, k = (doc.speech || {})[kind], r = l.find(x => x[0] === k) || l[0]; return [r[2], r[3]]; };
+function speechToText(root) {
+  for (const s of [...root.querySelectorAll('.rede')]) { const [o, c] = speechMarks('rede'); s.replaceWith(o, ...s.childNodes, c); }
+  for (const s of [...root.querySelectorAll('.innen')]) { const [o, c] = speechMarks('innen'), i = document.createElement('i'); i.append(o, ...s.childNodes, c); s.replaceWith(i); }
+}
+// Anführungszeichen am Rand der Markierung gehören nicht in den Text, die setzt der Stil
+function trimQuotes(span) {
+  const edge = first => {
+    const w = document.createTreeWalker(span, NodeFilter.SHOW_TEXT), list = []; while (w.nextNode()) list.push(w.currentNode);
+    const t = first ? list[0] : list[list.length - 1]; if (!t) return '';
+    const re = first ? new RegExp('^[\\s' + QUOTE_CH + ']+') : new RegExp('[\\s' + QUOTE_CH + ']+$');
+    const m = re.exec(t.data); if (!m) return '';
+    t.data = first ? t.data.slice(m[0].length) : t.data.slice(0, t.data.length - m[0].length);
+    return /\s/.test(m[0]) ? ' ' : '';
+  };
+  return [edge(true), edge(false)];
+}
+function makeSpeech(kind) {
+  const r = savedRange;
+  if (!r || !editor.contains(r.commonAncestorContainer)) { toast('Erst einen Satz markieren'); return; }
+  const cur = elOf(r.commonAncestorContainer).closest('.rede,.innen');
+  if (cur && editor.contains(cur)) { cur.className = kind; onEditorInput(); return; }
+  if (r.collapsed) { toast('Erst einen Satz markieren'); return; }
+  if (flowItem(r.startContainer) !== flowItem(r.endContainer)) { toast('Bitte innerhalb eines Absatzes markieren'); return; }
+  if (elOf(r.commonAncestorContainer).closest('.blk-head')) return;
+  // getippte Zeichen direkt vor und hinter der Markierung mitnehmen
+  const sc = r.startContainer, ec = r.endContainer;
+  if (sc.nodeType === 3) { let o = r.startOffset; while (o > 0 && QUOTE_CH.includes(sc.data[o - 1])) o--; r.setStart(sc, o); }
+  if (ec.nodeType === 3) { let o = r.endOffset; while (o < ec.data.length && QUOTE_CH.includes(ec.data[o])) o++; r.setEnd(ec, o); }
+  const span = document.createElement('span'); span.className = kind;
+  span.appendChild(r.extractContents());
+  for (const x of span.querySelectorAll('.rede,.innen')) x.replaceWith(...x.childNodes);
+  const [pre, post] = trimQuotes(span);
+  r.insertNode(span);
+  if (pre) span.before(pre);
+  if (post) span.after(post);
+  const nr = document.createRange(); nr.setStartAfter(span); nr.collapse(true);
+  const s = getSelection(); s.removeAllRanges(); s.addRange(nr); savedRange = nr.cloneRange();
+  onEditorInput();
+}
+function unSpeech(el) { el.replaceWith(...el.childNodes); editor.normalize(); onEditorInput(); }
+function speechItems(target, sel) {
+  const cur = target.closest && target.closest('.rede,.innen');
+  if (cur && editor.contains(cur)) {
+    const isR = cur.classList.contains('rede');
+    return [{ label:isR ? 'Wörtliche Rede aufheben' : 'Innerer Dialog aufheben', fn:() => unSpeech(cur) },
+      { label:isR ? 'Zu innerem Dialog machen' : 'Zu wörtlicher Rede machen', fn:() => { cur.className = isR ? 'innen' : 'rede'; onEditorInput(); } }, '-'];
+  }
+  if (!sel || !sel.toString().trim()) return [];
+  return [{ label:'Rede', row:[{ label:'Wörtliche Rede', title:'Strg+Umschalt+8', fn:() => { savedRange = sel; makeSpeech('rede'); } },
+    { label:'Innerer Dialog', title:'Strg+Umschalt+9', fn:() => { savedRange = sel; makeSpeech('innen'); } }] }, '-'];
+}
+function setSpeechStyle(kind, v) {
+  doc.speech = { ...(doc.speech || {}), [kind]:v }; applySpeech(); touch();
+  if (typeof renderManuscript === 'function' && $('#manu').classList.contains('open')) renderManuscript();
+}
+$('#btn-rede').addEventListener('mousedown', e => e.preventDefault());
+$('#btn-rede').addEventListener('click', e => {
+  const s = doc.speech || {}, inSel = savedRange && !savedRange.collapsed && editor.contains(savedRange.commonAncestorContainer);
+  const cur = savedRange && elOf(savedRange.startContainer).closest('.rede,.innen');
+  const pv = (st, txt) => `<span style="${st}">${esc(txt)}</span>`;
+  const rLook = { farbe:'color:var(--rede)', blase:'background:var(--rede-bg);border-radius:.7em;padding:.05em .4em' };
+  const iLook = { leise:'color:var(--innen)', blase:'background:var(--innen-bg);border-radius:.7em;padding:.05em .4em' };
+  openFx(e.currentTarget,
+    '<div class="fx-t">Wörtliche Rede</div><div class="fx-grid">' +
+    REDE.map(([v, l, o, c]) => `<button data-v="r:${v}" class="${(s.rede || 'de') === v ? 'on' : ''}">${pv(rLook[v] || '', o + 'Komm mit!' + c)}<small>${l}</small></button>`).join('') + '</div>' +
+    '<div class="fx-t" style="margin-top:10px">Innerer Dialog</div><div class="fx-grid">' +
+    INNEN.map(([v, l, o, c]) => `<button data-v="i:${v}" class="${(s.innen || 'kursiv') === v ? 'on' : ''}">${pv('font-style:italic;' + (iLook[v] || ''), o + 'Ob er lügt?' + c)}<small>${l}</small></button>`).join('') + '</div>' +
+    (inSel || cur ? '<hr style="border:0;border-top:1px solid var(--line);margin:8px 0">' +
+      '<button class="fx-act" data-v="do:rede">Markierung zu wörtlicher Rede<kbd>Strg+Umschalt+8</kbd></button>' +
+      '<button class="fx-act" data-v="do:innen">Markierung zu innerem Dialog<kbd>Strg+Umschalt+9</kbd></button>' +
+      (cur ? '<button class="fx-del" data-v="do:none">Aufheben</button>' : '') : ''),
+    v => {
+      const [k, x] = v.split(':');
+      if (k === 'r') setSpeechStyle('rede', x);
+      else if (k === 'i') setSpeechStyle('innen', x);
+      else if (x === 'none') { if (cur) unSpeech(cur); }
+      else makeSpeech(x);
+    });
+});
+
 /* ---------- Suche ---------- */
 const searchEl = $('#search'), searchInp = searchEl.querySelector('input');
 let searchHl = 0, searchRes = [];
@@ -3494,7 +3612,7 @@ function commit() {
 function touch() { dirty = true; updateTitle(); scheduleAutosave(); }
 function restoreSnap(s) {
   const o = JSON.parse(s);
-  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0 };
+  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech };
   if (sel && !selObj()) sel = null;
   renderAll(); updateSidebar();
 }
@@ -3669,7 +3787,7 @@ const headLevel = n => n.type === 'akt' ? 1 : n.type === 'szene' ? 3 : 2;
 // Text eines Knotens für die Ausgabe: ohne Sticky Notes, Icons und Link-Hüllen
 function exportBody(n, keepImages = true) {
   const t = document.createElement('template'); t.innerHTML = cleanHTML(n.text || '');
-  flattenBlocks(t.content);
+  flattenBlocks(t.content); speechToText(t.content);
   for (const x of t.content.querySelectorAll('.note,.ii,.shape,script,style')) x.remove();
   if (!keepImages) for (const x of t.content.querySelectorAll('.pic,img')) x.remove();
   for (const a of t.content.querySelectorAll('a')) a.replaceWith(...a.childNodes);
@@ -3850,7 +3968,7 @@ function cleanStyle(st, def) {
   return o;
 }
 function fileData() {
-  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
+  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, speech:doc.speech, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
 }
 function loadData(o) {
   if (!o || o.app !== 'Brainmap' || typeof o.nodes !== 'object') throw new Error('format');
@@ -3876,7 +3994,10 @@ function loadData(o) {
     const id = String(f.id);
     frames[id] = { id, x:+f.x || 0, y:+f.y || 0, w:clamp(+f.w || 400, 140, 100000), h:clamp(+f.h || 280, 90, 100000), title:String(f.title || 'Rahmen'), color:isHex(f.color) ? f.color : FRAME_COLORS[0] };
   }
-  doc = { nodes, edges, frames, bookGoal:Math.round(clamp(+o.bookGoal || 0, 0, 10000000)) };
+  const sp = o.speech && typeof o.speech === 'object' ? o.speech : {};
+  doc = { nodes, edges, frames, bookGoal:Math.round(clamp(+o.bookGoal || 0, 0, 10000000)),
+    speech:{ rede:REDE.some(r => r[0] === sp.rede) ? sp.rede : 'de', innen:INNEN.some(r => r[0] === sp.innen) ? sp.innen : 'kursiv' } };
+  applySpeech();
   renderAll();
   if (o.view && isFinite(o.view.x) && isFinite(o.view.y) && isFinite(o.view.s)) { view = { x:+o.view.x, y:+o.view.y, s:clamp(+o.view.s, .1, 4) }; applyView(); }
   else { applyView(); fitAll(); }
