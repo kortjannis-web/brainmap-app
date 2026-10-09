@@ -382,7 +382,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #dropline::before{content:"";position:absolute;left:-6px;top:-3px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
 @keyframes blkflash{0%,40%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
 /* Gestaltungs-Popup und Text-Kästen */
-#fxpop{position:fixed;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:8px;z-index:60;display:none}
+#fxpop{position:fixed;width:300px;max-height:calc(100vh - 16px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:8px;z-index:60;display:none}
 #fxpop .fx-t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:4px 4px 6px}
 #fxpop .fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
 #fxpop .fx-grid button{border:1px solid var(--line);background:none;border-radius:8px;padding:6px;cursor:pointer;text-align:left;font-size:13px;color:var(--ink);min-height:44px}
@@ -409,7 +409,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .mk-pill{background:color-mix(in srgb,var(--mk) 22%,transparent);border-radius:.45em;padding:.05em .35em}
 .mk-box{background:color-mix(in srgb,var(--mk) 12%,transparent);border:1.5px solid color-mix(in srgb,var(--mk) 70%,transparent);border-radius:6px;padding:0 .3em}
 /* Stile mit Charakter */
-.mk-crayon{background-repeat:no-repeat;background-size:100% .65em;background-position:0 100%;padding-bottom:.08em}
+.mk-crayon{background-repeat:repeat-x;background-size:4.5em .95em;background-position:0 100%;padding-bottom:.04em}
 .mk-blood{color:#8a0d0d;text-shadow:0 0 1px rgba(120,0,0,.35);padding-bottom:.5em;background-repeat:repeat-x;background-size:3.2em .8em;background-position:0 100%;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 16' preserveAspectRatio='none'%3E%3Cpath fill='%23a10f12' d='M0 1.5 Q8 0 16 1.8 T32 1.4 T48 2 T64 1.5 V4 Q60 4.5 57 4 Q56 9 55 12 Q54 14.5 53 12 Q52 8 51 4.6 Q40 5.2 30 4.4 Q29.5 6.5 28.8 7.5 Q28 9 27.3 7.4 Q26.8 6 26.5 4.3 Q16 5 9 4.2 Q8.4 10 7.6 14 Q6.8 16 6 13.6 Q5.4 9 5 4.3 Q2 4.4 0 4 Z'/%3E%3C/svg%3E")}
 .mk-ember{color:#d9480f;text-shadow:0 0 6px rgba(255,140,0,.75),0 0 14px rgba(255,80,0,.45)}
@@ -417,7 +417,21 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .mk-gold{background-image:linear-gradient(180deg,#f3d77a,#c8961e 55%,#8a6410);-webkit-background-clip:text;background-clip:text;color:transparent;caret-color:#8a6410;font-weight:650}
 .mk-ink{color:#1c2a52;text-shadow:0 0 1.5px rgba(28,42,82,.65),.6px .6px 2.5px rgba(28,42,82,.35)}
 .mk-ghost{color:color-mix(in srgb,var(--ink) 50%,transparent);font-style:italic;letter-spacing:.06em;text-shadow:0 0 5px rgba(140,150,175,.75)}
-.mk-scribble{text-decoration:line-through wavy var(--mk);text-decoration-thickness:2.5px}
+.mk-frost{color:#2b7bb9;text-shadow:0 0 4px rgba(150,210,255,.95),0 0 11px rgba(120,190,255,.6)}
+.mk-poison{color:#3c8d0d;text-shadow:0 0 5px rgba(120,255,60,.75),0 0 12px rgba(90,220,40,.45)}
+.mk-shadow{color:#26262b;text-shadow:2px 2px 0 rgba(0,0,0,.16),4px 4px 7px rgba(0,0,0,.4)}
+.mk-engrave{color:#6d6656;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.35);letter-spacing:.03em}
+.mk-seal{display:inline-block;transform:rotate(-3deg);border:2px solid #b3261e;color:#b3261e;padding:0 .35em;border-radius:5px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;font-size:.9em;box-shadow:inset 0 0 0 2px rgba(179,38,30,.15)}
+.mk-stardust{background-image:linear-gradient(90deg,#7b3fd1,#2f6fd6,#d14fa0);-webkit-background-clip:text;background-clip:text;color:transparent;caret-color:#7b3fd1;filter:drop-shadow(0 0 3px rgba(140,90,255,.55))}
+.mk-slant{background-image:linear-gradient(100deg,transparent .25em,color-mix(in srgb,var(--mk) 45%,transparent) .25em,color-mix(in srgb,var(--mk) 45%,transparent) calc(100% - .25em),transparent calc(100% - .25em));padding:0 .3em}
+.mk-shaky{text-shadow:.7px 0 rgba(0,0,0,.28),-.7px .5px rgba(0,0,0,.22),0 -.6px rgba(0,0,0,.18);letter-spacing:.04em}
+.mk-hand{font-family:'Segoe Script','Bradley Hand','Segoe Print',cursive;color:#23407a;font-size:.95em}
+.mk-glitch{text-shadow:-1.5px 0 rgba(255,0,60,.65),1.5px 0 rgba(0,200,255,.65)}
+:root[data-theme=dark] .mk-frost{color:#9fd4ff}
+:root[data-theme=dark] .mk-shadow{color:#e6e6ea;text-shadow:2px 2px 0 rgba(0,0,0,.5),4px 4px 8px rgba(0,0,0,.8)}
+:root[data-theme=dark] .mk-engrave{color:#a59f90;text-shadow:0 -1px 0 rgba(0,0,0,.85),0 1px 0 rgba(255,255,255,.12)}
+:root[data-theme=dark] .mk-hand{color:#9fb8ee}
+:root[data-theme=dark] .mk-shaky{text-shadow:.7px 0 rgba(255,255,255,.25),-.7px .5px rgba(255,255,255,.2),0 -.6px rgba(255,255,255,.15)}
 :root[data-theme=dark] .mk-blood{color:#e04848}
 :root[data-theme=dark] .mk-ink{color:#b9c6ee;text-shadow:0 0 2px rgba(150,170,240,.6)}
 :root[data-theme=dark] .mk-magic{color:#c4a3ff}
@@ -931,7 +945,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
     <tr><td>Wörtliche Rede</td><td>Satz markieren, dann Strg+Umschalt+8 (oder Rechtsklick, oder „Rede“ ▾). Innerer Dialog: Strg+Umschalt+9. Den Stil wählst du einmal unter „Rede“ ▾ (6 für Rede, 4 für Gedanken), er gilt sofort für das ganze Buch und auch im Export. Getippte Anführungszeichen am Rand werden dabei entfernt.</td></tr>
-    <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Durchgekritzelt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
+    <tr><td>Marker-Stile</td><td>Text markieren, dann Stil ▾ neben den Marker-Farben: halbhoch, Pinselstrich, wellig, unterstrichen, eingekreist, Pille, Kästchen, dazu mit Charakter: Wachsmaler, Blutig, Glut, Magie, Gold, Verlaufene Tinte, Geisterhaft, Frost, Gift, Schatten, Eingraviert, Siegel, Sternenstaub, Leuchtstift schräg, Zittrig, Handschrift, Verzerrt. Farbe darunter wählen (gilt für die farbigen Stile). Klick in einen gestylten Text und Stil ▾ ändert ihn oder entfernt ihn.</td></tr>
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
@@ -3294,12 +3308,13 @@ $('#btn-tbox').addEventListener('click', e => {
 
 // Marker-Stile für markierten Text innerhalb einer Zeile
 const MK = [['half','halbhoch'],['brush','Pinselstrich'],['wave','wellig'],['under','unterstrichen'],['circle','eingekreist'],['pill','Pille'],['box','Kästchen']];
-const MK_FX = [['crayon','Wachsmaler'],['blood','Blutig'],['ember','Glut'],['magic','Magie'],['gold','Gold'],['ink','Verlaufene Tinte'],['ghost','Geisterhaft'],['scribble','Durchgekritzelt']];
+const MK_FX = [['crayon','Wachsmaler'],['blood','Blutig'],['ember','Glut'],['magic','Magie'],['gold','Gold'],['ink','Verlaufene Tinte'],['ghost','Geisterhaft'],
+  ['frost','Frost'],['poison','Gift'],['shadow','Schatten'],['engrave','Eingraviert'],['seal','Siegel'],['stardust','Sternenstaub'],['slant','Leuchtstift schräg'],['shaky','Zittrig'],['hand','Handschrift'],['glitch','Verzerrt']];
 const MK_COLORS = ['#34a853','#f2c200','#e07b00','#d1343b','#e05a9b','#2f6fd6','#7b3fd1'];
 let mkColor = '#34a853';
 const brushBg = c => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 12' preserveAspectRatio='none'><path d='M2 8 C 25 3, 55 11, 98 5' fill='none' stroke='${c}' stroke-width='4.5' stroke-linecap='round' opacity='.85'/></svg>`)}")`;
 // Wachsmaler: Strich mit Körnung (Rauschfilter verschiebt die Kante)
-const crayonBg = c => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 14' preserveAspectRatio='none'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/><feDisplacementMap in='SourceGraphic' scale='3.5'/></filter><g filter='url(#f)' fill='none' stroke='${c}' stroke-linecap='round'><path d='M2 6 C 30 3, 62 9, 98 5' stroke-width='5' opacity='.8'/><path d='M5 10 C 35 7, 66 12, 95 8' stroke-width='3' opacity='.5'/></g></svg>`)}")`;
+const crayonBg = c => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20' preserveAspectRatio='none'><filter id='f' x='-5%' y='-40%' width='110%' height='180%'><feTurbulence type='fractalNoise' baseFrequency='.9 .6' numOctaves='3' seed='4' result='n'/><feDisplacementMap in='SourceGraphic' in2='n' scale='5' result='d'/><feTurbulence type='fractalNoise' baseFrequency='.16 .85' numOctaves='3' seed='9' result='g'/><feColorMatrix in='g' type='matrix' values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 0 0 0 -1.35' result='m'/><feComposite in='d' in2='m' operator='in'/></filter><g filter='url(#f)' fill='none' stroke='${c}' stroke-linecap='round'><path d='M-3 7 C 30 5, 65 9, 103 6.5' stroke-width='5'/><path d='M-3 11.5 C 35 10, 70 13, 103 11' stroke-width='5.5'/><path d='M-3 16 C 30 15, 66 17.5, 103 15.5' stroke-width='4' opacity='.8'/></g></svg>`)}")`;
 function paintMk(span, style, color) {
   span.className = 'mk mk-' + style; span.style.setProperty('--mk', color);
   span.style.backgroundImage = style === 'brush' ? brushBg(color) : style === 'crayon' ? crayonBg(color) : '';
@@ -3816,7 +3831,7 @@ function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
-h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.mk-blood{color:#8a0d0d}.mk-ember{color:#d9480f}.mk-magic{color:#7b3fd1}.mk-gold{color:#a57a14}.mk-ink{color:#1c2a52}.mk-ghost{color:#888;font-style:italic}.mk-scribble{text-decoration:line-through}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
+h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.mk-blood{color:#8a0d0d}.mk-ember{color:#d9480f}.mk-magic{color:#7b3fd1}.mk-gold{color:#a57a14}.mk-ink{color:#1c2a52}.mk-ghost{color:#888;font-style:italic}.mk-frost{color:#2b7bb9}.mk-poison{color:#3c8d0d}.mk-seal{color:#b3261e;border:2px solid #b3261e;padding:0 .3em;text-transform:uppercase}.mk-stardust{color:#7b3fd1}.mk-hand{font-family:'Segoe Script',cursive;color:#23407a}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
 img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}`;
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
