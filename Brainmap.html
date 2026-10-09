@@ -552,6 +552,23 @@ body.focus #sheet-navbtn{display:none}
 .mg::after{content:"";position:absolute;left:7px;top:0;bottom:0;width:2px;background:var(--accent);opacity:.1;transition:opacity .15s}
 .mg:hover::after,.mg.drag::after{opacity:.45}
 body.focus .mg{display:none}
+#sheet.book #paper{--page:#fffdf8;--desk:#e7e1d2;background:linear-gradient(var(--desk),var(--desk)) 0 0/40px 100% no-repeat local,linear-gradient(to right,var(--page) var(--pw),transparent var(--pw)) 40px 24px/calc(var(--pw) + var(--sp)) var(--ph) repeat-x local,var(--desk);overflow:auto}
+:root[data-theme=dark] #sheet.book #paper{--page:#2a2c31;--desk:#1c1d20}
+#sheet.book .sheet-body{padding:24px 40px 40px;min-height:0}
+#sheet.book #editor{box-sizing:content-box;width:var(--tw);height:var(--th);min-height:0;margin:0;padding:var(--mt) var(--mx) var(--mb);
+  column-width:var(--tw);column-gap:calc(var(--mx) * 2 + var(--sp));column-fill:auto;font-size:var(--fs);line-height:1.45;
+  font-family:Georgia,'Palatino Linotype','Book Antiqua',serif;text-align:justify;hyphens:auto}
+#sheet.book #editor p{margin:0;text-indent:1.3em}
+#sheet.book #editor :is(h1,h2,h3,hr,.tbox,section,ul,ol,figure)+p,#sheet.book #editor .blk-body>p:first-child,#sheet.book #editor>p:first-child{text-indent:0}
+#sheet.book #backlinks,#sheet.book #linklegend,#sheet.book .mg,#sheet.book .blk-meta{display:none}
+#sheet.book .blk{background:none;border:1px dashed var(--line)}
+#sheet.book .blk-head{hyphens:manual;text-align:left;padding:6px 4px}
+#sheet.book .blk-body{padding:0 8px 8px}
+#sheet.book .blk-body>section.blk{margin-left:0}
+#pgnums{position:absolute;left:0;top:0;pointer-events:none}
+#pgnums span{position:absolute;transform:translateX(-50%);font:12px Georgia,serif;color:var(--muted)}
+#pgnums span.l{transform:none}#pgnums span.r{transform:translateX(-100%)}
+#sheet:not(.book) #pgnums{display:none}
 #linklegend{margin:0 auto;padding:0 72px 18px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted)}
 #linklegend span{display:inline-flex;align-items:center;gap:5px}
 #linklegend i{font-style:normal;border-radius:3px;padding:0 4px}
@@ -896,7 +913,7 @@ body.focus .mg{display:none}
       <div class="sn-head"><b>Gliederung</b><button id="sn-close-all" title="Alle Kästen zuklappen">alle zu</button><button id="sn-open-all" title="Alle Kästen aufklappen">alle auf</button></div>
       <div id="sn-tree"></div>
     </nav>
-    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div class="mg" id="mg-l" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div class="mg" id="mg-r" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
+    <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="pgnums" aria-hidden="true"></div><div class="mg" id="mg-l" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div class="mg" id="mg-r" title="Ziehen ändert die Breite der Schreibfläche, Doppelklick: volle Breite"></div><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
       <div id="linklegend" aria-label="Legende der Link-Farben">
         <span><i style="color:var(--lk-box);background:var(--lk-box-bg);text-decoration:underline">Begriff</i> andere Box</span>
         <span><i style="color:var(--lk-sub);background:var(--lk-sub-bg);text-decoration:underline">Begriff</i> Unterstrang</span>
@@ -943,6 +960,7 @@ body.focus .mg{display:none}
     <tr><td>Bilder</td><td>Rechtsklick auf die Fläche: Bild hier einfügen. Bild auf einen Block ziehen setzt es als Hintergrund. Im Text: Knopf Bild, Strg+V oder hineinziehen. Rechtsklick aufs Bild für Umfluss, Größe, Rahmen. Bild im Text ziehen verschiebt es.</td></tr>
     <tr><td>Sortieren</td><td>Links: Raster-Knopf (Einrasten beim Ziehen) und Aufräumen-Knopf (ordnet Äste als Baum, mit Auswahl nur diesen Ast). Bei Mehrfachauswahl rechts: Ausrichten und Verteilen.</td></tr>
     <tr><td>Schriftgröße</td><td>Block ausgewählt: Strg+↑ / Strg+↓. Im Text: Wort markieren, dann Strg+↑ / Strg+↓ oder im Größenfeld die Pfeiltasten.</td></tr>
+    <tr><td>Buchseiten</td><td>Im Textblatt Knopf ↔ oben: „Buchseiten“ zeigt echte Seiten nebeneinander (Taschenbuch, Roman oder A5), mit Seitenumbruch mitten im Absatz und Buchsatz (eingerückte Absätze). Mausrad blättert, Strg+Mausrad vergrößert. Seitenzahlen: keine, Mitte oder außen. Beim Export als PDF oder Druck gelten Format und Seitenzahlen mit.</td></tr>
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster. Ränder links und rechts vom Text ziehen ändert die Breite (Doppelklick: volle Breite), Knopf ↔ oben bietet feste Breiten.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
@@ -2371,7 +2389,7 @@ $('#btn-icon').addEventListener('click', e => {
 // Breite der Schreibfläche: Ränder links und rechts ziehen. Gilt fürs ganze Buch (doc.page.w, null = volle Breite)
 const PAD_X = 72;
 function applyTextWidth() {
-  const w = !document.body.classList.contains('focus') && doc.page && doc.page.w;
+  const w = !document.body.classList.contains('focus') && doc.page && doc.page.mode !== 'book' && doc.page.w;
   for (const el of [editor, $('#backlinks'), $('#linklegend')]) el.style.maxWidth = w ? (w + PAD_X * 2) + 'px' : '';
   placeMargins();
 }
@@ -2382,6 +2400,56 @@ function placeMargins() {
   $('#mg-r').style.left = (editor.offsetLeft + editor.offsetWidth - parseFloat(cs.paddingRight)) + 'px';
 }
 function setTextWidth(w) { doc.page = { ...doc.page, w }; applyTextWidth(); touch(); }
+// Buchseiten: Format in cm, Schrift in pt. Maßstab so, dass eine Seite in die Fensterhöhe passt
+const PAGE_FMT = {
+  tb:{ name:'Taschenbuch 12,5 × 19 cm', w:12.5, h:19, mt:1.7, mb:2.1, mx:1.6, fs:10.5 },
+  roman:{ name:'Roman 13,5 × 21,5 cm', w:13.5, h:21.5, mt:1.9, mb:2.3, mx:1.8, fs:11 },
+  a5:{ name:'A5 14,8 × 21 cm', w:14.8, h:21, mt:2, mb:2.4, mx:2, fs:11 }
+};
+let bookZoom = 1;
+try { bookZoom = clamp(+localStorage.getItem('bm-book-zoom') || 1, .5, 2.5); } catch (_) {}
+const isBook = () => !!sheetId && doc.page.mode === 'book' && !document.body.classList.contains('focus');
+function applyBook() {
+  const on = isBook();
+  sheet.classList.toggle('book', on);
+  if (!on) { renderPageNums(); return; }
+  const f = PAGE_FMT[doc.page.fmt] || PAGE_FMT.tb, cm = 37.795;
+  const s = clamp((paper.clientHeight - 64) / (f.h * cm), .45, 1.6) * bookZoom, px = v => (v * cm * s).toFixed(1) + 'px';
+  const v = { '--pw':px(f.w), '--ph':px(f.h), '--mt':px(f.mt), '--mb':px(f.mb), '--mx':px(f.mx), '--tw':px(f.w - 2 * f.mx), '--th':px(f.h - f.mt - f.mb), '--sp':Math.round(26 * s) + 'px', '--fs':(f.fs * 96 / 72 * s).toFixed(2) + 'px' };
+  for (const k in v) paper.style.setProperty(k, v[k]);
+  renderPageNums();
+}
+// Seitenzahlen unter jede Seite: Seitenzahl ergibt sich aus der rechten Kante des letzten Inhalts
+function renderPageNums() {
+  const box = $('#pgnums'); box.innerHTML = '';
+  if (!isBook() || doc.page.nums === 'off') return;
+  const cs = getComputedStyle(paper), pw = parseFloat(cs.getPropertyValue('--pw')), sp = parseFloat(cs.getPropertyValue('--sp')), ph = parseFloat(cs.getPropertyValue('--ph'));
+  const mb = parseFloat(cs.getPropertyValue('--mb')), mx = parseFloat(cs.getPropertyValue('--mx')), P = pw + sp;
+  const r = document.createRange(); r.selectNodeContents(editor);
+  const er = editor.getBoundingClientRect(); let right = er.left + pw;
+  for (const x of r.getClientRects()) if (x.width) right = Math.max(right, x.right);
+  const pages = Math.max(1, Math.floor((right - er.left - 1) / P) + 1), x0 = editor.offsetLeft, y = editor.offsetTop + ph - mb / 2 - 8;
+  let h = '';
+  for (let k = 0; k < pages; k++) {
+    const left = x0 + k * P, n = k + 1;
+    if (doc.page.nums === 'out') h += n % 2 ? `<span class="r" style="left:${left + pw - mx}px;top:${y}px">${n}</span>` : `<span class="l" style="left:${left + mx}px;top:${y}px">${n}</span>`;
+    else h += `<span style="left:${left + pw / 2}px;top:${y}px">${n}</span>`;
+  }
+  box.innerHTML = h;
+}
+function setPage(p) { doc.page = { ...doc.page, ...p }; applyTextWidth(); applyBook(); touch(); }
+// Im Buchmodus blättert das Mausrad seitwärts
+paper.addEventListener('wheel', e => {
+  if (!isBook()) return;
+  if (e.ctrlKey) {               // Strg+Mausrad: Seiten größer oder kleiner
+    e.preventDefault(); bookZoom = clamp(bookZoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1), .5, 2.5);
+    try { localStorage.setItem('bm-book-zoom', String(bookZoom)); } catch (_) {}
+    applyBook(); return;
+  }
+  if (e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+  e.preventDefault(); paper.scrollLeft += e.deltaY;
+}, { passive:false });
+new ResizeObserver(() => { if (isBook()) applyBook(); }).observe(paper);
 for (const h of [$('#mg-l'), $('#mg-r')]) {
   h.addEventListener('mousedown', e => {
     if (e.button) return;
@@ -2397,11 +2465,22 @@ for (const h of [$('#mg-l'), $('#mg-r')]) {
 }
 new ResizeObserver(placeMargins).observe(paper);
 function pageMenu(btn) {
-  const w = doc.page.w;
-  openFx(btn, '<div class="fx-t">Breite der Schreibfläche</div><div class="fx-grid">' +
-    [['full','Volle Breite',null],['read','Lesebreite',680],['narrow','Schmal',520]].map(([v, l, x]) => `<button data-v="w:${v}" class="${w === x ? 'on' : ''}">${l}</button>`).join('') +
-    '</div><div class="fx-t" style="margin-top:8px;text-transform:none;letter-spacing:0">Oder die Ränder links und rechts vom Text ziehen.</div>',
-    v => { const k = v.split(':')[1]; setTextWidth({ full:null, read:680, narrow:520 }[k]); });
+  const p = doc.page, on = (a, b) => a === b ? 'on' : '';
+  openFx(btn, '<div class="fx-t">Ansicht</div><div class="fx-grid">' +
+    `<button data-v="m:flow" class="${on(p.mode, 'flow')}">Durchgehend<small>eine lange Seite</small></button><button data-v="m:book" class="${on(p.mode, 'book')}">Buchseiten<small>echte Seiten nebeneinander</small></button></div>` +
+    (p.mode === 'book'
+      ? '<div class="fx-t" style="margin-top:10px">Format</div><div class="fx-grid">' + Object.entries(PAGE_FMT).map(([k, f]) => `<button data-v="f:${k}" class="${on(p.fmt, k)}">${f.name.split(' ')[0]}<small>${f.name.split(' ').slice(1).join(' ')}</small></button>`).join('') + '</div>' +
+        '<div class="fx-t" style="margin-top:10px">Seitenzahlen</div><div class="fx-grid">' + [['off','Keine'],['mid','Mitte'],['out','Außen']].map(([k, l]) => `<button data-v="n:${k}" class="${on(p.nums, k)}">${l}</button>`).join('') + '</div>'
+      : '<div class="fx-t" style="margin-top:10px">Breite der Schreibfläche</div><div class="fx-grid">' +
+        [['full','Volle Breite',null],['read','Lesebreite',680],['narrow','Schmal',520]].map(([v, l, x]) => `<button data-v="w:${v}" class="${on(p.w, x)}">${l}</button>`).join('') +
+        '</div><div class="fx-t" style="margin-top:8px;text-transform:none;letter-spacing:0">Oder die Ränder links und rechts vom Text ziehen.</div>'),
+    v => {
+      const [k, x] = v.split(':');
+      if (k === 'w') setTextWidth({ full:null, read:680, narrow:520 }[x]);
+      else if (k === 'm') { setPage({ mode:x }); paper.scrollLeft = 0; }
+      else if (k === 'f') setPage({ fmt:x });
+      else if (k === 'n') setPage({ nums:x });
+    });
 }
 $('#sheet-width').addEventListener('mousedown', e => e.preventDefault());
 $('#sheet-width').addEventListener('click', e => pageMenu(e.currentTarget));
@@ -2422,12 +2501,12 @@ function openSheet(id) {
   sheetTitle.readOnly = ICON_TOKEN.test(n.title || ''); ICON_TOKEN.lastIndex = 0;
   sheetTitle.title = sheetTitle.readOnly ? 'Überschrift mit Icons: bitte im Block bearbeiten' : '';
   editor.innerHTML = n.text || '';
-  migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav(); applyTextWidth();
+  migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav(); applyTextWidth(); applyBook();
   requestAnimationFrame(() => { for (const s of editor.querySelectorAll('.shape')) renderShape(s); });
   editor.style.fontFamily = n.style && n.style.font ? fontStack(n.style.font) : '';
   applyAutoLinks(); markBrokenLinks(); renderBacklinks(id);
   $('#sheet-goal').value = n.goal || ''; updateSheetStat();
-  backdrop.style.display = 'block'; scroller.style.display = 'block'; paper.scrollTop = 0;
+  backdrop.style.display = 'block'; scroller.style.display = 'block'; paper.scrollTop = 0; paper.scrollLeft = 0;
   sheet.style.transition = 'none'; sheet.style.transform = 'none';
   sheet.style.transform = nodeTransform(id);
   sheet.style.opacity = '.3';
@@ -2448,7 +2527,7 @@ function openSheet(id) {
 function syncSheet() {
   clearTimeout(syncT);
   const n = sheetId && doc.nodes[sheetId]; if (!n) return;
-  refreshBlocks(); renderSheetNav();
+  refreshBlocks(); renderSheetNav(); renderPageNums();
   const c = editor.cloneNode(true);
   clearAutoLinks(c);
   for (const x of c.querySelectorAll('.blk-meta')) x.removeAttribute('data-w');
@@ -2472,7 +2551,7 @@ let syncT = 0;
 function onEditorInput() { normalizeBlocks(); updateSheetStat(); clearTimeout(syncT); syncT = setTimeout(syncSheet, 300); touch(); }
 function toggleFocus(on) {
   on = on === undefined ? !document.body.classList.contains('focus') : on;
-  document.body.classList.toggle('focus', on); $('#sheet-focus').setAttribute('aria-pressed', String(on)); applyTextWidth();
+  document.body.classList.toggle('focus', on); $('#sheet-focus').setAttribute('aria-pressed', String(on)); applyTextWidth(); applyBook();
   if (on) { editor.focus(); centerCaret(); }
 }
 // Schreibmaschinen-Effekt: die Zeile mit der Schreibmarke bleibt etwa in der Mitte
@@ -3009,7 +3088,8 @@ function revealInSheet(el) {
   if (opened) { onEditorInput(); renderSheetNav(); }
   const f = el.matches('section.blk') ? blkField(el, 'title') : el;
   const top = el.getBoundingClientRect().top - paper.getBoundingClientRect().top + paper.scrollTop - 16;
-  caretIn(f); paper.scrollTo({ top, behavior:'smooth' });
+  caretIn(f);
+  if (isBook()) el.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' }); else paper.scrollTo({ top, behavior:'smooth' });
   if (el.matches('section.blk')) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
 }
 $('#sn-tree').addEventListener('mousedown', e => e.preventDefault());
@@ -3025,8 +3105,8 @@ $('#sn-open-all').addEventListener('click', () => setAllBlocks(true));
 // Wo bin ich gerade? Letzter Eintrag, dessen Anfang oberhalb der Blattmitte liegt
 let navPosT = 0;
 function markNavPos() {
-  const lim = paper.getBoundingClientRect().top + paper.clientHeight * .3; let cur = -1;
-  navItems.forEach((el, i) => { if (el.offsetParent && el.getBoundingClientRect().top <= lim) cur = i; });
+  const pr = paper.getBoundingClientRect(), book = isBook(), lim = book ? pr.left + paper.clientWidth * .3 : pr.top + paper.clientHeight * .3; let cur = -1;
+  navItems.forEach((el, i) => { if (el.offsetParent && (book ? el.getBoundingClientRect().left : el.getBoundingClientRect().top) <= lim) cur = i; });
   for (const r of $('#sn-tree').querySelectorAll('.sn-row')) r.classList.toggle('cur', +r.dataset.i === cur);
 }
 paper.addEventListener('scroll', () => { cancelAnimationFrame(navPosT); navPosT = requestAnimationFrame(markNavPos); });
@@ -3860,13 +3940,22 @@ function exportBody(n, keepImages = true) {
   for (const a of t.content.querySelectorAll('a')) a.replaceWith(...a.childNodes);
   return t.innerHTML;
 }
+// Druck und PDF: im Buchmodus Seitenformat, Ränder und Seitenzahlen
+function pageCSS() {
+  const p = doc.page; if (p.mode !== 'book') return '';
+  const f = PAGE_FMT[p.fmt] || PAGE_FMT.tb, num = '{content:counter(page);font:10pt Georgia,serif}';
+  const nums = p.nums === 'mid' ? `@bottom-center${num}` : '';
+  return `@page{size:${f.w}cm ${f.h}cm;margin:${f.mt}cm ${f.mx}cm ${f.mb}cm;${nums}}` +
+    (p.nums === 'out' ? `@page:right{@bottom-right${num}}@page:left{@bottom-left${num}}` : '') +
+    `@media print{body{font-size:${f.fs}pt;line-height:1.45}p{margin:0;text-indent:1.3em;text-align:justify}h2+p,h3+p{text-indent:0}}`;
+}
 function bookTitle() { return String(fileName || 'Buch').replace(/\.brainmap$/i, ''); }
 function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
 h2.chapter{text-align:center}ul.l-dash,ul.l-arrow,ul.l-check,ul.l-circle{list-style:none}ul.l-dash>li::before{content:'- '}ul.l-arrow>li::before{content:'→ '}ul.l-check>li::before{content:'✓ '}ul.l-circle>li::before{content:'○ '}hr.deco-line{border:0;border-top:1px solid #999;margin:1.4em 20%}hr.deco-dots,hr.deco-star,hr.deco-wave{border:0;text-align:center}hr.deco-dots::after{content:'•   •   •'}hr.deco-star::after{content:'✦'}hr.deco-wave::after{content:'~   ~   ~'}.mk-half{background:linear-gradient(transparent 55%,#c8e6c9 55%)}.mk-wave{text-decoration:underline wavy}.mk-under{text-decoration:underline}.mk-circle,.mk-box{border:1.5px solid #888;border-radius:8px;padding:0 .2em}.mk-pill{background:#e8f0e0;border-radius:6px}.mk-blood{color:#8a0d0d}.mk-ember{color:#d9480f}.mk-magic{color:#7b3fd1}.mk-gold{color:#a57a14}.mk-ink{color:#1c2a52}.mk-ghost{color:#888;font-style:italic}.mk-frost{color:#2b7bb9}.mk-poison{color:#3c8d0d}.mk-seal{color:#b3261e;border:2px solid #b3261e;padding:0 .3em;text-transform:uppercase}.mk-stardust{color:#7b3fd1}.mk-hand{font-family:'Segoe Script',cursive;color:#23407a}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
-img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}`;
+img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}` + pageCSS();
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
   for (const id of ids) {
