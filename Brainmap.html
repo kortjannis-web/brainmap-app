@@ -745,7 +745,7 @@ body.focus #sheet-navbtn{display:none}
       <button id="sheet-close" aria-label="Schließen" title="Schließen (Esc)"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
     </header>
     <div class="sheet-tools">
-      <select id="fmt-block" title="Absatzformat" aria-label="Absatzformat">
+      <select id="fmt-block" title="Absatzformat: Strg+1/2/3 Überschrift, Strg+0 Text, oder # / ## / ### und Leertaste am Zeilenanfang" aria-label="Absatzformat">
         <option value="p">Normaler Text</option>
         <option value="h1">Überschrift 1</option>
         <option value="h2">Überschrift 2</option>
@@ -838,6 +838,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster, Knopf ↔ oben schaltet auf Lesebreite.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
+    <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
@@ -2331,7 +2332,7 @@ sheetTitle.addEventListener('input', () => { const n = doc.nodes[sheetId]; if (n
 sheetTitle.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); editor.focus(); } });
 editor.addEventListener('input', onEditorInput);
 editor.addEventListener('keydown', e => {
-  if (blockKeys(e)) return;
+  if (blockKeys(e) || lineFormatKeys(e)) return;
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); document.execCommand('insertLineBreak'); onEditorInput(); }
   if ((e.key === 'ArrowUp' || e.key === 'ArrowDown') && (e.ctrlKey || e.metaKey)) { e.preventDefault(); applyFontSize(selSize() + (e.key === 'ArrowUp' ? 2 : -2)); }
 });
@@ -2906,6 +2907,40 @@ function applyRank(kind, range) {
   if (!body.firstChild) body.appendChild(emptyP());
   liftBlock(b); normalizeBlocks(); onEditorInput();
   caretIn(blkField(b, 'title')); b.classList.add('flash');
+}
+// Schnell formatieren: Strg+1/2/3 Überschrift, Strg+0 Text; am Zeilenanfang # , ## , ### und Leertaste
+function currentLine() {
+  const s = getSelection(); if (!s.rangeCount || !editor.contains(s.anchorNode)) return null;
+  const el = s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentNode;
+  if (el.closest('.blk-head')) return null;
+  const l = flowItem(s.anchorNode); return l && /^(P|H1|H2|H3|DIV)$/.test(l.nodeName) && !l.className ? l : null;
+}
+function setLineTag(l, tag) {
+  const s = getSelection(), r = s.rangeCount ? s.getRangeAt(0) : null, off = r ? (() => { const x = document.createRange(); x.selectNodeContents(l); x.setEnd(r.startContainer, r.startOffset); return x.toString().length; })() : 0;
+  const n = retag(l, tag);
+  // Schreibmarke an dieselbe Textstelle
+  const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT); let left = off, t;
+  while ((t = w.nextNode())) { if (left <= t.data.length) { const nr = document.createRange(); nr.setStart(t, left); nr.collapse(true); s.removeAllRanges(); s.addRange(nr); break; } left -= t.data.length; }
+  if (!t) caretIn(n);
+  onEditorInput(); updateToolState();
+  return n;
+}
+function lineFormatKeys(e) {
+  if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && /^Digit[0-3]$/.test(e.code)) {
+    const l = currentLine(); e.preventDefault(); if (!l) return true;
+    setLineTag(l, e.code === 'Digit0' ? 'p' : 'h' + e.code[5]); return true;
+  }
+  if (e.key !== ' ' || e.ctrlKey || e.metaKey || e.altKey) return false;
+  const s = getSelection(); if (!s.isCollapsed) return false;
+  const l = currentLine(); if (!l) return false;
+  const r = document.createRange(); r.selectNodeContents(l); r.setEnd(s.anchorNode, s.anchorOffset);
+  const before = r.toString(), m = /^(#{1,3})$/.exec(before);
+  if (!m) return false;
+  e.preventDefault();
+  r.deleteContents();
+  const n = setLineTag(l, 'h' + m[1].length);
+  if (!n.textContent) { n.innerHTML = '<br>'; caretIn(n, false); }
+  return true;
 }
 function blockMenu(b, x, y) {
   const closed = b.classList.contains('closed'), kids = blkBody(b).querySelectorAll('section.blk');
