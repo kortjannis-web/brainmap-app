@@ -381,6 +381,24 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #dropline{position:absolute;height:3px;border-radius:2px;background:var(--accent);pointer-events:none;display:none;z-index:5}
 #dropline::before{content:"";position:absolute;left:-6px;top:-3px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
 @keyframes blkflash{0%,40%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+/* Gestaltungs-Popup und Text-Kästen */
+#fxpop{position:fixed;width:300px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-lg);padding:8px;z-index:60;display:none}
+#fxpop .fx-t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:4px 4px 6px}
+#fxpop .fx-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+#fxpop .fx-grid button{border:1px solid var(--line);background:none;border-radius:8px;padding:6px;cursor:pointer;text-align:left;font-size:13px;color:var(--ink);min-height:44px}
+#fxpop .fx-grid button:hover{border-color:var(--accent)}
+#fxpop .fx-cols{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:10px 4px 2px}
+#fxpop .fx-cols .sw{width:24px;height:24px}
+#fxpop .fx-cols .sw.on{outline:2px solid var(--accent);outline-offset:2px}
+#fxpop .fx-del{display:block;margin-top:6px;border:0;background:none;color:var(--danger);cursor:pointer;font-size:13px;padding:8px 4px}
+.tbox{margin:12px 0;padding:10px 18px;border-radius:14px;background:color-mix(in srgb,var(--tb,#d9c89c) 28%,#fffdf8);border:1px solid color-mix(in srgb,var(--tb,#d9c89c) 60%,transparent)}
+.tbox>:first-child{margin-top:0}.tbox>:last-child{margin-bottom:0}
+.tbox[data-v=hinweis]{border:0;border-left:4px solid var(--tb,#2f6fd6);border-radius:6px 14px 14px 6px;background:color-mix(in srgb,var(--tb,#2f6fd6) 10%,transparent)}
+.tbox[data-v=zitat]{border:0;border-left:3px solid var(--tb,#b5a77f);border-radius:0;background:none;font-family:Georgia,'Times New Roman',serif;font-style:italic;padding:4px 22px}
+.tbox[data-v=dialog]{border:0;border-radius:20px 20px 20px 4px;background:color-mix(in srgb,var(--tb,#2f6fd6) 14%,transparent);width:fit-content;max-width:80%}
+.tbox[data-v=rahmen]{background:none;border:2px dashed var(--tb,#b9ad8c)}
+:root[data-theme=dark] .tbox{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
+:root[data-theme=dark] .tbox[data-v=zitat],:root[data-theme=dark] .tbox[data-v=rahmen]{background:none}
 /* Gliederung links im Textblatt */
 #sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
 #sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
@@ -774,6 +792,7 @@ body.focus #sheet-navbtn{display:none}
       <span class="sep"></span>
       <button class="tb" data-cmd="insertUnorderedList" title="Aufzählung" aria-label="Aufzählung">• Liste</button>
       <button class="tb" data-cmd="insertOrderedList" title="Nummerierung" aria-label="Nummerierung">1. Liste</button>
+      <button class="tb fx-btn" id="btn-tbox" title="Absätze in einen Kasten setzen: beige, Hinweis, Zitat, Dialog, Rahmen" aria-label="Kasten um Absätze" aria-haspopup="true">Kasten ▾</button>
       <button class="tb" data-cmd="removeFormat" title="Formatierung entfernen" aria-label="Formatierung entfernen">⌫ Format</button>
       <span class="sep"></span>
       <button class="tb" id="btn-kap" title="Kapitel-Kasten einfügen (Strg+Umschalt+2). Rechtsklick auf Text: Rang vergeben" aria-label="Kapitel-Kasten einfügen">+ Kapitel</button>
@@ -808,6 +827,7 @@ body.focus #sheet-navbtn{display:none}
 
 <div id="menu" role="menu"></div>
 <div id="iconpop"><div class="ipick" id="pop-ipick"></div></div>
+<div id="fxpop" role="dialog" aria-label="Gestaltung"></div>
 <div id="minipop" role="dialog" aria-label="Mini-Block"><div class="mp-head"><b></b><button class="mp-go" title="In der Mindmap zeigen">In Map</button><button class="mp-x" aria-label="Schließen">✕</button></div><div class="mp-body" contenteditable="true" spellcheck="true"></div></div>
 <div id="picker"><input placeholder="Überschrift suchen …" aria-label="Überschrift suchen"><div class="list"></div></div>
 <div id="ask" role="alertdialog"><div class="ask-text"></div><div class="ask-btns"><button class="btn" data-v="0">Abbrechen</button><button class="btn primary" data-v="1">OK</button></div></div>
@@ -843,6 +863,7 @@ body.focus #sheet-navbtn{display:none}
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
     <tr><td>Überschriften</td><td>Im Textblatt: Strg+1 / 2 / 3 macht die Zeile zu Überschrift 1 bis 3, Strg+0 zurück zu Text. Oder am Zeilenanfang #, ## oder ### und Leertaste tippen.</td></tr>
+    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, Farbe darunter. Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
@@ -2697,7 +2718,7 @@ function makeBlock(kind, title = '', sub = '') {
 const blkHead = b => b.querySelector(':scope>.blk-head'), blkBody = b => b.querySelector(':scope>.blk-body');
 const blkField = (b, f) => b.querySelector(':scope>.blk-head .blk-' + f);
 const emptyP = () => { const p = document.createElement('p'); p.innerHTML = '<br>'; return p; };
-const isFlowBox = el => el === editor || (el.classList && el.classList.contains('blk-body'));
+const isFlowBox = el => el === editor || (el.classList && (el.classList.contains('blk-body') || el.classList.contains('tbox')));
 // Zeile oder Kasten, in dem ein Knoten liegt (direktes Kind des Blatts oder eines Kasten-Inhalts)
 function flowItem(node) {
   while (node && node !== editor) { if (node.parentNode && isFlowBox(node.parentNode)) return node.nodeType === 1 ? node : null; node = node.parentNode; }
@@ -2736,9 +2757,10 @@ function normalizeBlocks() {
     }
     for (const x of [...b.childNodes]) if (x !== head && x !== body) { if (x.nodeType === 3 && !x.data.trim()) x.remove(); else body.appendChild(x); }
     if (!body.firstChild) body.appendChild(emptyP());
-    if (body.lastElementChild && body.lastElementChild.matches('section.blk')) body.appendChild(emptyP());
+    if (body.lastElementChild && body.lastElementChild.matches('section.blk,.tbox')) body.appendChild(emptyP());
   }
-  if (editor.lastElementChild && editor.lastElementChild.matches('section.blk')) editor.appendChild(emptyP());
+  for (const t of [...editor.querySelectorAll('.tbox')]) if (!t.textContent.trim() && !t.querySelector('img,hr,svg,.pic')) t.remove();
+  if (editor.lastElementChild && editor.lastElementChild.matches('section.blk,.tbox')) editor.appendChild(emptyP());
 }
 // Wortzahl und automatische Kennung im Kopf (nur Anzeige, wird nicht gespeichert)
 function refreshBlocks() {
@@ -2795,7 +2817,7 @@ function blockKeys(e) {
   if (e.key === 'Backspace') {
     r.setEnd(s.anchorNode, s.anchorOffset); if (r.toString().length) return false;
     const prev = line.previousElementSibling, par = line.parentNode;
-    if (!prev && par !== editor) {          // Anfang eines Kasten-Inhalts: Kopf nie mitlöschen
+    if (!prev && par.classList.contains('blk-body')) {          // Anfang eines Kasten-Inhalts: Kopf nie mitlöschen
       e.preventDefault();
       if (isEmptyLine(line) && par.children.length > 1) { line.remove(); onEditorInput(); }
       caretIn(blkField(par.parentNode, 'title')); return true;
@@ -2811,7 +2833,7 @@ function blockKeys(e) {
     r.setStart(s.anchorNode, s.anchorOffset); if (r.toString().length) return false;
     const next = line.nextElementSibling;
     if (next && next.matches('section.blk')) { e.preventDefault(); if (isEmptyLine(line) && line.previousElementSibling) { line.remove(); onEditorInput(); } return true; }
-    if (!next && line.parentNode !== editor) { e.preventDefault(); return true; }
+    if (!next && line.parentNode.classList.contains('blk-body')) { e.preventDefault(); return true; }
   }
   return false;
 }
@@ -3033,7 +3055,7 @@ function blockDropAt(x, y, moving) {
   let item;
   if (isFlowBox(el)) {
     const kids = [...el.children].filter(k => k !== moving);
-    if (!kids.length) return el === editor ? null : { mode:'into', box:el.parentNode };
+    if (!kids.length) return el.classList.contains('blk-body') ? { mode:'into', box:el.parentNode } : null;
     item = kids.find(k => k.getBoundingClientRect().bottom > y) || kids[kids.length - 1];
   } else item = flowItem(el);
   if (!item || item === moving || moving.contains(item)) return null;
@@ -3122,6 +3144,58 @@ function flattenBlocks(root) {
     b.replaceWith(t.content, ...(body ? body.childNodes : []));
   }
 }
+
+/* ---------- Gestaltung im Text (Kästen, Marker-Stile, Listen, Trenner) ---------- */
+const fxpop = $('#fxpop');
+let fxCb = null;
+function openFx(btn, html, cb) {
+  fxpop.innerHTML = html; fxCb = cb;
+  const b = btn.getBoundingClientRect(); placePopup(fxpop, b.left, b.bottom + 6);
+}
+const hideFx = () => { fxpop.style.display = 'none'; fxCb = null; };
+fxpop.addEventListener('mousedown', e => e.preventDefault());
+fxpop.addEventListener('click', e => {
+  const b = e.target.closest('[data-v]'); if (!b || !fxCb) return;
+  const cb = fxCb; hideFx(); restoreSel(); cb(b.dataset.v, b.dataset.c);
+});
+window.addEventListener('mousedown', e => { if (fxpop.style.display === 'block' && !fxpop.contains(e.target)) hideFx(); }, true);
+const elOf = n => n.nodeType === 1 ? n : n.parentNode;
+// Zeilen einer Markierung im selben Textbereich (erste bis letzte)
+function rangeLines(r) {
+  const a = flowItem(r.startContainer); if (!a || elOf(r.startContainer).closest('.blk-head')) return [];
+  let z = flowItem(r.endContainer);
+  while (z && z.parentNode !== a.parentNode) z = z.parentNode === editor ? null : z.parentNode;
+  const out = []; for (let x = a; x; x = x.nextElementSibling) { out.push(x); if (!z || x === z) break; }
+  return out;
+}
+const fxSwatches = (cols, cur) => '<div class="fx-cols"><span class="tlabel">Farbe</span>' + cols.map(c => `<button class="sw${c === cur ? ' on' : ''}" style="background:${c}" data-v="c" data-c="${c}" title="${c}" aria-label="Farbe ${c}"></button>`).join('') + '</div>';
+// Kästen um Absätze
+const TBOX = [['beige','Beige'],['hinweis','Hinweis'],['zitat','Zitat'],['dialog','Dialog'],['rahmen','Rahmen']];
+const TBOX_COLORS = ['#d9c89c','#34a853','#2f6fd6','#e07b00','#d1343b','#7b3fd1','#8a8472'];
+function applyTbox(v, color) {
+  const r = savedRange; if (!r || !editor.contains(r.startContainer)) { toast('Erst in den Text klicken'); return; }
+  const cur = elOf(r.startContainer).closest('.tbox');
+  if (v === 'none') { if (cur) { cur.replaceWith(...cur.childNodes); normalizeBlocks(); onEditorInput(); } return; }
+  if (cur && editor.contains(cur) && cur.contains(r.endContainer)) {
+    if (v !== 'c') cur.dataset.v = v;
+    if (color) cur.style.setProperty('--tb', color);
+    onEditorInput(); return;
+  }
+  const lines = rangeLines(r); if (!lines.length) { toast('Erst in einen Absatz klicken'); return; }
+  const box = document.createElement('div'); box.className = 'tbox'; box.dataset.v = v === 'c' ? 'beige' : v;
+  if (color) box.style.setProperty('--tb', color);
+  lines[0].before(box); box.append(...lines);
+  if (!box.nextElementSibling) box.after(emptyP());
+  normalizeBlocks(); onEditorInput(); caretIn(lines[lines.length - 1]);
+}
+$('#btn-tbox').addEventListener('mousedown', e => e.preventDefault());
+$('#btn-tbox').addEventListener('click', e => {
+  const cur = savedRange && elOf(savedRange.startContainer).closest('.tbox');
+  openFx(e.currentTarget, '<div class="fx-t">Kasten um die Absätze</div><div class="fx-grid">' +
+    TBOX.map(([v, l]) => `<button data-v="${v}"><span class="tbox" data-v="${v}" style="margin:0;padding:4px 10px;display:block">${l}</span></button>`).join('') + '</div>' +
+    fxSwatches(TBOX_COLORS, cur && cur.style.getPropertyValue('--tb').trim()) +
+    (cur ? '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
+});
 
 /* ---------- Suche ---------- */
 const searchEl = $('#search'), searchInp = searchEl.querySelector('input');
@@ -3360,7 +3434,7 @@ function buildBookHTML(ids, { word = false, withTitle = true } = {}) {
   const css = `body{font-family:Georgia,'Times New Roman',serif;font-size:12pt;line-height:1.5;max-width:42em;margin:2em auto;padding:0 1em;color:#111}
 h1,h2,h3{line-height:1.25}h1{font-size:22pt;text-align:center}h2{font-size:16pt}h3{font-size:13pt;font-style:italic}
 .booktitle{font-size:30pt;text-align:center;margin:3em 0}.pb{page-break-before:always}
-h2.chapter{text-align:center}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
+h2.chapter{text-align:center}.tbox{border:1px solid #d9c89c;border-radius:10px;padding:8px 14px;margin:10px 0;background:#f8f2e2}.lbl{display:block;font-size:.6em;letter-spacing:.08em;text-transform:uppercase}.sepc{display:none}.subtitle{text-align:center;font-style:italic}hr.scene{border:0;text-align:center}hr.scene::after{content:'*   *   *'}
 img{max-width:100%}p{margin:0 0 .6em}@media print{body{margin:0;max-width:none}}`;
   let h = '', first = true;
   if (withTitle) h += `<h1 class="booktitle">${esc(bookTitle())}</h1><div class="pb"></div>`;
