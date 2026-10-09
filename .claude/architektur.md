@@ -34,6 +34,7 @@ doc.nodes[id]  = { id, x, y, title, sub, text(HTML), style, collapsed, mini, min
                    type (idee|akt|kapitel|szene|figur|ort|notiz), goal (Wörter), when (Zeitpunkt), ord (Reihenfolge unter Geschwistern),
                    chapters:[ids] am Block, host:blockId am Kapitel (Kapitel-Knoten liegen nicht auf der Fläche) }
 doc.bookGoal = Wortziel fürs Buch
+doc.speech   = { rede:'de|buch|fr|en|farbe|blase', innen:'kursiv|klammer|leise|blase' } (Stil für <span class="rede|innen">, als data-rede/data-innen am body; Export: speechToText)
 doc.edges[id]  = { id, from, to, label, style:{color,width,dash} }
 doc.frames[id] = { id, x, y, w, h, title, color }
 ```
