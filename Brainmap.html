@@ -1046,7 +1046,10 @@ const ICON_CATS = [["Figuren","user",["user","users","baby","person-standing","c
 const AUTOSAVE_KEY = 'brainmap:autosave';
 
 const DEF_PAGE = { w:null, mode:'flow', fmt:'tb', nums:'mid' };
-let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' }, page:{ ...DEF_PAGE } };
+const MAIN = 'main';
+const defTree = () => ({ items:{ [MAIN]:{ id:MAIN, kind:'map', name:'Mindmap', parent:'', ord:0 } }, map:MAIN, active:MAIN, dir:'' });
+let doc = { nodes:{}, edges:{}, frames:{}, bookGoal:0, speech:{ rede:'de', innen:'kursiv' }, page:{ ...DEF_PAGE }, tree:defTree() };
+const mapOf = x => (x && x.m) || MAIN;
 let multi = new Set();
 const FRAME_COLORS = ['#e5412d','#2f8f4e','#e07b00','#d1343b','#7b3fd1','#2f6fd6','#8a7a5c','#6b6b72'];
 const frameEls = new Map();
@@ -1138,7 +1141,7 @@ function animateView(t, ms = 450) {
   });
 }
 function fitAll() {
-  const ids = Object.keys(doc.nodes);
+  const ids = Object.keys(doc.nodes).filter(id => !hiddenSet.has(id));
   if (!ids.length) return animateView({ x:innerWidth/2, y:innerHeight/2, s:1 });
   let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
   for (const id of ids) { const r = rect(id); x1 = Math.min(x1, r.x); y1 = Math.min(y1, r.y); x2 = Math.max(x2, r.x + r.w); y2 = Math.max(y2, r.y + r.h); }
@@ -1300,7 +1303,7 @@ function rect(id) {
   return { x:n.x, y:n.y, w:el ? el.offsetWidth : 150, h:el ? el.offsetHeight : 48 };
 }
 function createNode(cx, cy, props = {}) {
-  const n = { id:uid(), x:cx, y:cy, title:'', sub:'', text:'', style:{}, ...props };
+  const n = { id:uid(), x:cx, y:cy, title:'', sub:'', text:'', style:{}, ...(doc.tree.map !== MAIN ? { m:doc.tree.map } : {}), ...props };
   doc.nodes[n.id] = n;
   renderNode(n);
   const el = nodeEls.get(n.id);
@@ -1347,7 +1350,31 @@ function duplicateNode(id) {
   }
   renderNode(doc.nodes[id2]); commit(); select({ type:'node', id:id2 });
 }
-function updateEmpty() { $('#empty-hint').style.display = Object.keys(doc.nodes).length ? 'none' : 'block'; }
+// Karte wechseln: Ansicht der alten merken, neue zeigen (gemerkte Ansicht oder alles einpassen)
+function switchMap(id, keepView) {
+  const it = doc.tree.items[id]; if (!it || it.kind !== 'map') return;
+  const cur = doc.tree.items[doc.tree.map]; if (cur) cur.view = { ...view };
+  if (sheetId) closeSheet(true);
+  endEdit(); select(null); peekId = null;
+  doc.tree.map = id; doc.tree.active = id;
+  applyVisibility(); renderFrames(); renderEdges(); updateEmpty();
+  if (!keepView) { if (it.view) { view = { ...it.view }; applyView(); } else fitAll(); }
+  if (typeof renderTabs === 'function') renderTabs();
+  touch();
+}
+// Nach Rückgängig: Karte und Reiter müssen noch existieren, verwaiste Knoten landen auf der Hauptkarte
+function fixTreeRefs() {
+  const t = doc.tree, its = t.items;
+  if (!its[MAIN]) its[MAIN] = { id:MAIN, kind:'map', name:'Mindmap', parent:'', ord:-1 };
+  if (!its[t.map] || its[t.map].kind !== 'map') t.map = MAIN;
+  if (!its[t.active] || its[t.active].kind === 'folder') t.active = t.map;
+  if (t.dir && !its[t.dir]) t.dir = '';
+  for (const n of Object.values(doc.nodes)) if (n.m && !its[n.m]) delete n.m;
+  for (const f of Object.values(doc.frames)) if (f.m && !its[f.m]) delete f.m;
+  for (const it of Object.values(its)) if (it.kind === 'text' && !(doc.nodes[it.id] && doc.nodes[it.id].solo)) delete its[it.id];
+  for (const n of Object.values(doc.nodes)) if (n.solo && !its[n.id]) its[n.id] = { id:n.id, kind:'text', name:'', parent:'', ord:Date.now() };
+}
+function updateEmpty() { $('#empty-hint').style.display = Object.values(doc.nodes).some(n => !n.solo && !isHosted(n) && mapOf(n) === doc.tree.map) ? 'none' : 'block'; }
 
 /* ---------- Verbindungen ---------- */
 function sidePoint(r, side) {
@@ -1380,7 +1407,7 @@ let hiddenSet = new Set(), peekId = null;
 function applyVisibility() {
   hiddenSet = new Set();
   for (const n of Object.values(doc.nodes)) {
-    if (isHosted(n)) { hiddenSet.add(n.id); continue; }
+    if (isHosted(n) || n.solo || mapOf(n) !== doc.tree.map) { hiddenSet.add(n.id); continue; }
     if (n.collapsed) for (const d of descendants(n.id)) hiddenSet.add(d);
     if (n.mini && n.miniHidden && n.id !== peekId) hiddenSet.add(n.id);
   }
@@ -1958,6 +1985,7 @@ function renderFrames() {
       $('#frames').appendChild(el); frameEls.set(f.id, el);
     }
     const c = isHex(f.color) ? f.color : FRAME_COLORS[0];
+    el.style.display = mapOf(f) === doc.tree.map ? '' : 'none';
     el.style.transform = `translate(${f.x}px,${f.y}px)`; el.style.width = f.w + 'px'; el.style.height = f.h + 'px';
     el.style.borderColor = c + '88'; el.style.background = c + '14';
     const h = el.querySelector('.f-head');
@@ -1968,7 +1996,7 @@ function renderFrames() {
 }
 function createFrame(x, y, w, h, title = 'Gruppe') {
   const id = uid();
-  doc.frames[id] = { id, x:Math.round(x), y:Math.round(y), w:Math.round(w), h:Math.round(h), title, color:FRAME_COLORS[Object.keys(doc.frames).length % FRAME_COLORS.length] };
+  doc.frames[id] = { id, ...(doc.tree.map !== MAIN ? { m:doc.tree.map } : {}), x:Math.round(x), y:Math.round(y), w:Math.round(w), h:Math.round(h), title, color:FRAME_COLORS[Object.keys(doc.frames).length % FRAME_COLORS.length] };
   renderFrames(); commit(); select({ type:'frame', id });
   return doc.frames[id];
 }
@@ -2487,7 +2515,7 @@ $('#sheet-width').addEventListener('click', e => pageMenu(e.currentTarget));
 // Nur aufrufen, solange das Blatt ohne Transform steht: misst das echte Blatt
 function nodeTransform(id) {
   const hn = doc.nodes[id], el = (hn && hn.host && document.querySelector(`.chap[data-cid="${id}"]`)) || nodeEls.get(id), s = sheet.getBoundingClientRect();
-  if (!el) return 'translate(0,40px) scale(.9)';
+  if (!el || !el.offsetParent) return 'translate(0,40px) scale(.96)';
   const r = el.getBoundingClientRect();
   return `translate(${r.left - s.left}px,${r.top - s.top}px) scale(${Math.max(.02, r.width / s.width)},${Math.max(.02, r.height / s.height)})`;
 }
@@ -2857,6 +2885,8 @@ async function followLink(id) {
 }
 async function focusNode(id, openText) {
   const tn = doc.nodes[id];
+  if (tn && tn.solo) { openTab(id); return; }
+  if (tn && !isHosted(tn) && mapOf(tn) !== doc.tree.map) switchMap(mapOf(tn), true);
   if (isHosted(tn)) { await focusNode(tn.host, false); openSheet(id); return; }
   if (tn && tn.mini && tn.miniHidden) { select(null); peekId = id; renderNode(tn); renderEdges(); }
   if (hiddenSet.has(id)) { reveal(id); renderEdges(); commit(); }
@@ -3749,7 +3779,7 @@ searchEl.querySelector('.list').addEventListener('click', e => { const b = e.tar
 
 /* ---------- Rückgängig und Autosave ---------- */
 const noTmp = (k, v) => k.startsWith('_') ? undefined : v;
-const serialize = () => JSON.stringify({ nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
+const serialize = () => JSON.stringify({ nodes:doc.nodes, edges:doc.edges, frames:doc.frames, tree:doc.tree.items }, noTmp);
 function commit() {
   const s = serialize();
   if (s === lastSnap) return;
@@ -3759,7 +3789,8 @@ function commit() {
 function touch() { dirty = true; updateTitle(); scheduleAutosave(); }
 function restoreSnap(s) {
   const o = JSON.parse(s);
-  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page };
+  doc = { nodes:o.nodes, edges:o.edges, frames:o.frames || {}, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page, tree:{ ...doc.tree, items:o.tree || doc.tree.items } };
+  fixTreeRefs();
   if (sel && !selObj()) sel = null;
   renderAll(); updateSidebar();
 }
@@ -3786,7 +3817,7 @@ const isStruct = n => ['akt', 'kapitel', 'szene'].includes(n.type);
 function sortedKids(id) { return kidsOf(id).map(k => doc.nodes[k]).filter(n => n && !isHosted(n) && !n.mini).sort(byOrd); }
 function outlineRoots() {
   const hasParent = new Set(Object.values(doc.edges).filter(e => doc.nodes[e.from] && doc.nodes[e.to] && !isHosted(doc.nodes[e.from])).map(e => e.to));
-  return Object.values(doc.nodes).filter(n => !isHosted(n) && !n.mini && !hasParent.has(n.id)).sort(byOrd);
+  return Object.values(doc.nodes).filter(n => !isHosted(n) && !n.mini && !n.solo && !hasParent.has(n.id)).sort(byOrd);
 }
 function outlineHTML(list, par, depth, path) {
   let out = '';
@@ -4109,6 +4140,25 @@ function cleanHTML(html) {
   }
   return t.innerHTML;
 }
+// Projektbaum prüfen: Arten, Namen, Eltern ohne Kreise, mindestens eine Mindmap
+function cleanTree(t) {
+  t = t && typeof t === 'object' ? t : {};
+  const src = t.items && typeof t.items === 'object' ? t.items : {}, items = {};
+  for (const it of Object.values(src)) {
+    if (!it || it.id == null || !['folder','map','text'].includes(it.kind)) continue;
+    const id = String(it.id), v = it.view;
+    items[id] = { id, kind:it.kind, name:String(it.name || '').slice(0, 80), parent:String(it.parent || ''), ord:isFinite(+it.ord) ? +it.ord : 0,
+      ...(v && isFinite(v.x) && isFinite(v.y) && isFinite(v.s) ? { view:{ x:+v.x, y:+v.y, s:clamp(+v.s, .1, 4) } } : {}) };
+  }
+  if (!items[MAIN] || items[MAIN].kind !== 'map') items[MAIN] = { id:MAIN, kind:'map', name:'Mindmap', parent:'', ord:-1 };
+  for (const it of Object.values(items)) {
+    if (it.parent && !(items[it.parent] && items[it.parent].kind === 'folder')) it.parent = '';
+    const seen = new Set([it.id]); let p = it.parent;
+    while (p) { if (seen.has(p)) { it.parent = ''; break; } seen.add(p); p = items[p] ? items[p].parent : ''; }
+  }
+  const map = items[t.map] && items[t.map].kind === 'map' ? String(t.map) : MAIN;
+  return { items, map, active:items[t.active] && items[t.active].kind !== 'folder' ? String(t.active) : map, dir:items[t.dir] && items[t.dir].kind === 'folder' ? String(t.dir) : '' };
+}
 function cleanPage(p) {
   p = p && typeof p === 'object' ? p : {};
   return { w:+p.w >= 200 && +p.w <= 4000 ? Math.round(+p.w) : null, mode:p.mode === 'book' ? 'book' : 'flow',
@@ -4129,7 +4179,7 @@ function cleanStyle(st, def) {
   return o;
 }
 function fileData() {
-  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
+  return JSON.stringify({ app:'Brainmap', version:1, saved:new Date().toISOString(), view, bookGoal:doc.bookGoal || 0, speech:doc.speech, page:doc.page, tree:doc.tree, nodes:doc.nodes, edges:doc.edges, frames:doc.frames }, noTmp);
 }
 function loadData(o) {
   if (!o || o.app !== 'Brainmap' || typeof o.nodes !== 'object') throw new Error('format');
@@ -4156,7 +4206,15 @@ function loadData(o) {
     frames[id] = { id, x:+f.x || 0, y:+f.y || 0, w:clamp(+f.w || 400, 140, 100000), h:clamp(+f.h || 280, 90, 100000), title:String(f.title || 'Rahmen'), color:isHex(f.color) ? f.color : FRAME_COLORS[0] };
   }
   const sp = o.speech && typeof o.speech === 'object' ? o.speech : {};
-  doc = { nodes, edges, frames, bookGoal:Math.round(clamp(+o.bookGoal || 0, 0, 10000000)),
+  const tree = cleanTree(o.tree);
+  for (const n of Object.values(o.nodes || {})) {
+    const x = n && nodes[String(n.id)]; if (!x) continue;
+    if (typeof n.m === 'string' && tree.items[n.m] && tree.items[n.m].kind === 'map' && n.m !== MAIN) x.m = n.m;
+    if (n.solo && tree.items[x.id] && tree.items[x.id].kind === 'text') x.solo = true;
+  }
+  for (const f of Object.values(o.frames || {})) { const x = f && frames[String(f.id)]; if (x && typeof f.m === 'string' && tree.items[f.m] && f.m !== MAIN) x.m = f.m; }
+  for (const it of Object.values(tree.items)) if (it.kind === 'text' && !(nodes[it.id] && nodes[it.id].solo)) delete tree.items[it.id];
+  doc = { tree, nodes, edges, frames, bookGoal:Math.round(clamp(+o.bookGoal || 0, 0, 10000000)),
     speech:{ rede:REDE.some(r => r[0] === sp.rede) ? sp.rede : 'de', innen:INNEN.some(r => r[0] === sp.innen) ? sp.innen : 'kursiv' },
     page:cleanPage(o.page) };
   applySpeech();
