@@ -343,11 +343,9 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #editor .pagebreak span{position:relative;top:-.75em;background:var(--panel,#fff);padding:0 10px;font:600 11px system-ui,sans-serif;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 #editor .nlink{color:var(--accent);background:var(--accent-soft);border-radius:3px;padding:0 2px;text-decoration:underline dotted;text-underline-offset:3px;cursor:pointer}
 /* Kästen im Text: Teil, Kapitel, Szene (Kennung zählt automatisch, eigene Kennung überschreibt) */
-#editor,#m-page .m-body{counter-reset:teil kap szene}
 .blk{position:relative;margin:14px 0;border:1.5px solid var(--line);border-radius:16px;background:#fbf7ee}
-.blk[data-kind=teil]{counter-increment:teil;border-width:2px;border-color:#bcae8a;background:#f5eedd}
-.blk[data-kind=kapitel]{counter-increment:kap;counter-reset:szene}
-.blk[data-kind=szene]{counter-increment:szene;border-radius:12px;background:#fffefb;margin:10px 0}
+.blk[data-kind=teil]{border-width:2px;border-color:#bcae8a;background:#f5eedd}
+.blk[data-kind=szene]{border-radius:12px;background:#fffefb;margin:10px 0}
 .blk-head{display:flex;align-items:flex-start;gap:8px;padding:10px 10px 10px 8px;cursor:pointer;user-select:none;border-radius:inherit}
 .blk-head:hover{background:rgba(0,0,0,.025)}
 .blk-tog,.blk-grip{flex:none;width:28px;height:28px;display:grid;place-items:center;border-radius:8px;color:var(--muted)}
@@ -360,9 +358,10 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .blk-label{display:block;width:fit-content;min-width:3em;font:700 11px/1.5 system-ui,sans-serif;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);outline:none;cursor:text}
 .blk[data-kind=teil]>.blk-head .blk-label{color:var(--ink)}
 .blk[data-kind=szene]>.blk-head .blk-label{color:var(--muted)}
-.blk[data-kind=teil]>.blk-head .blk-label:empty::before{content:"Teil " counter(teil,upper-roman)}
-.blk[data-kind=kapitel]>.blk-head .blk-label:empty::before{content:"Kapitel " counter(kap)}
-.blk[data-kind=szene]>.blk-head .blk-label:empty::before{content:"Szene " counter(szene)}
+.blk-label:empty::before{content:attr(data-auto)}
+#m-page .blk[data-kind=teil] .blk-label:empty::before{content:"Teil"}
+#m-page .blk[data-kind=kapitel] .blk-label:empty::before{content:"Kapitel"}
+#m-page .blk[data-kind=szene] .blk-label:empty::before{content:"Szene"}
 .blk-title{font-size:1.35em;font-weight:700;line-height:1.3;outline:none;cursor:text;user-select:text}
 .blk[data-kind=teil]>.blk-head .blk-title{font-size:1.6em}
 .blk[data-kind=szene]>.blk-head .blk-title{font-size:1.1em}
@@ -373,7 +372,8 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .blk-sub:empty::before{content:"Untertitel (optional)";color:#c4bfb1}
 .blk-meta{flex:none;margin-top:6px;font:500 12px system-ui,sans-serif;color:var(--muted);white-space:nowrap}
 .blk-meta::after{content:attr(data-w)}
-.blk-body{padding:0 20px 12px 44px}
+.blk-body{padding:0 14px 12px 44px}
+.blk-body>section.blk{margin-left:-30px}
 .blk.closed>.blk-body{display:none}
 .blk.flash{animation:blkflash 1.2s ease}
 .blk.moving{opacity:.35}
@@ -381,6 +381,33 @@ body.focus #editor{font-size:19px;line-height:1.8}
 #dropline{position:absolute;height:3px;border-radius:2px;background:var(--accent);pointer-events:none;display:none;z-index:5}
 #dropline::before{content:"";position:absolute;left:-6px;top:-3px;width:9px;height:9px;border-radius:50%;background:var(--accent)}
 @keyframes blkflash{0%,40%{box-shadow:0 0 0 3px var(--accent)}100%{box-shadow:0 0 0 3px transparent}}
+/* Gliederung links im Textblatt */
+#sheet-nav{width:250px;flex:none;overflow-y:auto;border-right:1px solid #eee9dc;background:#faf6ec;padding:10px 8px 40px;font:13px/1.35 system-ui,sans-serif}
+#sheet.nonav #sheet-nav,body.focus #sheet-nav{display:none}
+.sn-head{display:flex;align-items:center;gap:2px;padding:2px 4px 8px}
+.sn-head b{flex:1;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.sn-head button{border:0;background:none;border-radius:6px;padding:4px 6px;font-size:12px;color:var(--muted);cursor:pointer}
+.sn-head button:hover{background:rgba(0,0,0,.06);color:var(--ink)}
+.sn-row{display:flex;align-items:flex-start;gap:4px;padding:5px 6px;border-radius:8px;cursor:pointer;color:var(--ink)}
+.sn-row:hover{background:rgba(0,0,0,.05)}
+.sn-row.cur{background:var(--accent-soft)}
+.sn-tog{flex:none;width:18px;height:18px;display:grid;place-items:center;border-radius:4px;color:var(--muted)}
+.sn-tog:hover{background:rgba(0,0,0,.08)}
+.sn-tog svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .15s}
+.sn-tog.closed svg{transform:rotate(-90deg)}
+.sn-txt{flex:1;min-width:0}
+.sn-txt small{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.sn-row.k-kapitel small{color:var(--accent)}
+.sn-txt span{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sn-row.k-teil .sn-txt span{font-weight:700}
+.sn-row.k-kapitel .sn-txt span{font-weight:600}
+.sn-row.hd .sn-txt span{color:var(--muted)}
+.sn-row.hd.h1 .sn-txt span{font-weight:600;color:var(--ink)}
+.sn-empty{padding:8px;color:var(--muted);font-size:12px;line-height:1.5}
+#sheet-navbtn{width:44px;height:44px;border:0;border-radius:10px;background:none;cursor:pointer;display:grid;place-items:center;color:var(--ink)}
+#sheet-navbtn:hover{background:#f1eee5}
+#sheet-navbtn[aria-pressed=true]{color:var(--accent)}
+body.focus #sheet-navbtn{display:none}
 #backlinks{margin:0 auto;padding:0 72px 40px;font-size:13px;color:var(--muted)}
 #backlinks:empty{display:none}
 #backlinks b{display:block;margin-bottom:6px;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
@@ -516,6 +543,9 @@ body.focus #editor{font-size:19px;line-height:1.8}
 :root[data-theme=dark] #editor:empty::before,:root[data-theme=dark] #m-page .m-body:empty::before{color:#6f7178}
 :root[data-theme=dark] #editor .pagebreak span{background:var(--panel)}
 :root[data-theme=dark] #backlinks button{background:#2d2f34;border-color:var(--line)}
+:root[data-theme=dark] #sheet-nav{background:#232428;border-right-color:var(--line)}
+:root[data-theme=dark] .sn-row:hover,:root[data-theme=dark] .sn-head button:hover{background:rgba(255,255,255,.06)}
+:root[data-theme=dark] #sheet-navbtn:hover{background:#383a40}
 :root[data-theme=dark] .blk{background:#2d2f34}
 :root[data-theme=dark] .blk[data-kind=teil]{background:#33343a;border-color:#5a5c66}
 :root[data-theme=dark] .blk[data-kind=szene]{background:#28292d}
@@ -707,6 +737,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
   <div class="sheet-content">
     <div class="sheet-top">
     <header class="sheet-head">
+      <button id="sheet-navbtn" aria-label="Gliederung links" aria-pressed="true" title="Gliederung links ein- oder ausblenden"><svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18"/></svg></button>
       <input id="sheet-title" placeholder="Überschrift" aria-label="Überschrift">
       <div class="sheet-stat"><span id="sheet-words"></span><span class="bar" id="sheet-bar" hidden><i></i></span><label>Ziel <input id="sheet-goal" type="number" min="0" step="100" aria-label="Wortziel dieses Textes"></label></div>
       <button id="sheet-width" aria-label="Lesebreite" aria-pressed="false" title="Lesebreite: Text schmaler in der Mitte statt über die ganze Breite"><svg class="ico" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></button>
@@ -754,6 +785,10 @@ body.focus #editor{font-size:19px;line-height:1.8}
     </div>
     </div>
     <div class="sheet-main">
+    <nav id="sheet-nav" aria-label="Gliederung dieses Textes">
+      <div class="sn-head"><b>Gliederung</b><button id="sn-close-all" title="Alle Kästen zuklappen">alle zu</button><button id="sn-open-all" title="Alle Kästen aufklappen">alle auf</button></div>
+      <div id="sn-tree"></div>
+    </nav>
     <div id="paper"><div id="dropline"></div><div class="sheet-body"><div id="editor" contenteditable="true" spellcheck="true"></div><div id="backlinks"></div>
       <div id="linklegend" aria-label="Legende der Link-Farben">
         <span><i style="color:var(--lk-box);background:var(--lk-box-bg);text-decoration:underline">Begriff</i> andere Box</span>
@@ -803,7 +838,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
     <tr><td>Größe</td><td>Block: Griff unten rechts ziehen, Doppelklick darauf stellt automatisch. Textblatt: füllt das ganze Fenster, Knopf ↔ oben schaltet auf Lesebreite.</td></tr>
     <tr><td>Buch-Typen</td><td>Seitenleiste, „Typ im Buch“: Idee, Akt, Kapitel, Szene, Figur, Ort, Notiz. Trichter links filtert die Fläche nach Typ.</td></tr>
     <tr><td>Kapitel-Streifen</td><td>Block ausgewählt: „Kapitel-Streifen hinzufügen“ (oder Rechtsklick). Klick auf einen Streifen öffnet dessen Text, Rechtsklick: umbenennen, sortieren, Status, als eigenen Block lösen, löschen.</td></tr>
-    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
+    <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
     <tr><td>Textmarken</td><td>Im Textblatt: * * * (Szenenwechsel), ⤓ Seite (Seitenumbruch). Alles erscheint im Export.</td></tr>
     <tr><td>Wortziele</td><td>Seitenleiste oder Feld „Ziel“ im Textblatt. Balken am Block und am Kapitel-Streifen. Buchziel in der Gliederung.</td></tr>
     <tr><td>Gliederung</td><td>Liste links (Knopf in der Werkzeugleiste): Baum aus Blöcken und Kapiteln. Klick springt, Doppelklick öffnet den Text, Ziehen sortiert Geschwister um (gilt auch fürs Manuskript).</td></tr>
@@ -2190,7 +2225,7 @@ function openSheet(id) {
   sheetTitle.readOnly = ICON_TOKEN.test(n.title || ''); ICON_TOKEN.lastIndex = 0;
   sheetTitle.title = sheetTitle.readOnly ? 'Überschrift mit Icons: bitte im Block bearbeiten' : '';
   editor.innerHTML = n.text || '';
-  migrateChapters(); normalizeBlocks(); refreshBlocks();
+  migrateChapters(); normalizeBlocks(); refreshBlocks(); renderSheetNav();
   editor.style.fontFamily = n.style && n.style.font ? fontStack(n.style.font) : '';
   applyAutoLinks(); markBrokenLinks(); renderBacklinks(id);
   $('#sheet-goal').value = n.goal || ''; updateSheetStat();
@@ -2215,10 +2250,11 @@ function openSheet(id) {
 function syncSheet() {
   clearTimeout(syncT);
   const n = sheetId && doc.nodes[sheetId]; if (!n) return;
-  refreshBlocks();
+  refreshBlocks(); renderSheetNav();
   const c = editor.cloneNode(true);
   clearAutoLinks(c);
   for (const x of c.querySelectorAll('.blk-meta')) x.removeAttribute('data-w');
+  for (const x of c.querySelectorAll('.blk-label')) x.removeAttribute('data-auto');
   for (const x of c.querySelectorAll('.blk.flash')) x.classList.remove('flash');
   for (const a of c.querySelectorAll('.nlink')) { a.classList.remove('broken', 'tomini', 'tosub', 'tonote', 'once'); a.removeAttribute('title'); }
   n.text = cleanHTML(c.innerHTML);
@@ -2621,7 +2657,18 @@ function caretIn(el, atEnd = true) {
 }
 function setBlockOpen(b, open) {
   b.classList.toggle('closed', !open);
-  onEditorInput();
+  onEditorInput(); renderSheetNav();
+}
+const roman = n => { let s = ''; for (const [v, c] of [[1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]) while (n >= v) { s += c; n -= v; } return s; };
+// Automatische Kennungen: Teil I, II … / Kapitel 1, 2 … durchgehend / Szene zählt je Kapitel neu
+function blockLabels(root) {
+  const cnt = { teil:0, kapitel:0, szene:0 }, m = new Map();
+  for (const b of root.querySelectorAll('section.blk')) {
+    const k = BLK_KINDS[b.dataset.kind] ? b.dataset.kind : 'kapitel';
+    cnt[k]++; if (k === 'kapitel') cnt.szene = 0;
+    m.set(b, BLK_KINDS[k] + ' ' + (k === 'teil' ? roman(cnt.teil) : cnt[k]));
+  }
+  return m;
 }
 // Kaputte Kästen reparieren (z. B. nach Markieren und Löschen) und Platz zum Weiterschreiben lassen
 function normalizeBlocks() {
@@ -2637,9 +2684,11 @@ function normalizeBlocks() {
   }
   if (editor.lastElementChild && editor.lastElementChild.matches('section.blk')) editor.appendChild(emptyP());
 }
-// Wortzahl im Kopf (nur Anzeige, wird nicht gespeichert)
+// Wortzahl und automatische Kennung im Kopf (nur Anzeige, wird nicht gespeichert)
 function refreshBlocks() {
+  const labels = blockLabels(editor);
   for (const b of editor.querySelectorAll('section.blk')) {
+    const lb = blkField(b, 'label'); if (lb) lb.dataset.auto = labels.get(b);
     const m = b.querySelector(':scope>.blk-head .blk-meta'), body = blkBody(b); if (!m || !body) continue;
     const w = (body.textContent.match(/[\p{L}\p{N}]+/gu) || []).length;
     m.dataset.w = w ? w.toLocaleString('de-DE') + ' W.' : '';
@@ -2726,6 +2775,63 @@ document.addEventListener('keydown', e => {
   const kind = { Digit1:'teil', Digit2:'kapitel', Digit3:'szene' }[e.code];
   if (kind) { e.preventDefault(); insertBlock(kind); }
 }, true);
+// Gliederung links: Kästen und Überschriften, Klick springt hin, Pfeil klappt
+let navItems = [];
+function renderSheetNav() {
+  if (!sheetId) return;
+  const labels = blockLabels(editor); navItems = [];
+  const walk = (box, depth) => {
+    let h = '';
+    for (const c of box.children) {
+      if (c.matches('section.blk')) {
+        const i = navItems.push(c) - 1, closed = c.classList.contains('closed'), k = c.dataset.kind;
+        const label = blkField(c, 'label').textContent.trim() || labels.get(c), title = blkField(c, 'title').textContent.trim();
+        const inner = walk(blkBody(c), depth + 1);
+        h += `<div class="sn-row k-${esc(k)}" data-i="${i}" style="padding-left:${6 + depth * 14}px"><span class="sn-tog${closed ? ' closed' : ''}"${inner ? ' title="Auf- oder zuklappen"' : ''}>${inner ? BLK_CHEV : ''}</span><span class="sn-txt"><small>${esc(label)}</small><span>${esc(title || '(ohne Titel)')}</span></span></div>`;
+        if (!closed) h += inner;
+      } else if (/^H[123]$/.test(c.nodeName) && c.textContent.trim()) {
+        const i = navItems.push(c) - 1, lv = +c.nodeName[1];
+        h += `<div class="sn-row hd h${lv}" data-i="${i}" style="padding-left:${6 + depth * 14 + (lv - 1) * 10}px"><span class="sn-tog"></span><span class="sn-txt"><span>${esc(c.textContent.trim())}</span></span></div>`;
+      }
+    }
+    return h;
+  };
+  $('#sn-tree').innerHTML = walk(editor, 0) || '<div class="sn-empty">Noch keine Kapitel oder Überschriften.<br>Oben „+ Kapitel“, oder Rechtsklick auf eine Zeile und einen Rang wählen.</div>';
+  markNavPos();
+}
+function revealInSheet(el) {
+  let opened = false;
+  for (let p = el.parentNode; p && p !== editor; p = p.parentNode) if (p.matches && p.matches('section.blk.closed')) { p.classList.remove('closed'); opened = true; }
+  if (opened) { onEditorInput(); renderSheetNav(); }
+  const f = el.matches('section.blk') ? blkField(el, 'title') : el;
+  const top = el.getBoundingClientRect().top - paper.getBoundingClientRect().top + paper.scrollTop - 16;
+  caretIn(f); paper.scrollTo({ top, behavior:'smooth' });
+  if (el.matches('section.blk')) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+}
+$('#sn-tree').addEventListener('mousedown', e => e.preventDefault());
+$('#sn-tree').addEventListener('click', e => {
+  const row = e.target.closest('.sn-row'); if (!row) return;
+  const el = navItems[+row.dataset.i]; if (!el || !editor.contains(el)) return;
+  if (e.target.closest('.sn-tog svg')) { setBlockOpen(el, el.classList.contains('closed')); return; }
+  revealInSheet(el);
+});
+const setAllBlocks = open => { for (const b of editor.querySelectorAll('section.blk')) b.classList.toggle('closed', !open); onEditorInput(); renderSheetNav(); };
+$('#sn-close-all').addEventListener('click', () => setAllBlocks(false));
+$('#sn-open-all').addEventListener('click', () => setAllBlocks(true));
+// Wo bin ich gerade? Letzter Eintrag, dessen Anfang oberhalb der Blattmitte liegt
+let navPosT = 0;
+function markNavPos() {
+  const lim = paper.getBoundingClientRect().top + paper.clientHeight * .3; let cur = -1;
+  navItems.forEach((el, i) => { if (el.offsetParent && el.getBoundingClientRect().top <= lim) cur = i; });
+  for (const r of $('#sn-tree').querySelectorAll('.sn-row')) r.classList.toggle('cur', +r.dataset.i === cur);
+}
+paper.addEventListener('scroll', () => { cancelAnimationFrame(navPosT); navPosT = requestAnimationFrame(markNavPos); });
+function setNav(on) {
+  sheet.classList.toggle('nonav', !on); $('#sheet-navbtn').setAttribute('aria-pressed', String(on));
+  try { localStorage.setItem('bm-sheet-nonav', on ? '' : '1'); } catch (_) {}
+}
+try { setNav(localStorage.getItem('bm-sheet-nonav') !== '1'); } catch (_) {}
+$('#sheet-navbtn').addEventListener('click', () => setNav(sheet.classList.contains('nonav')));
 // Rang vergeben: Markierung oder Zeile wird Teil, Kapitel, Szene oder Überschrift, jederzeit umschaltbar
 function caretRangeAt(x, y) {
   let r = null;
@@ -2912,14 +3018,14 @@ editor.addEventListener('keydown', e => {
 });
 // Für Export und Manuskript: Kästen werden zu Überschriften, Szenen ohne Titel zu * * *
 function flattenBlocks(root) {
-  const cnt = { teil:0, kapitel:0, szene:0 }, roman = n => { let s = ''; for (const [v, c] of [[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']]) while (n >= v) { s += c; n -= v; } return s; };
+  const labels = blockLabels(root); let scenes = 0;
   for (const b of [...root.querySelectorAll('section.blk')]) {
     const kind = BLK_KINDS[b.dataset.kind] ? b.dataset.kind : 'kapitel', body = b.querySelector(':scope>.blk-body');
     const get = f => { const x = b.querySelector(':scope>.blk-head .blk-' + f); return x ? x.textContent.trim() : ''; };
-    cnt[kind]++; if (kind === 'kapitel') cnt.szene = 0;
-    const label = get('label') || BLK_KINDS[kind] + ' ' + (kind === 'teil' ? roman(cnt.teil) : cnt[kind]), title = get('title'), sub = get('sub');
+    if (kind === 'kapitel') scenes = 0; else if (kind === 'szene') scenes++;
+    const label = get('label') || labels.get(b), title = get('title'), sub = get('sub');
     let h = '';
-    if (kind === 'szene') h = title ? `<h3>${esc(title)}</h3>` : cnt.szene > 1 ? '<hr class="scene">' : '';
+    if (kind === 'szene') h = title ? `<h3>${esc(title)}</h3>` : scenes > 1 ? '<hr class="scene">' : '';
     else h = `<h2 class="${kind === 'teil' ? 'part' : 'chapter'}"><span class="lbl">${esc(label)}</span>${title ? '<span class="sepc">: </span>' + esc(title) : ''}</h2>`;
     if (sub) h += `<p class="subtitle"><i>${esc(sub)}</i></p>`;
     const t = document.createElement('template'); t.innerHTML = h;
