@@ -468,7 +468,7 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v=brief]{border:7px solid transparent;border-radius:0;color:#222;background:#fffdf6 padding-box;border-image:repeating-linear-gradient(45deg,#d1343b 0 9px,#fff 9px 18px,#2f6fd6 18px 27px,#fff 27px 36px) 7;box-shadow:0 2px 8px rgba(0,0,0,.12)}
 .tbox[data-v=magie]{border:1.5px solid #b48cff;border-radius:16px;background:linear-gradient(135deg,rgba(123,63,209,.1),rgba(47,111,214,.1));box-shadow:0 0 16px rgba(140,90,255,.35),inset 0 0 18px rgba(140,90,255,.14)}
 .tbox[data-v=ornament]{border:3px double #a08a5a;border-radius:2px;background:#fdf8ec;color:#3b2f1e;padding:20px 28px;font-family:Georgia,serif}
-.tbox[data-v=ornament]::before,.tbox[data-v=ornament]::after{content:"❦";position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;background:#fdf8ec;color:#a08a5a;font-size:16px;line-height:1}
+.tbox[data-v=ornament]::before,.tbox[data-v=ornament]::after{content:var(--orn,"❦");position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;background:#fdf8ec;color:#a08a5a;font-size:16px;line-height:1}
 .tbox[data-v=ornament]::before{top:-.6em}.tbox[data-v=ornament]::after{bottom:-.6em;transform:translateX(-50%) rotate(180deg)}
 .tbox[data-v=glas]{border:1px solid rgba(255,255,255,.85);border-radius:18px;background:rgba(255,255,255,.5);box-shadow:0 8px 24px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.95)}
 .tbox[data-v=karte]{border:0;border-radius:16px;background:var(--panel);box-shadow:0 12px 30px -10px rgba(0,0,0,.28),0 2px 6px rgba(0,0,0,.06)}
@@ -489,16 +489,16 @@ body.focus #editor{font-size:19px;line-height:1.8}
 .tbox[data-v^=ornament-]::before,.tbox[data-v^=ornament-]::after{position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;font-size:16px;line-height:1}
 .tbox[data-v^=ornament-]::before{top:-.6em}.tbox[data-v^=ornament-]::after{bottom:-.6em}
 .tbox[data-v=ornament-gold]{border:2px solid #c9a227;outline:1px solid #c9a227;outline-offset:4px;border-radius:2px;background:#fffaf0;color:#3b2f1e}
-.tbox[data-v=ornament-gold]::before,.tbox[data-v=ornament-gold]::after{content:"❖";background:#fffaf0;color:#c9a227}
+.tbox[data-v=ornament-gold]::before,.tbox[data-v=ornament-gold]::after{content:var(--orn,"❖");background:#fffaf0;color:#c9a227}
 .tbox[data-v=ornament-ecken]{border:0;border-radius:0;color:#3b2f1e;background:
   linear-gradient(#a08a5a,#a08a5a) top left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top left/2px 24px no-repeat,
   linear-gradient(#a08a5a,#a08a5a) top right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top right/2px 24px no-repeat,
   linear-gradient(#a08a5a,#a08a5a) bottom left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom left/2px 24px no-repeat,
   linear-gradient(#a08a5a,#a08a5a) bottom right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom right/2px 24px no-repeat,#fdf8ec}
 .tbox[data-v=ornament-blume]{border:1.5px solid #b57a8a;border-radius:26px;background:#fff7f8;color:#4a2f36}
-.tbox[data-v=ornament-blume]::before,.tbox[data-v=ornament-blume]::after{content:"✿";background:#fff7f8;color:#b57a8a}
+.tbox[data-v=ornament-blume]::before,.tbox[data-v=ornament-blume]::after{content:var(--orn,"✿");background:#fff7f8;color:#b57a8a}
 .tbox[data-v=ornament-gotisch]{border:2px solid #8a6d3b;outline:1px solid #8a6d3b;outline-offset:-8px;border-radius:2px;background:#1f1b16;color:#efe6d2}
-.tbox[data-v=ornament-gotisch]::before,.tbox[data-v=ornament-gotisch]::after{content:"⚜";background:#1f1b16;color:#c9a227}
+.tbox[data-v=ornament-gotisch]::before,.tbox[data-v=ornament-gotisch]::after{content:var(--orn,"⚜");background:#1f1b16;color:#c9a227}
 :root[data-theme=dark] .tbox[data-v=karte-polaroid]{background:#fff}
 :root[data-theme=dark] .tbox[data-v=ornament-gold]{background:#fffaf0}
 :root[data-theme=dark] .tbox[data-v=ornament-blume]{background:#fff7f8}
@@ -509,6 +509,14 @@ body.focus #editor{font-size:19px;line-height:1.8}
   linear-gradient(#a08a5a,#a08a5a) top right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) top right/2px 24px no-repeat,
   linear-gradient(#a08a5a,#a08a5a) bottom left/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom left/2px 24px no-repeat,
   linear-gradient(#a08a5a,#a08a5a) bottom right/24px 2px no-repeat,linear-gradient(#a08a5a,#a08a5a) bottom right/2px 24px no-repeat,#fdf8ec}
+/* Zeichen an jedem Kasten: eigenes Symbol, Lage oben und unten, links und rechts oder keine */
+.tbox[data-osym]::before,.tbox[data-osym]::after{content:var(--orn);position:absolute;left:50%;transform:translateX(-50%);padding:0 8px;font-size:16px;line-height:1;background:inherit;color:var(--tb,#a08a5a);border-radius:4px}
+.tbox[data-osym]::before{top:-.6em}.tbox[data-osym]::after{bottom:-.6em;top:auto;transform:translateX(-50%) rotate(180deg)}
+.tbox[data-v=ornament-ecken][data-osym]::before,.tbox[data-v=ornament-ecken][data-osym]::after{background:#fdf8ec;color:#a08a5a}
+.tbox.tbox[data-opos=lr]::before{top:50%;bottom:auto;left:-.55em;right:auto;transform:translateY(-50%);padding:6px 0}
+.tbox.tbox[data-opos=lr]::after{top:50%;bottom:auto;left:auto;right:-.55em;transform:translateY(-50%) rotate(180deg);padding:6px 0}
+.tbox.tbox[data-opos=lr]{padding-left:30px;padding-right:30px}
+.tbox.tbox[data-opos=none]::before,.tbox.tbox[data-opos=none]::after{display:none}
 :root[data-theme=dark] .tbox:not([data-v]),:root[data-theme=dark] .tbox[data-v=beige]{background:color-mix(in srgb,var(--tb,#d9c89c) 18%,#26282c)}
 :root[data-theme=dark] .tbox[data-v=zitat],:root[data-theme=dark] .tbox[data-v=rahmen]{background:none}
 :root[data-theme=dark] .tbox[data-v=pergament]{background:radial-gradient(ellipse at center,#fbf3dc 55%,#ead6a2 100%)}
@@ -1104,7 +1112,7 @@ body.focus .mg{display:none}
     <tr><td>Formen</td><td>Im Textblatt: ◇ Form ▾ legt eine Linie, einen Pfeil, ein Rechteck, eine runde Form oder ein Vieleck frei auf die Seite. Ziehen verschiebt, die Punkte ändern die Ecken, das Quadrat unten rechts die Größe. Rechtsklick: Linien- und Flächenfarbe, Stärke, gestrichelt, Ecken, Punkte. Entf löscht die markierte Form.</td></tr>
     <tr><td>Spalten</td><td>In einen Absatz klicken oder mehrere markieren, dann ▥ Spalten ▾: 2 oder 3 Spalten, fließend (Text läuft weiter wie in der Zeitung) oder getrennt nebeneinander (jede Spalte eigener Text). Nochmal ▥ Spalten ▾ im Bereich: umstellen oder auflösen.</td></tr>
     <tr><td>Zettel am Wort</td><td>Wort markieren, dann 🗒 Zettel oder Rechtsklick › Zettel: „sichtbar mit Linie“ legt einen frei verschiebbaren Zettel neben das Wort, eine Linie verbindet beide. „versteckt“: das Wort bekommt einen Punkt, Klick aufs Wort klappt den Zettel auf. × am Zettel versteckt ihn. Rechtsklick auf den Zettelkopf: Farbe, sichtbar oder versteckt, löschen.</td></tr>
-    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
+    <tr><td>Kasten um Text</td><td>Im Textblatt: in einen Absatz klicken oder mehrere markieren, dann Kasten ▾: Beige, Hinweis, Zitat, Dialog oder Rahmen, mit Stil: Pergament, Schriftrolle, Tafel, Notizbuch, Karteikarte, Brief, Glas, dazu Karten (5), Magie (6) und Ornamente (5). Im Kasten nochmal Kasten ▾: Zeichen oben und unten, links und rechts oder keine, und ein eigenes Symbol, an jedem Kasten. Farbe darunter (für die schlichten). Im Kasten nochmal Kasten ▾ ändert Art und Farbe oder entfernt ihn.</td></tr>
     <tr><td>Bilder im Text</td><td>Ziehen setzt das Bild an eine andere Textstelle, Ecke unten rechts ändert die Größe. Rechtsklick: „Frei schweben“ legt es frei auf die Seite, dann überall hinziehbar; „Zurück in den Text“ setzt es wieder in den Textfluss.</td></tr>
     <tr><td>Notiz-Kasten</td><td>+ Notiz (Strg+Umschalt+4) oder Rechtsklick › Rang › Notiz: ein schmaler gelber Balken, aufklappbar wie Kapitel und Szene, aber ohne Nummer und Untertitel. Darf überall stehen, auch in Kapiteln und Szenen, und erscheint nicht im Export.</td></tr>
     <tr><td>Kapitel und Szenen</td><td>Im Textblatt: + Kapitel oder + Szene (Strg+Umschalt+2 / 3, Teil: Strg+Umschalt+1) legt einen Kasten an: Kennung, Titel, Untertitel. Klick auf den Kopf klappt auf und zu. Kästen am Griff ⠿ ziehen: Linie = davor oder danach, Rahmen = hinein. Alt+↑/↓ im Kopf verschiebt um eine Stelle. Rechtsklick auf Text oder Markierung: Rang (Teil, Kapitel, Szene, Ü1 bis Ü3, Text), der Text darunter wandert mit in den Kasten. Rechtsklick auf den Kopf: Rang wechseln, auflösen, löschen. Links die Gliederung: Klick springt hin, Pfeil klappt, Knopf oben links blendet sie aus. Leere Kennung zählt automatisch, eigener Text (z. B. Prolog) ersetzt sie.</td></tr>
@@ -3585,9 +3593,18 @@ const TBOX_MORE = [
 ];
 const TBOX_FX = [['pergament','Pergament'],['rolle','Schriftrolle'],['tafel','Tafel'],['notizbuch','Notizbuch'],['karteikarte','Karteikarte'],['brief','Brief'],['magie','Magie'],['ornament','Ornament'],['glas','Glas'],['karte','Karte']];
 const TBOX_COLORS = ['#d9c89c','#34a853','#2f6fd6','#e07b00','#d1343b','#7b3fd1','#8a8472'];
+const ORN_SYMS = ['❦','❧','☙','❖','✦','✧','✿','❀','⚜','✵','❂','☽','✠','⚔\uFE0E','♛\uFE0E','⁂','◆','❈'];
+const hasOrn = b => /^ornament/.test(b.dataset.v || '') || !!b.dataset.osym;
 function applyTbox(v, color) {
   const r = savedRange; if (!r || !editor.contains(r.startContainer)) { toast('Erst in den Text klicken'); return; }
   const cur = elOf(r.startContainer).closest('.tbox');
+  if (/^o[ps]:/.test(v)) {                                 // Zeichen am Kasten
+    if (!cur) return;
+    const x = v.slice(3);
+    if (v[1] === 'p') { if (x === 'tb') delete cur.dataset.opos; else cur.dataset.opos = x; if (x !== 'none' && !hasOrn(cur)) { cur.dataset.osym = '1'; cur.style.setProperty('--orn', '"❦"'); } }
+    else { cur.dataset.osym = '1'; cur.style.setProperty('--orn', JSON.stringify(x)); if (cur.dataset.opos === 'none') delete cur.dataset.opos; }
+    onEditorInput(); return;
+  }
   if (v === 'none') { if (cur) { cur.replaceWith(...cur.childNodes); normalizeBlocks(); onEditorInput(); } return; }
   if (cur && editor.contains(cur) && cur.contains(r.endContainer)) {
     if (v !== 'c') cur.dataset.v = v;
@@ -3651,7 +3668,10 @@ $('#btn-tbox').addEventListener('click', e => {
     TBOX_FX.filter(([v]) => !['magie','ornament','karte'].includes(v)).map(([v, l]) => tboxPv(v, l)).join('') + '</div>' +
     TBOX_MORE.map(([g, list]) => `<div class="fx-t" style="margin-top:10px">${g}</div><div class="fx-grid">` + list.map(([v, l]) => tboxPv(v, l)).join('') + '</div>').join('') +
     fxSwatches(TBOX_COLORS, cur && cur.style.getPropertyValue('--tb').trim()) +
-    (cur ? '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
+    (cur ? '<div class="fx-t" style="margin-top:10px">Zeichen am Kasten</div><div class="fx-grid">' +
+      [['tb','oben und unten'],['lr','links und rechts'],['none','keine']].map(([k, l]) => `<button data-v="op:${k}" class="${(cur.dataset.opos || (hasOrn(cur) ? 'tb' : 'none')) === k ? 'on' : ''}">${l}</button>`).join('') + '</div>' +
+      '<div class="fx-cols" style="gap:2px">' + ORN_SYMS.map(s => `<button class="tb" style="font-size:17px;min-width:30px" data-v="os:${s}" title="Zeichen ${s}">${s}</button>`).join('') + '</div>' +
+      '<button class="fx-del" data-v="none">Kasten entfernen (Text bleibt)</button>' : ''), applyTbox);
 });
 
 // Marker-Stile für markierten Text innerhalb einer Zeile
