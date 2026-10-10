@@ -27,6 +27,7 @@ Script-Abschnitte (Kommentare `/* ---------- Name ---------- */`, Reihenfolge wi
 | Rückgängig und Autosave | `commit`, `undo/redo` (JSON-Snapshots), `scheduleAutosave` (Tauri: Datei, sonst localStorage) |
 | Dateien | `fileData/loadData` (validiert alles), `cleanHTML`, `cleanStyle`, Tauri-Befehle oder Browser-Fallback |
 | Programm-Update (Web-App) | `WEB_APP` (https, kein Tauri, `APP_VERSION` ≠ 'dev'), Service Worker registrieren, `checkUpdate` (version.json), `reloadForUpdate` (vorher `flushAutosave`), `#update-bar` |
+| Cloud-Sync (Supabase) | `sync` (Zustand im Kopf), `syncAuth/syncToken/syncApi` (REST ohne Bibliothek), `syncTouched` (aus `touch`), `syncPush` (PATCH nur bei passendem `rev`), `syncPull` (alle 30 s, beim Zurückwechseln), `syncConflict` (Frage, Verlierer in Sicherungskopien), `syncApply`, Fenster `#cloud` (`openCloud/renderCloud`) |
 | Tastatur | eine keydown-Weiche: ask, Strg+S/O/F, Hilfe, Menü, Blatt, Bearbeiten, Fläche |
 
 ## Datenmodell
@@ -50,6 +51,11 @@ Daten: `%APPDATA%\de.brainmap.app\` (autosave.json, Sicherungen\<Dateiname>\).
 - `web/sw.js`: Netz zuerst (`cache:'no-cache'`, 5 s Zeitlimit), sonst Cache. Kein Vorab-Cache.
 - Update im Fenster: beim Start und alle 15 min `version.json`. Neu → sofort neu laden (erste 15 s oder im Hintergrund, wenn kein Text/Titel offen), sonst Leiste „Neue Version“.
 - `tools/smoke.mjs`: Rauchtest (Start, Version, Service Worker, offline, Auto-Update). Läuft in `.github/workflows/pages.yml`.
+
+## Cloud-Sync
+- Tabelle `public.maps (user_id default auth.uid(), id, name, data text = fileData(), rev, device, updated_at)`, Primärschlüssel (user_id, id), RLS nur eigene Zeilen.
+- localStorage: `bm-sync-session` (Tokens, Refresh vor Ablauf), `bm-sync-link` `{id, name, rev, dirty}`. Aktiv nur, wenn `link.name === fileName`.
+- Holen übernimmt nur, wenn lokal nichts offen ist (`syncSafe`, kein `dirty`); sonst Hochladen → bei falschem `rev` Konflikt-Frage.
 
 ## Werkzeuge
 - Syntaxcheck: Python zieht das letzte `<script>` nach `%TEMP%\bm.js`, dann `node --check`.

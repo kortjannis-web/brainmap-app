@@ -9,7 +9,16 @@ Brainmap ist eine Mindmap für ein Buchprojekt: Ideen, Figuren, Orte und Kapitel
 3. **Android (Chrome):** Menü ⋮ → „Zum Startbildschirm hinzufügen“ / „App installieren“. **iPhone (Safari):** Teilen → „Zum Home-Bildschirm“.
 4. **Updates kommen von selbst:** Jeder geprüfte Push auf `master` wird veröffentlicht. Beim nächsten Start (mit Internet) läuft sofort die neue Version. Ist das Fenster schon offen, lädt es neu, sobald es im Hintergrund ist, oder zeigt oben „Neue Version verfügbar“. Ohne Internet startet die zuletzt geladene Version.
 5. Welche Version läuft, steht im Hilfe-Fenster (**?**) unter der Überschrift.
-6. Die Daten liegen pro Gerät im Browser-Speicher. Zwischen Geräten: Datei mit Strg+S speichern und auf dem anderen Gerät öffnen.
+6. Die Daten liegen pro Gerät im Browser-Speicher. Abgleich zwischen Geräten: siehe Cloud-Sync.
+
+## Cloud-Sync (Laptop und Handy abgleichen)
+
+1. Links in der Leiste auf die **Wolke** klicken und mit E-Mail und Passwort anmelden (Konto aus Supabase).
+2. **Auf dem ersten Gerät:** „Hochladen und synchronisieren“. Ab jetzt geht jede Änderung nach 2 Sekunden in die Cloud.
+3. **Auf dem anderen Gerät:** anmelden, unter „In der Cloud“ die Datei **Öffnen**. Änderungen kommen beim Öffnen der App, beim Zurückwechseln und alle 30 Sekunden an.
+4. Farbe der Wolke: **grün** = alles hochgeladen, **orange** = Änderungen warten (z. B. offline), **rot** = Problem (Maus drüber zeigt es).
+5. **Haben beide Geräte gleichzeitig geändert,** fragt Brainmap, welche Fassung gilt. Die andere landet in den **Sicherungskopien**, es geht nichts verloren.
+6. Synchronisiert wird die geöffnete Datei, solange ihr Name gleich bleibt. „Speichern unter“ mit neuem Namen beendet den Sync für diese Datei.
 
 ## Installieren und aktualisieren (Windows-Programm)
 
