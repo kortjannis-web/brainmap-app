@@ -2,7 +2,16 @@
 
 Brainmap ist eine Mindmap für ein Buchprojekt: Ideen, Figuren, Orte und Kapitel als Blöcke auf einer unendlichen Fläche, verbunden durch Linien, mit Text dahinter.
 
-## Installieren und aktualisieren
+## Web-App (Laptop und Handy, empfohlen)
+
+1. **https://kortjannis-web.github.io/brainmap-app/** öffnen.
+2. **Laptop (Edge/Chrome):** In der Adresszeile auf das Installieren-Symbol klicken (oder Menü ⋯ → Apps → „Brainmap installieren“). Danach startet Brainmap wie ein Programm aus Startmenü oder Taskleiste.
+3. **Android (Chrome):** Menü ⋮ → „Zum Startbildschirm hinzufügen“ / „App installieren“. **iPhone (Safari):** Teilen → „Zum Home-Bildschirm“.
+4. **Updates kommen von selbst:** Jeder geprüfte Push auf `master` wird veröffentlicht. Beim nächsten Start (mit Internet) läuft sofort die neue Version. Ist das Fenster schon offen, lädt es neu, sobald es im Hintergrund ist, oder zeigt oben „Neue Version verfügbar“. Ohne Internet startet die zuletzt geladene Version.
+5. Welche Version läuft, steht im Hilfe-Fenster (**?**) unter der Überschrift.
+6. Die Daten liegen pro Gerät im Browser-Speicher. Zwischen Geräten: Datei mit Strg+S speichern und auf dem anderen Gerät öffnen.
+
+## Installieren und aktualisieren (Windows-Programm)
 
 1. Auf der Seite **Releases** die Datei `Brainmap_..._x64-setup.exe` herunterladen und starten.
 2. Beim ersten Start erscheint ein Kurz-Tutorial. Es lässt sich jederzeit über das **?** oben wieder öffnen.

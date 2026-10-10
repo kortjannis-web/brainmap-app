@@ -9,6 +9,10 @@
 - Speicherformat: `.brainmap` (JSON mit `app:"Brainmap"`). Bilder liegen als WebP-Data-URL darin.
 - Ziel: schlicht und funktionstüchtig. Funktion vor Optik.
 
+- Web-App (Hauptweg für Laptop und Handy): https://kortjannis-web.github.io/brainmap-app/ . Push auf `master` →
+  Action `Web-App` baut (`tools/build-web.mjs`), testet (`tools/smoke.mjs`) und veröffentlicht nur bei Grün auf GitHub Pages.
+  Service Worker `web/sw.js` lädt online immer die neueste Datei, `version.json` + Update-Leiste für lange laufende Fenster.
+
 - Installer (NSIS, Tauri-Vorlage): Zielordner wählbar, Startmenü-Eintrag (Ordner „Brainmap“), Häkchen „Desktop-Verknüpfung“ am Ende. `brainmap.exe` läuft auch einzeln aus jedem Ordner (HTML ist eingebettet, Daten in `%APPDATA%`). Ungetestet, solange SAC das Bauen blockiert.
 
 ## Gilt hier NICHT (globale CLAUDE.md ist für Kundenwebsites)
@@ -29,6 +33,7 @@
 - Syntax: Script aus der HTML ziehen und `node --check` (siehe architektur.md).
 - Browser: `python -m http.server 8765`, dann `http://localhost:8765/Brainmap.html`. Server per Task-ID beenden.
   Ist das Chrome-Fenster minimiert, laufen keine Animationen und Screenshots: dann Logik per JS testen.
+- Web-App lokal: `npm run dist`, dann `node tools/smoke.mjs` (braucht `playwright`).
 - Programm: `npx tauri build` (Rust unter `%USERPROFILE%\.cargo\bin`). Ergebnis:
   `src-tauri/target/release/brainmap.exe` und Installer unter `src-tauri/target/release/bundle/nsis/`.
 

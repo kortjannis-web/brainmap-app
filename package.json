@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "dist": "node -e \"const f=require('fs');f.mkdirSync('dist',{recursive:true});f.copyFileSync('Brainmap.html','dist/index.html')\"",
+    "dist": "node tools/build-web.mjs",
     "build": "tauri build",
     "dev": "tauri dev",
     "tauri": "tauri"
