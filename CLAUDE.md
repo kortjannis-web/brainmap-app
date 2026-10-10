@@ -12,6 +12,8 @@
 - Web-App (Hauptweg für Laptop und Handy): https://kortjannis-web.github.io/brainmap-app/ . Push auf `master` →
   Action `Web-App` baut (`tools/build-web.mjs`), testet (`tools/smoke.mjs`) und veröffentlicht nur bei Grün auf GitHub Pages.
   Service Worker `web/sw.js` lädt online immer die neueste Datei, `version.json` + Update-Leiste für lange laufende Fenster.
+- Cloud-Sync: Supabase-Projekt `dclqzugjddhvvqepctlr` (Frankfurt), Tabelle `public.maps` mit RLS, Login per E-Mail/Passwort,
+  Registrierung gesperrt. Eine Datei = eine Zeile, Konflikte über `rev`. Test ohne Internet: Mock in `tools/smoke.mjs`.
 
 - Installer (NSIS, Tauri-Vorlage): Zielordner wählbar, Startmenü-Eintrag (Ordner „Brainmap“), Häkchen „Desktop-Verknüpfung“ am Ende. `brainmap.exe` läuft auch einzeln aus jedem Ordner (HTML ist eingebettet, Daten in `%APPDATA%`). Ungetestet, solange SAC das Bauen blockiert.
 
