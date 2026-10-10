@@ -46,7 +46,9 @@ button{font:inherit;color:inherit}
 
 /* Canvas */
 #viewport{position:fixed;inset:0;overflow:hidden;background-color:var(--canvas);background-image:radial-gradient(var(--canvas-dot) 1.3px,transparent 1.4px)}
+#viewport{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #viewport.panning{cursor:grabbing}
+#paper,#sheet-scroller{touch-action:pan-x pan-y;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 #viewport.placing{cursor:crosshair}
 #world{position:absolute;left:0;top:0;transform-origin:0 0}
 #edges,#overlay-svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible}
@@ -2171,6 +2173,72 @@ window.addEventListener('mousemove', e => {
 });
 window.addEventListener('mouseup', e => { if (drag) { const d = drag; drag = null; d.up(e); } });
 window.addEventListener('blur', () => { spaceDown = false; });
+/* ---------- Touch: ein Finger = Maus, zwei Finger = Zoom + Verschieben, Doppeltipp, langer Druck ---------- */
+{
+  const mev = (type, t, el, extra) => new MouseEvent(type, { bubbles:true, cancelable:true, view:window, button:0, buttons:type === 'mouseup' ? 0 : 1, clientX:t.clientX, clientY:t.clientY, screenX:t.screenX, screenY:t.screenY, ...extra });
+  let g = null, lastTap = null, pinch = null;
+  const mid = ts => ({ x:(ts[0].clientX + ts[1].clientX) / 2, y:(ts[0].clientY + ts[1].clientY) / 2, d:Math.hypot(ts[0].clientX - ts[1].clientX, ts[0].clientY - ts[1].clientY) });
+  const endSingle = () => {
+    if (!g) return;
+    clearTimeout(g.lp);
+    if (drag) { const d = drag; drag = null; d.up(mev('mouseup', g.t, g.el)); }
+    g = null;
+  };
+  viewport.addEventListener('touchstart', e => {
+    if (e.target.closest('.editing,input,textarea,[contenteditable="true"]')) { endSingle(); return; }
+    e.preventDefault();
+    if (e.touches.length >= 2) {
+      endSingle();
+      const m = mid(e.touches); pinch = { x:m.x, y:m.y, d:m.d || 1 };
+      return;
+    }
+    const t = e.touches[0], el = e.target;
+    g = { t, el, sx:t.clientX, sy:t.clientY, moved:false, started:Date.now() };
+    el.dispatchEvent(mev('mousedown', t, el));
+    g.lp = setTimeout(() => {
+      if (!g || g.moved) return;
+      if (drag) { const d = drag; drag = null; d.up(mev('mouseup', g.t, g.el)); }
+      g.long = true;
+      g.el.dispatchEvent(mev('contextmenu', g.t, g.el, { button:2 }));
+    }, 550);
+  }, { passive:false });
+  viewport.addEventListener('touchmove', e => {
+    if (e.target.closest('.editing,input,textarea,[contenteditable="true"]') && !g && !pinch) return;
+    e.preventDefault();
+    if (pinch && e.touches.length >= 2) {
+      const m = mid(e.touches);
+      view.x += m.x - pinch.x; view.y += m.y - pinch.y; applyView();
+      zoomAt(m.x, m.y, m.d / pinch.d);
+      pinch = { x:m.x, y:m.y, d:m.d || 1 };
+      return;
+    }
+    if (!g || e.touches.length !== 1) return;
+    const t = e.touches[0]; g.t = t;
+    if (!g.moved && Math.hypot(t.clientX - g.sx, t.clientY - g.sy) > 8) { g.moved = true; clearTimeout(g.lp); }
+    lastMouse = { x:t.clientX, y:t.clientY };
+    if (drag) drag.move(mev('mousemove', t, g.el));
+    else if (linking) updateLink(mev('mousemove', t, g.el));
+  }, { passive:false });
+  const finish = e => {
+    if (pinch) { if (e.touches.length < 2) pinch = null; return; }
+    if (!g) return;
+    e.preventDefault();
+    const { el, moved, long } = g, t = g.t;
+    clearTimeout(g.lp);
+    if (drag) { const d = drag; drag = null; d.up(mev('mouseup', t, el)); }
+    g = null;
+    if (e.type === 'touchcancel' || moved || long) { lastTap = null; return; }
+    // reiner Tipp: Klick nachreichen, zweiter Tipp kurz danach = Doppelklick
+    el.dispatchEvent(mev('click', t, el));
+    const now = Date.now();
+    if (lastTap && now - lastTap.time < 350 && Math.hypot(t.clientX - lastTap.x, t.clientY - lastTap.y) < 30) {
+      el.dispatchEvent(mev('dblclick', t, el, { detail:2 }));
+      lastTap = null;
+    } else lastTap = { time:now, x:t.clientX, y:t.clientY };
+  };
+  viewport.addEventListener('touchend', finish, { passive:false });
+  viewport.addEventListener('touchcancel', finish, { passive:false });
+}
 // Klicks außerhalb von Popups schließen diese
 window.addEventListener('mousedown', e => {
   if (askResolve && !askEl.contains(e.target)) { e.stopPropagation(); e.preventDefault(); closeAsk(false); return; }
