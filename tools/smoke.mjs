@@ -47,8 +47,7 @@ async function mockSupabase(ctx) {
 async function device(browser) {
   const ctx = await browser.newContext(); await mockSupabase(ctx);
   await ctx.addInitScript(() => localStorage.setItem('brainmap-tour', '1'));   // Kurz-Tutorial würde Klicks abfangen
-  const errors = [];
-const page = await ctx.newPage(); page.on('pageerror', e => errors.push(String(e)));
+  const page = await ctx.newPage(); page.on('pageerror', e => errors.push(String(e)));
   await page.goto(url); await page.waitForSelector('.node');
   await page.click('#btn-sync'); await page.fill('#cl-mail', 'ich@test.de'); await page.fill('#cl-pass', 'geheim'); await page.click('#cl-login');
   await page.waitForSelector('#cl-logout');
