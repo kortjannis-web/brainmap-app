@@ -26,6 +26,7 @@ Script-Abschnitte (Kommentare `/* ---------- Name ---------- */`, Reihenfolge wi
 | Suche | `openSearch`, `runSearch` über Titel und Klartext, `chooseSearch` |
 | Rückgängig und Autosave | `commit`, `undo/redo` (JSON-Snapshots), `scheduleAutosave` (Tauri: Datei, sonst localStorage) |
 | Dateien | `fileData/loadData` (validiert alles), `cleanHTML`, `cleanStyle`, Tauri-Befehle oder Browser-Fallback |
+| Programm-Update (Web-App) | `WEB_APP` (https, kein Tauri, `APP_VERSION` ≠ 'dev'), Service Worker registrieren, `checkUpdate` (version.json), `reloadForUpdate` (vorher `flushAutosave`), `#update-bar` |
 | Tastatur | eine keydown-Weiche: ask, Strg+S/O/F, Hilfe, Menü, Blatt, Bearbeiten, Fläche |
 
 ## Datenmodell
@@ -43,6 +44,12 @@ Kinder = Linien mit `from` = Elternblock. `style` speichert nur Abweichungen von
 ## Rust (src-tauri/src/main.rs)
 `open_dialog`, `save_dialog`, `write_file` (vorher Sicherung), `startup_file`, `autosave_write/read`, `open_backups`.
 Daten: `%APPDATA%\de.brainmap.app\` (autosave.json, Sicherungen\<Dateiname>\).
+
+## Web-App (GitHub Pages)
+- `tools/build-web.mjs` → `dist/`: setzt `APP_VERSION`, hängt Manifest/Icons in den Kopf, kopiert `web/*`, schreibt `version.json`. Bricht bei Syntaxfehler ab.
+- `web/sw.js`: Netz zuerst (`cache:'no-cache'`, 5 s Zeitlimit), sonst Cache. Kein Vorab-Cache.
+- Update im Fenster: beim Start und alle 15 min `version.json`. Neu → sofort neu laden (erste 15 s oder im Hintergrund, wenn kein Text/Titel offen), sonst Leiste „Neue Version“.
+- `tools/smoke.mjs`: Rauchtest (Start, Version, Service Worker, offline, Auto-Update). Läuft in `.github/workflows/pages.yml`.
 
 ## Werkzeuge
 - Syntaxcheck: Python zieht das letzte `<script>` nach `%TEMP%\bm.js`, dann `node --check`.
